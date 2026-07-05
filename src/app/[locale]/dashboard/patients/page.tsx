@@ -1,0 +1,22 @@
+import { getTranslations } from "next-intl/server";
+import { PatientsShell } from "@/components/patients/PatientsShell";
+import { fetchPatients } from "@/lib/queries/patients";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const t = await getTranslations({ locale: params.locale, namespace: "patients" });
+
+  return {
+    title: t("metaTitle"),
+    description: t("subtitle"),
+  };
+}
+
+export default async function PatientsPage() {
+  const patients = await fetchPatients();
+
+  return <PatientsShell patients={patients} />;
+}
