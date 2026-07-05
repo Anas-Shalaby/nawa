@@ -18,8 +18,9 @@ export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | nu
 
   const { data, error } = await supabase
     .from("tenants")
-    .select("id, name, slug")
+    .select("id, name, slug, is_active")
     .eq("slug", slug)
+    .eq("is_active", true)
     .maybeSingle();
 
   if (error) {

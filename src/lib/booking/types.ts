@@ -21,6 +21,6 @@ export interface TimeSlot {
   available: boolean;
 }
 
-export type BookingStep = "services" | "slots" | "details" | "success";
+export type BookingStep = "services" | "slots" | "details";
 
 export type BookingErrorCode = "SOFT_BANNED" | "SLOT_TAKEN" | "UNKNOWN";

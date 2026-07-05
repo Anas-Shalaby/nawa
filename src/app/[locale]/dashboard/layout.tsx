@@ -1,4 +1,5 @@
 import { DashboardLayoutShell } from "@/components/dashboard/layout/DashboardLayoutShell";
+import { DashboardNotificationsRoot } from "@/components/providers/DashboardNotificationsRoot";
 import { TheaterModeProvider } from "@/components/ehr/TheaterModeContext";
 import { fetchClinicBrief } from "@/lib/queries/services";
 
@@ -7,11 +8,13 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { clinicName } = await fetchClinicBrief();
+  const { clinicName, tenantId } = await fetchClinicBrief();
 
   return (
     <TheaterModeProvider>
-      <DashboardLayoutShell clinicName={clinicName}>{children}</DashboardLayoutShell>
+      <DashboardNotificationsRoot tenantId={tenantId}>
+        <DashboardLayoutShell clinicName={clinicName}>{children}</DashboardLayoutShell>
+      </DashboardNotificationsRoot>
     </TheaterModeProvider>
   );
 }

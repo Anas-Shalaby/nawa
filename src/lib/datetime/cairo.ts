@@ -31,10 +31,24 @@ export function buildAppointmentDateIso(slotTime: string, reference = new Date()
 
 export function formatSlotLabel(slotTime: string, locale: string): string {
   const iso = buildAppointmentDateIso(slotTime);
+  return formatAppointmentTime(iso, locale);
+}
+
+export function formatAppointmentTime(iso: string, locale: string): string {
   return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-EG", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
+    timeZone: CAIRO_TZ,
+  }).format(new Date(iso));
+}
+
+export function formatAppointmentDateLong(iso: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-EG", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
     timeZone: CAIRO_TZ,
   }).format(new Date(iso));
 }

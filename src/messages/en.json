@@ -3,6 +3,13 @@
     "nawa": "Nawa",
     "continue": "Continue",
     "switchLocale": "العربية",
+    "localeSwitcher": {
+      "label": "Choose language",
+      "ar": "العربية",
+      "en": "English",
+      "arSecondary": "Arabic",
+      "enSecondary": "English"
+    },
     "openDashboard": "Open Dashboard",
     "bookNovaDental": "Book — Nova Dental",
     "clinicNotFound": "Clinic not found",
@@ -56,7 +63,25 @@
     "noServicesAvailable": "Online booking is not available yet. Please contact the clinic.",
     "backHome": "Back to home",
     "servicePrice": "{amount} EGP",
-    "preVisitNote": "Pre-visit instructions"
+    "preVisitNote": "Pre-visit instructions",
+    "ticket": {
+      "metaTitle": "Booking ticket — Nawa",
+      "metaDescription": "Your digital appointment ticket after booking.",
+      "digitalPass": "Digital pass",
+      "congrats": "Congratulations, {name}! Your booking is confirmed.",
+      "bookingNumber": "Booking #",
+      "patient": "Patient",
+      "date": "Date",
+      "time": "Time",
+      "service": "Service",
+      "scanToVerify": "Scan to verify booking",
+      "directions": "Directions (Google Maps)",
+      "cancelBooking": "Cancel booking",
+      "cancelling": "Cancelling…",
+      "cancelError": "Could not cancel. Please contact the clinic.",
+      "cancelledTitle": "Booking cancelled",
+      "cancelledBody": "Your slot at {time} has been released. You can book again anytime."
+    }
   },
   "dashboard": {
     "dailyQueue": "Daily queue management",
@@ -170,15 +195,30 @@
     "settings": "Settings",
     "layout": {
       "brandTagline": "Clinic management",
-      "navQueue": "Today's Queue",
-      "navAgenda": "Upcoming Agenda",
-      "navPatients": "Patients CRM",
-      "navRecalls": "Patient Recalls",
-      "navFinancials": "Billing & ROI",
+      "sectionOperations": "Operations",
+      "sectionClinic": "Clinic management",
+      "sectionFinance": "Finance & growth",
+      "sectionSystem": "System",
+      "navQueue": "Today's queue",
+      "navUpcoming": "Upcoming",
+      "navPatients": "Patients",
       "navServices": "Services",
+      "navInventory": "Inventory",
+      "navStaff": "Staff",
+      "navFinancials": "Billing & ROI",
+      "navMarketing": "Marketing",
+      "navAiAssistant": "AI assistant",
       "navSettings": "Settings",
       "collapse": "Collapse sidebar",
       "closeMenu": "Close menu"
+    },
+    "notifications": {
+      "toastTitle": "New booking!",
+      "toastDescription": "{patient} booked {service} at {time}",
+      "centerTitle": "Notifications",
+      "empty": "No notifications yet",
+      "markAllRead": "Mark all read",
+      "bellLabel": "Notification center"
     }
   },
   "services": {
@@ -280,6 +320,29 @@
     "close": "Close",
     "paymentFailed": "Could not record payment"
   },
+  "comingSoon": {
+    "badge": "Coming soon",
+    "inventory": {
+      "metaTitle": "Inventory — Nawa",
+      "title": "Inventory management",
+      "description": "Track clinic supplies, low-stock alerts, and tie consumption to sessions — coming soon."
+    },
+    "staff": {
+      "metaTitle": "Staff — Nawa",
+      "title": "Staff management",
+      "description": "Manage doctors, front desk, and role permissions — coming soon."
+    },
+    "marketing": {
+      "metaTitle": "Marketing — Nawa",
+      "title": "Marketing campaigns",
+      "description": "Bulk WhatsApp campaigns, dormant patient targeting, and ROI tracking — coming soon."
+    },
+    "aiAssistant": {
+      "metaTitle": "AI assistant — Nawa",
+      "title": "AI assistant",
+      "description": "We're training your clinic AI to analyze performance and surface actionable insights — coming soon."
+    }
+  },
   "agenda": {
     "metaTitle": "Upcoming Agenda — Nawa",
     "title": "Upcoming Agenda",
@@ -378,54 +441,113 @@
   },
   "landing": {
     "metadata": {
-      "title": "Nawa — Stop no-shows, save thousands",
-      "description": "Appointment management for Egyptian clinics — smart booking, secretary dashboard, automated WhatsApp reminders."
+      "title": "Nawa — Your clinic runs like clockwork",
+      "description": "The smartest cloud management system for dental, dermatology, and mental health clinics in Egypt — discipline engine, visual EHR, and free WhatsApp."
     },
     "nav": {
       "brand": "Nawa",
       "features": "Features",
+      "value": "Why Nawa",
       "pricing": "Pricing",
       "cta": "Get started"
     },
     "hero": {
-      "badge": "Built for dental & dermatology clinics",
-      "headline": "Stop patient no-shows — save thousands every month",
-      "subheadline": "Nawa connects a smart booking link, live secretary Kanban, and a WhatsApp discipline engine — so you fill your schedule and cut losses.",
-      "cta": "Create your clinic workspace",
-      "proof": "Reduces no-shows by up to 40%"
+      "badge": "For dental, dermatology & mental health clinics",
+      "headline": "Your clinic.. runs like Swiss clockwork.",
+      "subheadline": "The smartest cloud management system for dental, dermatology, and mental health clinics. Double revenue, eliminate no-shows, communicate for free.",
+      "ctaPrimary": "Get started",
+      "ctaSecondary": "Browse features",
+      "stat1Value": "40%",
+      "stat1Label": "Fewer no-shows",
+      "stat2Value": "Zero",
+      "stat2Label": "WhatsApp cost",
+      "stat3Value": "6 mo",
+      "stat3Label": "Guaranteed ROI"
     },
-    "features": {
+    "bento": {
+      "eyebrow": "The Nawa arsenal",
+      "title": "Everything your clinic needs — one interface",
+      "subtitle": "Real mini UI replicas, no stock photos. See how the system works before you sign up.",
+      "roi": {
+        "title": "Discipline & ROI engine",
+        "body": "Track recovered revenue from WhatsApp reminders and confirmations — see real returns on the financial dashboard.",
+        "metricLabel": "Recovered revenue",
+        "metricValue": "+42,500 EGP",
+        "metricDelta": "+28%",
+        "chartStart": "Jan",
+        "chartEnd": "Jun"
+      },
+      "whatsapp": {
+        "title": "Free relationship management",
+        "body": "Reach patients on WhatsApp with no CRM subscription. Ready-made templates for reminders, follow-ups, and collections.",
+        "msg1": "Reminder: your appointment tomorrow at 3:00 PM",
+        "msg2": "Please confirm attendance with one tap",
+        "zeroCost": "Zero cost — via wa.me"
+      },
+      "visual": {
+        "title": "Visual transformation",
+        "body": "Visual EHR for dental, dermatology, and mental health — before/after, media gallery, and patient presentation mode.",
+        "before": "Before",
+        "after": "After",
+        "point1": "Visual comparison for clinical cases",
+        "point2": "Patient privacy in presentation mode"
+      },
+      "queue": {
+        "title": "Goodbye waiting chaos",
+        "body": "Master-detail control screen: vertical queue + patient detail panel. The secretary sees everything at a glance.",
+        "queueLabel": "Today's queue",
+        "detailLabel": "Appointment details",
+        "patient1": "Sara Mahmoud",
+        "patient2": "Ahmed Hassan",
+        "patient3": "Nour Ibrahim",
+        "statusInSession": "In session",
+        "statusConfirmed": "Confirmed",
+        "statusCheckedIn": "Checked in",
+        "detailService": "Service",
+        "detailServiceValue": "Teeth whitening",
+        "detailBalance": "Balance due",
+        "detailBalanceValue": "1,200 EGP",
+        "actionPrimary": "Complete session",
+        "actionSecondary": "Schedule follow-up"
+      }
+    },
+    "value": {
       "eyebrow": "Why Nawa?",
-      "title": "Three pillars for a disciplined clinic",
-      "subtitle": "Everything your secretary and doctor need in one platform — no stock medical photos, just clean fast interfaces.",
-      "booking": {
-        "title": "Smart Booking Link (PWA)",
-        "body": "Send patients a WhatsApp link — they pick a slot on mobile and book in seconds."
+      "title": "A connected care loop — from appointment to collection",
+      "subtitle": "Nawa doesn't stop at booking. It follows up after sessions, manages balances, and surfaces the upcoming agenda.",
+      "careLoop": {
+        "title": "Continuous care loop",
+        "body": "Schedule follow-ups and re-exams in one click. The secretary plans the next session without leaving the queue screen."
       },
-      "kanban": {
-        "title": "Secretary Kanban Dashboard",
-        "body": "Drag cards between columns, add walk-ins, and watch the queue update in real time."
+      "installments": {
+        "title": "Balances & collections",
+        "body": "Record patient payments, track outstanding balances, and tie collections to the appointment record — all in one place."
       },
-      "discipline": {
-        "title": "The Discipline Engine",
-        "body": "Automated WhatsApp reminders 24h ahead, one-tap confirmation, and a two-strike no-show policy."
+      "agenda": {
+        "title": "Upcoming agenda",
+        "body": "View upcoming appointments and follow-ups on one page. No surprises, no missed slots."
       }
     },
     "pricing": {
-      "eyebrow": "Simple pricing",
-      "title": "Small investment — big return",
+      "eyebrow": "Transparent pricing",
+      "title": "An investment that pays for itself",
+      "subtitle": "No hidden fees. White-glove onboarding, then a clear semi-annual subscription.",
+      "hook": "Less than the cost of one missed visit",
       "planName": "Clinic plan",
       "planDuration": "6 months",
+      "onboardingLabel": "Onboarding",
+      "onboardingValue": "White-glove setup",
       "setupFeeLabel": "Setup fee",
       "setupFee": "500 EGP",
       "oneTime": "One-time",
       "subscriptionLabel": "Subscription",
       "subscriptionFee": "3,000 EGP / 6 months",
-      "benefit1": "Private booking link for your clinic",
-      "benefit2": "Secretary Kanban dashboard",
-      "benefit3": "Automated WhatsApp reminders",
-      "benefit4": "Arabic-first support",
-      "cta": "Create your clinic workspace"
+      "benefit1": "Private PWA booking link",
+      "benefit2": "Master-detail queue screen",
+      "benefit3": "Visual EHR + before/after",
+      "benefit4": "Free WhatsApp — no CRM",
+      "benefit5": "Arabic-first support",
+      "cta": "Get started"
     },
     "footer": {
       "brand": "Nawa — نواة",
@@ -433,6 +555,39 @@
     }
   },
   "auth": {
+    "shared": {
+      "emailPlaceholder": "doctor@clinic.com",
+      "passwordPlaceholder": "Enter your password",
+      "logoAlt": "Nawa logo"
+    },
+    "branding": {
+      "eyebrow": "Nawa for clinics",
+      "headline": "The management system trusted by elite dental, dermatology, and mental health practices.",
+      "subheadline": "From the discipline engine to visual EHR — one platform for scheduling, collections, and patient communication.",
+      "proofLabel": "Avg. no-show revenue recovered",
+      "proofValue": "92%",
+      "proofCaption": "Based on clinics using WhatsApp reminders and one-tap confirmations."
+    },
+    "login": {
+      "metaTitle": "Sign in — Nawa",
+      "metaDescription": "Sign in to your clinic dashboard.",
+      "title": "Welcome back",
+      "subtitle": "Enter your doctor account credentials to access the dashboard.",
+      "email": "Email address",
+      "password": "Password",
+      "emailPlaceholder": "doctor@clinic.com",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Create your clinic workspace",
+      "errors": {
+        "invalidCredentials": "Invalid email or password.",
+        "invalidEmail": "Enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "unknown": "Something went wrong. Please try again."
+      }
+    },
     "register": {
       "metaTitle": "Create clinic account — Nawa",
       "metaDescription": "Register your clinic and start managing appointments in minutes.",
@@ -440,10 +595,14 @@
       "subtitle": "Enter your clinic details — you'll land on your dashboard right away.",
       "clinicName": "Clinic name",
       "clinicNamePlaceholder": "Al-Noor Clinic",
-      "email": "Doctor's email",
+      "email": "Doctor's email address",
       "password": "Password",
+      "emailPlaceholder": "doctor@clinic.com",
+      "passwordPlaceholder": "At least 6 characters",
       "submit": "Create account",
       "submitting": "Creating…",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in",
       "errors": {
         "emailInUse": "Email already in use.",
         "weakPassword": "Password must be at least 6 characters.",

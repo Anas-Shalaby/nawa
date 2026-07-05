@@ -6,8 +6,10 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 export function GlobalLocaleSwitcher() {
   const pathname = usePathname();
   const isDashboard = pathname.startsWith("/dashboard");
+  const isLanding = pathname === "/";
+  const isAuth = pathname === "/login" || pathname === "/register";
 
-  if (isDashboard) {
+  if (isDashboard || isLanding || isAuth) {
     return null;
   }
 

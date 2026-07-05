@@ -75,6 +75,7 @@ export async function scheduleFollowUp(
     }
 
     revalidatePath("/[locale]/dashboard", "page");
+    revalidatePath("/[locale]/dashboard/upcoming", "page");
     revalidatePath("/[locale]/dashboard/agenda", "page");
     revalidatePath("/[locale]/dashboard/patients", "page");
 

@@ -35,7 +35,11 @@ export async function fetchTenantServices(): Promise<Service[]> {
   return (data ?? []).map(mapServiceRow);
 }
 
-export async function fetchClinicBrief(): Promise<{ clinicName: string; slug: string }> {
+export async function fetchClinicBrief(): Promise<{
+  clinicName: string;
+  slug: string;
+  tenantId: string;
+}> {
   const supabase = await createAuthenticatedClient();
   const tenantId = await resolveTenantId(supabase);
 
@@ -49,5 +53,5 @@ export async function fetchClinicBrief(): Promise<{ clinicName: string; slug: st
     throw new Error(`Failed to load clinic: ${error.message}`);
   }
 
-  return { clinicName: data.name, slug: data.slug };
+  return { clinicName: data.name, slug: data.slug, tenantId };
 }

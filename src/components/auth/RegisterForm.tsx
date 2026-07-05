@@ -8,8 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { Building2, Loader2, Lock, Mail } from "lucide-react";
 import { z } from "zod";
+import { Link } from "@/i18n/navigation";
 import { registerClinic } from "@/actions/registerClinic";
 import type { RegisterClinicErrorCode } from "@/actions/registerClinic.types";
+import { AuthField } from "./AuthField";
 
 const ERROR_KEYS: Record<RegisterClinicErrorCode, string> = {
   EMAIL_IN_USE: "errors.emailInUse",
@@ -79,86 +81,62 @@ export function RegisterForm() {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-md rounded-[2rem] border border-zinc-200 bg-white p-8 shadow-xl dark:border-subtle dark:bg-elevated"
+      transition={{ duration: 0.45, delay: 0.08 }}
     >
       <div className="mb-8 text-start">
-        <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/15">
-          <Building2 className="h-5 w-5 text-accent" aria-hidden />
-        </div>
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-primary">{t("title")}</h1>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-muted">{t("subtitle")}</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
+          {t("title")}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-slate-400">{t("subtitle")}</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label htmlFor="clinicName" className="mb-1.5 block text-sm text-zinc-600 dark:text-muted">
-            {t("clinicName")}
-          </label>
-          <div className="relative">
-            <Building2 className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-            <input
-              id="clinicName"
-              {...register("clinicName")}
-              autoComplete="organization"
-              className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-3 pe-4 ps-10 text-sm text-zinc-900 outline-none ring-accent/40 focus:ring-2 dark:border-subtle dark:bg-surface dark:text-primary"
-              placeholder={t("clinicNamePlaceholder")}
-            />
-          </div>
-          {errors.clinicName && (
-            <p className="mt-1 text-xs text-accent-danger">{errors.clinicName.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <AuthField
+          id="clinicName"
+          label={t("clinicName")}
+          icon={Building2}
+          autoComplete="organization"
+          placeholder={t("clinicNamePlaceholder")}
+          error={errors.clinicName?.message}
+          {...register("clinicName")}
+        />
 
-        <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm text-zinc-600 dark:text-muted">
-            {t("email")}
-          </label>
-          <div className="relative">
-            <Mail className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-            <input
-              id="email"
-              type="email"
-              {...register("email")}
-              autoComplete="email"
-              className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-3 pe-4 ps-10 text-sm text-zinc-900 outline-none ring-accent/40 focus:ring-2 dark:border-subtle dark:bg-surface dark:text-primary"
-              placeholder="doctor@clinic.com"
-            />
-          </div>
-          {errors.email && (
-            <p className="mt-1 text-xs text-accent-danger">{errors.email.message}</p>
-          )}
-        </div>
+        <AuthField
+          id="email"
+          label={t("email")}
+          icon={Mail}
+          type="email"
+          autoComplete="email"
+          placeholder={t("emailPlaceholder")}
+          error={errors.email?.message}
+          {...register("email")}
+        />
 
-        <div>
-          <label htmlFor="password" className="mb-1.5 block text-sm text-zinc-600 dark:text-muted">
-            {t("password")}
-          </label>
-          <div className="relative">
-            <Lock className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-            <input
-              id="password"
-              type="password"
-              {...register("password")}
-              autoComplete="new-password"
-              className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-3 pe-4 ps-10 text-sm text-zinc-900 outline-none ring-accent/40 focus:ring-2 dark:border-subtle dark:bg-surface dark:text-primary"
-              placeholder="••••••••"
-            />
-          </div>
-          {errors.password && (
-            <p className="mt-1 text-xs text-accent-danger">{errors.password.message}</p>
-          )}
-        </div>
+        <AuthField
+          id="password"
+          label={t("password")}
+          icon={Lock}
+          type="password"
+          autoComplete="new-password"
+          placeholder={t("passwordPlaceholder")}
+          error={errors.password?.message}
+          {...register("password")}
+        />
 
-        {serverError && (
-          <p className="rounded-xl border border-accent-danger/20 bg-accent-danger/5 px-4 py-3 text-sm text-accent-danger">
+        {serverError ? (
+          <p className="text-sm text-red-400/90" role="alert">
             {serverError}
           </p>
-        )}
+        ) : null}
 
         <button
           type="submit"
           disabled={isPending}
-          className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+          className={[
+            "flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3",
+            "text-sm font-semibold text-white shadow-[0_0_32px_rgba(108,92,231,0.28)]",
+            "transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60",
+          ].join(" ")}
         >
           {isPending ? (
             <>
@@ -170,6 +148,13 @@ export function RegisterForm() {
           )}
         </button>
       </form>
+
+      <p className="mt-8 text-center text-sm text-slate-500">
+        {t("hasAccount")}{" "}
+        <Link href="/login" className="font-medium text-slate-300 transition hover:text-white">
+          {t("loginLink")}
+        </Link>
+      </p>
     </motion.div>
   );
 }

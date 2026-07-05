@@ -1,18 +1,10 @@
-import { AgendaShell } from "@/components/agenda/AgendaShell";
-import { fetchUpcomingAgenda } from "@/lib/queries/agenda";
-import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 
-export async function generateMetadata({
+export default async function AgendaRedirectPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "agenda" });
-  return { title: t("metaTitle") };
-}
-
-export default async function AgendaPage() {
-  const appointments = await fetchUpcomingAgenda();
-  return <AgendaShell appointments={appointments} />;
+  redirect(`/${locale}/dashboard/upcoming`);
 }

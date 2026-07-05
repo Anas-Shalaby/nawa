@@ -15,7 +15,18 @@ export interface Database {
           id: string;
           name: string;
           slug: string;
+          is_active: boolean;
           created_at: string;
+        };
+        Insert: {
+          name: string;
+          slug: string;
+          is_active?: boolean;
+        };
+        Update: {
+          name?: string;
+          slug?: string;
+          is_active?: boolean;
         };
       };
       services: {

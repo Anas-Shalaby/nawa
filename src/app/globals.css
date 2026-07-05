@@ -2,13 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --scrollbar-size: 6px;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: #2a2a3c;
+  --scrollbar-thumb-hover: #3d3d54;
+  --scrollbar-thumb-active: #6c5ce7;
+}
+
+.booking-surface {
+  --scrollbar-thumb: rgba(107, 92, 231, 0.28);
+  --scrollbar-thumb-hover: rgba(107, 92, 231, 0.48);
+  --scrollbar-thumb-active: #6c5ce7;
+}
+
 @layer base {
   html {
     @apply antialiased;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
 
   body {
     @apply bg-base text-primary;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 150ms ease;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-thumb-active);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 

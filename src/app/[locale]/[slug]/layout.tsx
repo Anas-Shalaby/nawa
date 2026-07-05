@@ -4,7 +4,7 @@ export default function BookingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-[100dvh] bg-booking-bg text-booking-text antialiased">
+    <div className="booking-surface min-h-[100dvh] bg-booking-bg text-booking-text antialiased">
       {children}
     </div>
   );

@@ -10,6 +10,7 @@
     "seed:dev-user": "node --env-file=.env scripts/seed-dev-user.mjs"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@hookform/resolvers": "^5.4.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.0",
@@ -21,7 +22,9 @@
     "react-compare-slider": "^4.0.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.80.0",
+    "react-qr-code": "^2.2.0",
     "recharts": "^3.9.2",
+    "sonner": "^2.0.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {

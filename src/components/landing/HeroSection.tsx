@@ -2,73 +2,82 @@
 
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { ArrowLeft, ShieldCheck, TrendingDown } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { KanbanMockup } from "./KanbanMockup";
 
 export function HeroSection() {
   const t = useTranslations("landing.hero");
 
   return (
-    <section className="relative overflow-hidden px-6 pb-20 pt-12 md:pb-28 md:pt-16">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(108,92,231,0.12),_transparent_55%)] dark:bg-[radial-gradient(circle_at_top,_rgba(108,92,231,0.18),_transparent_55%)]" />
+    <section className="relative overflow-hidden px-6 pb-24 pt-16 md:pb-32 md:pt-24">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(108,92,231,0.18),transparent)]"
+        aria-hidden
+      />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
-        <div className="text-start">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-xs font-medium text-accent"
-          >
-            <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-            {t("badge")}
-          </motion.div>
+      <div className="relative mx-auto max-w-4xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-subtle/80 bg-surface/60 px-4 py-1.5 text-xs font-medium text-muted backdrop-blur-sm"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-accent-success" aria-hidden />
+          {t("badge")}
+        </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08, duration: 0.5 }}
-            className="mb-5 text-4xl font-semibold leading-[1.15] tracking-tight text-zinc-900 dark:text-primary md:text-5xl"
-          >
-            {t("headline")}
-          </motion.h1>
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.06, duration: 0.55 }}
+          className="text-balance text-4xl font-semibold leading-[1.12] tracking-tight md:text-6xl"
+        >
+          {t("headline")}
+        </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.14, duration: 0.5 }}
-            className="mb-8 max-w-xl text-lg leading-relaxed text-zinc-600 dark:text-muted"
-          >
-            {t("subheadline")}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex flex-col gap-4 sm:flex-row sm:items-center"
-          >
-            <Link
-              href="/register"
-              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-base font-semibold text-white shadow-lg shadow-accent/25 transition hover:brightness-110"
-            >
-              {t("cta")}
-              <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden />
-            </Link>
-            <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-muted">
-              <TrendingDown className="h-4 w-4 text-accent-success" aria-hidden />
-              {t("proof")}
-            </div>
-          </motion.div>
-        </div>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.55 }}
+          className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted md:text-xl"
+        >
+          {t("subheadline")}
+        </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.18, duration: 0.55 }}
+          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <KanbanMockup />
+          <Link
+            href="/register"
+            className="inline-flex min-h-[52px] min-w-[200px] items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3 text-base font-semibold text-white shadow-[0_0_32px_rgba(108,92,231,0.35)] transition hover:brightness-110"
+          >
+            {t("ctaPrimary")}
+            <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden />
+          </Link>
+          <a
+            href="#features"
+            className="inline-flex min-h-[52px] min-w-[200px] items-center justify-center rounded-xl border border-subtle bg-surface/40 px-8 py-3 text-base font-semibold text-primary backdrop-blur-sm transition hover:border-accent/40 hover:bg-surface/70"
+          >
+            {t("ctaSecondary")}
+          </a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-subtle/80 bg-subtle/40"
+          aria-hidden
+        >
+          {(["stat1", "stat2", "stat3"] as const).map((key) => (
+            <div key={key} className="bg-surface/80 px-4 py-5 text-center backdrop-blur-sm">
+              <p className="text-xl font-semibold text-primary md:text-2xl">{t(`${key}Value`)}</p>
+              <p className="mt-1 text-xs text-muted md:text-sm">{t(`${key}Label`)}</p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

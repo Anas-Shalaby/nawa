@@ -2,6 +2,7 @@
 
 import { Menu } from "lucide-react";
 import { LocaleSwitcher } from "@/components/shared/LocaleSwitcher";
+import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 
 interface DashboardTopbarProps {
   clinicName: string;
@@ -25,7 +26,10 @@ export function DashboardTopbar({ clinicName, onOpenMobileMenu }: DashboardTopba
         </div>
       </div>
 
-      <LocaleSwitcher />
+      <div className="flex items-center gap-2">
+        <NotificationCenter />
+        <LocaleSwitcher />
+      </div>
     </header>
   );
 }

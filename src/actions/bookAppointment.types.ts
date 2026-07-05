@@ -21,6 +21,7 @@ export interface BookAppointmentInput {
 export interface BookAppointmentResult {
   success: boolean;
   appointmentId?: string;
+  ticketToken?: string;
   errorCode?: BookingErrorCode;
   message?: string;
 }

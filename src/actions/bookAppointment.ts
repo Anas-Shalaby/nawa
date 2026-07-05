@@ -11,6 +11,7 @@ import {
 } from "@/lib/datetime/cairo";
 import { normalizeEgyptPhone } from "@/lib/booking/schema";
 import { createServiceRoleClient } from "@/utils/supabase/auth";
+import { signBookingTicket } from "@/lib/booking/ticketToken";
 
 /**
  * Public patient booking — uses service role server-side, scoped by slug + service ownership.
@@ -26,8 +27,9 @@ export async function bookAppointment(
 
     const { data: tenant, error: tenantError } = await supabase
       .from("tenants")
-      .select("id, slug")
+      .select("id, slug, is_active")
       .eq("slug", formData.tenantSlug)
+      .eq("is_active", true)
       .maybeSingle();
 
     if (tenantError) {
@@ -150,6 +152,7 @@ export async function bookAppointment(
     return {
       success: true,
       appointmentId: appointment.id,
+      ticketToken: signBookingTicket(appointment.id, formData.tenantSlug),
     };
   } catch (error) {
     if (error instanceof BookingActionError) {

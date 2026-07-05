@@ -3,13 +3,50 @@
 > **Save State:** Update this file whenever you start, finish, or pause work.
 > Move tasks between sections. Only one task should be in **IN PROGRESS** at a time.
 
-**Last updated:** 2026-07-05 (Phase 16 — Flexible Scheduling & Upcoming Agenda)
+**Last updated:** 2026-07-05 (Phase 22 — Enterprise Real-Time Notifications)
 
 ---
 
 ## IN PROGRESS
 
 _Nothing in progress. Pick the next TODO task._
+
+---
+
+## DONE (Recent)
+
+### Phase 22: Enterprise Real-Time Notifications
+
+- [x] **Enterprise Real-Time Notifications**
+  - `RealtimeProvider` — Supabase `INSERT` on `appointments` filtered by `tenant_id`
+  - `sonner` dark RTL toasts, subtle `/audio/notification-pop.wav` after user interaction
+  - Topbar notification bell with unread badge + history dropdown (`NotificationCenter`)
+  - Completed: 2026-07-05
+
+### Phase 21: Enterprise Digital Success Ticket
+
+- [x] **Enterprise Digital Success Ticket**
+  - Post-booking `/[locale]/[slug]/success` with HMAC-signed `?t=` token (14-day TTL)
+  - Dark perforated digital ticket, QR verify URL, Google Maps directions, token-gated cancel
+  - `DigitalSuccessTicket` + `react-qr-code`; booking flow redirects after successful POST
+  - Completed: 2026-07-05
+
+### Phase 20: Enterprise Split-Screen Auth
+
+- [x] **Enterprise Split-Screen Auth**
+  - 50/50 split layout (form right / branding left in RTL) with `AuthFormPanel` + `AuthBrandingPanel`
+  - Dark slate form side (`bg-slate-950`), glassmorphism proof card, CSS geometric pattern (no stock photos)
+  - Upgraded `RegisterForm`, new `LoginForm` + `/login` route, shared `AuthField` inputs
+  - Framer Motion entrance; subtle error states; login/register cross-links
+  - Completed: 2026-07-05
+
+### Phase 19: Enterprise Bento-Box Landing Page
+
+- [x] **Enterprise Bento-Box Landing Page**
+  - RTL Arabic-first hero, Bento grid with mini UI replicas (ROI tracker, WhatsApp CRM, visual EHR, master-detail queue)
+  - Value proposition section (care loop, balances, upcoming agenda), transparent pricing card
+  - Framer Motion scroll reveals; dark enterprise aesthetic; `/icons/whatsapp.svg`
+  - Completed: 2026-07-05
 
 ---
 
@@ -459,6 +496,35 @@ _Nothing in progress. Pick the next TODO task._
 
 ---
 
+### Phase 17: Super Admin Analytics & Management
+
+- [x] **Isolated `/super-admin` route group with auth gate**
+  - `SUPER_ADMIN_EMAIL` or `app_metadata.role === super_admin`; redirects unauthorized to `/`
+  - Completed: 2026-07-05
+
+- [x] **SaaS Health Dashboard**
+  - KPIs (clinics, active clinics, MRR mock, processed appointments); monthly onboarding bar chart
+  - Service-role aggregates — no PHI
+  - Completed: 2026-07-05
+
+- [x] **Clinic CRM + suspension (`is_active`)**
+  - Tenant table with toggle; blocks staff login and public booking when suspended
+  - Completed: 2026-07-05
+
+---
+
+### Phase 18: Enterprise Sidebar Expansion
+
+- [x] **Grouped sidebar (`Sidebar.tsx`)**
+  - Operations, Clinic, Finance & Growth, System sections with section headers
+  - Completed: 2026-07-05
+
+- [x] **`ComingSoonPlaceholder` + placeholder routes**
+  - Inventory, Staff, Marketing, AI Assistant; `/dashboard/upcoming` for agenda
+  - Completed: 2026-07-05
+
+---
+
 ### Localization & RTL (i18n architecture)
 
 - [x] **Integrate `next-intl` with locale routing**
@@ -574,5 +640,11 @@ _Use this section for blockers, decisions, and context when resuming work._
 | 2026-07-05 | Phase 14 — Financial ledger, recall engine, zero-cost WhatsApp CRM via wa.me templates. |
 | 2026-07-05 | Phase 15 — Follow-up modal on complete, doctor_notes, scheduleFollowUp server action. |
 | 2026-07-05 | Phase 16 — On-demand scheduling modal, upcoming agenda page, is_re_examination flag. |
+| 2026-07-05 | Phase 17 — Super Admin dashboard, clinic CRM, tenant suspension, service-role metrics. |
+| 2026-07-05 | Phase 18 — Grouped enterprise sidebar, Coming Soon placeholders, /dashboard/upcoming. |
+| 2026-07-05 | Phase 19 — Enterprise Bento-Box landing page with mini UI replicas, value props, pricing overhaul. |
+| 2026-07-05 | Phase 20 — Split-screen auth (login/register), branding panel with trust signals, premium dark forms. |
+| 2026-07-05 | Phase 21 — Digital success ticket page with signed token, QR code, dark perforated UI. |
+| 2026-07-05 | Phase 22 — Realtime booking notifications (sonner + bell center + audio cue). |
 | | WhatsApp provider TBD — evaluate Meta Cloud API vs Twilio during Phase 7. |
 | | Multi-tenancy: `tenant_id` column + RLS (not schema-per-tenant). |

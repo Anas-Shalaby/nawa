@@ -1,6 +1,7 @@
 "use server";
 
 import { createServiceRoleClient } from "@/utils/supabase/auth";
+import { verifyBookingTicketForAppointment } from "@/lib/booking/ticketToken";
 
 export interface CancelAppointmentResult {
   success: boolean;
@@ -12,8 +13,13 @@ const CANCELABLE_STATUSES = new Set(["pending", "confirmed"]);
 export async function cancelAppointment(
   appointmentId: string,
   tenantSlug: string,
+  accessToken: string,
 ): Promise<CancelAppointmentResult> {
   try {
+    if (!verifyBookingTicketForAppointment(accessToken, appointmentId, tenantSlug)) {
+      return { success: false, error: "Invalid or expired ticket." };
+    }
+
     const supabase = createServiceRoleClient();
 
     const { data: tenant, error: tenantError } = await supabase

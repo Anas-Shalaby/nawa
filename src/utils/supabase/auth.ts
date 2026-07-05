@@ -4,6 +4,23 @@ import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "./server";
 import { getMockTenantId, getSupabaseAnonKey, getSupabaseUrl } from "./config";
 
+async function assertTenantIsActive(tenantId: string): Promise<void> {
+  const admin = createServiceRoleClient();
+  const { data, error } = await admin
+    .from("tenants")
+    .select("is_active")
+    .eq("id", tenantId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to verify clinic status: ${error.message}`);
+  }
+
+  if (data?.is_active === false) {
+    throw new Error("Clinic account is suspended. Contact Nawa support.");
+  }
+}
+
 function formatAuthError(error: AuthError | null): string {
   if (!error) return "Unknown auth error";
 
@@ -54,6 +71,11 @@ export async function createAuthenticatedClient(): Promise<SupabaseClient> {
   } = await supabase.auth.getUser();
 
   if (user) {
+    const jwtTenantId = user.app_metadata?.tenant_id as string | undefined;
+    const tenantId = jwtTenantId ?? getMockTenantId();
+    if (tenantId) {
+      await assertTenantIsActive(tenantId);
+    }
     return supabase;
   }
 
