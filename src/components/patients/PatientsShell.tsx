@@ -10,12 +10,18 @@ import {
   Pencil,
   Phone,
   Plus,
+  ShieldCheck,
   Search,
   UserRound,
   Users,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { archivePatient, restorePatient } from "@/actions/managePatients";
+import {
+  archivePatient,
+  clearPatientWarning,
+  restorePatient,
+} from "@/actions/managePatients";
+import { matchesPatientSearch } from "@/lib/patients/search";
 import type { PatientRecord } from "@/lib/queries/patients";
 import { PatientFormModal, type PatientFormValues } from "./PatientFormModal";
 
@@ -51,15 +57,14 @@ export function PatientsShell({
   }, [initialPatients]);
 
   const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query = search.trim();
+    const searching = query.length > 0;
+
     return patients.filter((patient) => {
-      if (!matchesFilter(patient, filter)) return false;
-      if (!query) return true;
-      return (
-        patient.name.toLowerCase().includes(query) ||
-        patient.phoneNumber
-          .replace(/\D/g, "")
-          .includes(query.replace(/\D/g, ""))
+      if (!searching && !matchesFilter(patient, filter)) return false;
+      return matchesPatientSearch(
+        { name: patient.name, phoneNumber: patient.phoneNumber },
+        query,
       );
     });
   }, [patients, search, filter]);
@@ -128,6 +133,33 @@ export function PatientsShell({
           current.map((item) =>
             item.id === patient.id
               ? { ...item, isArchived: patient.isArchived }
+              : item,
+          ),
+        );
+      }
+
+      setPendingId(null);
+    });
+  }
+
+  function handleClearWarning(patient: PatientRecord) {
+    if (patient.noShowCount === 0) return;
+
+    setPendingId(patient.id);
+    setPatients((current) =>
+      current.map((item) =>
+        item.id === patient.id ? { ...item, noShowCount: 0 } : item,
+      ),
+    );
+
+    startTransition(async () => {
+      const result = await clearPatientWarning(patient.id);
+
+      if (!result.success) {
+        setPatients((current) =>
+          current.map((item) =>
+            item.id === patient.id
+              ? { ...item, noShowCount: patient.noShowCount }
               : item,
           ),
         );
@@ -266,6 +298,21 @@ export function PatientsShell({
                 </div>
 
                 <div className="flex items-center gap-2 md:justify-end">
+                  {!patient.isArchived && patient.noShowCount > 0 && (
+                    <button
+                      type="button"
+                      disabled={pendingId === patient.id}
+                      onClick={() => handleClearWarning(patient)}
+                      className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary disabled:opacity-50"
+                      aria-label={t("clearWarning")}
+                    >
+                      {pendingId === patient.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <ShieldCheck className="h-4 w-4" />
+                      )}
+                    </button>
+                  )}
                   {!patient.isArchived && (
                     <button
                       type="button"

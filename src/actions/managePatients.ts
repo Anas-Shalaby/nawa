@@ -165,3 +165,31 @@ export async function restorePatient(patientId: string): Promise<ManagePatientRe
     };
   }
 }
+
+export async function clearPatientWarning(
+  patientId: string,
+): Promise<ManagePatientResult> {
+  try {
+    const supabase = await createAuthenticatedClient();
+    const tenantId = await resolveTenantId(supabase);
+
+    const { error } = await supabase
+      .from("patients")
+      .update({ no_show_count: 0 })
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId);
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    revalidatePatientPaths();
+    return { success: true, patientId };
+  } catch (error) {
+    console.error("[clearPatientWarning]", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not clear warning.",
+    };
+  }
+}

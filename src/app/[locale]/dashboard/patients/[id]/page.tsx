@@ -5,6 +5,7 @@ import { PatientFinancialCard } from "@/components/patients/PatientFinancialCard
 import { fetchPatientMedia } from "@/lib/queries/patientMedia";
 import { fetchPatientPayments } from "@/lib/queries/patientPayments";
 import { fetchPatientById, fetchPatientTenantId } from "@/lib/queries/patients";
+import { fetchPatientVisitHistory } from "@/lib/queries/patientVisits";
 import { fetchDashboardServices } from "@/lib/queries/services";
 
 export async function generateMetadata({
@@ -27,12 +28,13 @@ export default async function PatientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [patient, tenantId, media, payments, services] = await Promise.all([
+  const [patient, tenantId, media, payments, services, visits] = await Promise.all([
     fetchPatientById(id),
     fetchPatientTenantId(),
     fetchPatientMedia(id),
     fetchPatientPayments(id),
     fetchDashboardServices(),
+    fetchPatientVisitHistory(id),
   ]);
 
   if (!patient) {
@@ -46,6 +48,7 @@ export default async function PatientDetailPage({
           patient={patient}
           tenantId={tenantId}
           initialMedia={media}
+          initialVisits={visits}
           services={services}
         />
         <PatientFinancialCard

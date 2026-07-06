@@ -1,5 +1,7 @@
 import { AgendaShell } from "@/components/agenda/AgendaShell";
 import { fetchUpcomingAgenda } from "@/lib/queries/agenda";
+import { fetchPatients } from "@/lib/queries/patients";
+import { fetchDashboardServices } from "@/lib/queries/services";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
@@ -13,6 +15,25 @@ export async function generateMetadata({
 }
 
 export default async function UpcomingPage() {
-  const appointments = await fetchUpcomingAgenda();
-  return <AgendaShell appointments={appointments} />;
+  const [appointments, services, patients] = await Promise.all([
+    fetchUpcomingAgenda(),
+    fetchDashboardServices(),
+    fetchPatients(),
+  ]);
+
+  const activePatients = patients
+    .filter((patient) => !patient.isArchived)
+    .map((patient) => ({
+      id: patient.id,
+      name: patient.name,
+      phoneNumber: patient.phoneNumber,
+    }));
+
+  return (
+    <AgendaShell
+      appointments={appointments}
+      services={services}
+      patients={activePatients}
+    />
+  );
 }

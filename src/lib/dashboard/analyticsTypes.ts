@@ -8,6 +8,9 @@ export interface DashboardAnalytics {
   attendanceRate: number;
   savedHours: number;
   warningPatientCount: number;
+  totalAppointments: number;
+  totalCompleted: number;
+  totalNoShow: number;
   peakHours: PeakHourBucket[];
 }
 

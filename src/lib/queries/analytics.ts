@@ -91,6 +91,9 @@ export async function fetchDashboardAnalytics(locale = "ar"): Promise<DashboardA
     attendanceRate,
     savedHours: Math.round((savedMinutes / 60) * 10) / 10,
     warningPatientCount: warningCount ?? 0,
+    totalAppointments: bookingRows?.length ?? 0,
+    totalCompleted: resolved,
+    totalNoShow: missed,
     peakHours: buildPeakHourBuckets(hourCounts, locale),
   };
 }

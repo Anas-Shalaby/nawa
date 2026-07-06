@@ -16,13 +16,16 @@ import type { PatientRecord } from "@/lib/queries/patients";
 import type { DashboardService } from "@/lib/dashboard/types";
 import { ScheduleSessionButton } from "@/components/dashboard/ScheduleSessionButton";
 import { WhatsAppActionMenu } from "@/components/whatsapp/WhatsAppActionMenu";
+import type { PatientVisitRecord } from "@/lib/queries/patientVisits";
 import { PatientDetailTabs, type PatientDetailTab } from "./PatientDetailTabs";
+import { PatientVisitHistory } from "./PatientVisitHistory";
 import { PatientVisualEhr } from "./PatientVisualEhr";
 
 interface PatientDetailShellProps {
   patient: PatientRecord;
   tenantId: string;
   initialMedia: PatientMediaRecord[];
+  initialVisits?: PatientVisitRecord[];
   services: DashboardService[];
   backHref?: string;
   compact?: boolean;
@@ -32,6 +35,7 @@ export function PatientDetailShell({
   patient,
   tenantId,
   initialMedia,
+  initialVisits,
   services,
   backHref = "/dashboard/patients",
   compact = false,
@@ -141,6 +145,13 @@ export function PatientDetailShell({
               </p>
             )}
           </div>
+        ) : activeTab === "record" ? (
+          <PatientVisitHistory
+            patientId={patient.id}
+            initialVisits={initialVisits}
+            enabled={activeTab === "record"}
+            compact={compact}
+          />
         ) : (
           <PatientVisualEhr
             patientId={patient.id}

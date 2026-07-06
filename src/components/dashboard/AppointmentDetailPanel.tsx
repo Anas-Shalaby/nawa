@@ -30,6 +30,7 @@ import {
   type PatientDetailTab,
 } from "@/components/ehr/PatientDetailTabs";
 import { PatientVisualEhr } from "@/components/ehr/PatientVisualEhr";
+import { PatientVisitHistory } from "@/components/ehr/PatientVisitHistory";
 
 interface AppointmentDetailPanelProps {
   appointment: QueueAppointment | null;
@@ -232,6 +233,12 @@ export function AppointmentDetailPanel({
               </div>
             )}
           </>
+        ) : activeTab === "record" ? (
+          <PatientVisitHistory
+            patientId={appointment.patientId}
+            enabled={activeTab === "record"}
+            compact
+          />
         ) : (
           <PatientVisualEhr
             key={appointment.patientId}

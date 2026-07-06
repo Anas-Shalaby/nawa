@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-export type PatientDetailTab = "general" | "ehr";
+export type PatientDetailTab = "general" | "record" | "ehr";
 
 interface PatientDetailTabsProps {
   activeTab: PatientDetailTab;
@@ -20,6 +20,7 @@ export function PatientDetailTabs({
 
   const tabs: { id: PatientDetailTab; label: string }[] = [
     { id: "general", label: t("tabGeneral") },
+    { id: "record", label: t("tabVisitRecord") },
     { id: "ehr", label: t("tabVisualEhr") },
   ];
 

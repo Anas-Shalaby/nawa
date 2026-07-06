@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, X } from "lucide-react";
+import { toast } from "sonner";
 import { createPatient, updatePatient } from "@/actions/managePatients";
 import type { PatientRecord } from "@/lib/queries/patients";
 
@@ -30,6 +31,7 @@ export function PatientFormModal({
   onSaved,
 }: PatientFormModalProps) {
   const t = useTranslations("patients.form");
+  const tPatients = useTranslations("patients");
   const {
     register,
     handleSubmit,
@@ -65,6 +67,9 @@ export function PatientFormModal({
       : await createPatient(payload);
 
     if (!result.success) {
+      toast.error(t("error"), {
+        description: result.error ?? tPatients("form.error"),
+      });
       return;
     }
 

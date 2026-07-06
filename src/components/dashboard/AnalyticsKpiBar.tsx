@@ -1,87 +1,26 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
-import { AlertTriangle, Clock, TrendingUp } from "lucide-react";
 import type { DashboardAnalytics } from "@/lib/dashboard/analyticsTypes";
+import { AttendanceDonutChart } from "./analytics/AttendanceDonutChart";
 import { PeakHoursChart } from "./PeakHoursChart";
+import { SavedHoursChart } from "./analytics/SavedHoursChart";
+import { StatusBreakdownChart } from "./analytics/StatusBreakdownChart";
+import { WarningPatientsChart } from "./analytics/WarningPatientsChart";
 
 interface AnalyticsKpiBarProps {
   analytics: DashboardAnalytics;
 }
 
-const STAT_CONFIG = [
-  {
-    key: "attendanceRate" as const,
-    color: "#55EFC4",
-    icon: TrendingUp,
-    labelKey: "kpiAttendance",
-    suffixKey: "kpiPercent",
-  },
-  {
-    key: "savedHours" as const,
-    color: "#74B9FF",
-    icon: Clock,
-    labelKey: "kpiSavedHours",
-    suffixKey: "kpiHours",
-  },
-  {
-    key: "warningPatientCount" as const,
-    color: "#FDCB6E",
-    icon: AlertTriangle,
-    labelKey: "kpiWarning",
-    suffixKey: null,
-  },
-];
-
 export function AnalyticsKpiBar({ analytics }: AnalyticsKpiBarProps) {
-  const t = useTranslations("dashboard.analytics");
-
   return (
-    <div className="mb-6 space-y-5">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {STAT_CONFIG.map((stat, index) => {
-          const Icon = stat.icon;
-          const value = analytics[stat.key];
-
-          return (
-            <motion.div
-              key={stat.key}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.25 }}
-              className="rounded-2xl border border-subtle/50 bg-surface/80 px-5 py-4 backdrop-blur-sm"
-            >
-              <div className="mb-3 flex items-center gap-3">
-                <span
-                  className="flex h-10 w-10 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: `${stat.color}18` }}
-                >
-                  <Icon className="h-5 w-5" style={{ color: stat.color }} aria-hidden />
-                </span>
-                <span className="text-sm font-medium text-muted">
-                  {t(stat.labelKey)}
-                </span>
-              </div>
-              <motion.p
-                key={String(value)}
-                initial={{ scale: 0.92, opacity: 0.6 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                className="text-3xl font-semibold tabular-nums text-primary sm:text-4xl"
-              >
-                {stat.suffixKey === "kpiPercent"
-                  ? t(stat.suffixKey, { value })
-                  : stat.suffixKey === "kpiHours"
-                    ? t(stat.suffixKey, { value })
-                    : value}
-              </motion.p>
-            </motion.div>
-          );
-        })}
+    <div className="grid gap-5 lg:grid-cols-2">
+      <AttendanceDonutChart analytics={analytics} />
+      <StatusBreakdownChart analytics={analytics} />
+      <SavedHoursChart savedHours={analytics.savedHours} />
+      <WarningPatientsChart count={analytics.warningPatientCount} />
+      <div className="lg:col-span-2">
+        <PeakHoursChart data={analytics.peakHours} />
       </div>
-
-      <PeakHoursChart data={analytics.peakHours} />
     </div>
   );
 }
