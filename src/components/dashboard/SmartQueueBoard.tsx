@@ -15,8 +15,9 @@ import {
 } from "@/actions/updateAppointmentStatus";
 import { useAppointmentsRealtime } from "@/lib/dashboard/useAppointmentsRealtime";
 import { useOptimisticAppointments } from "@/lib/dashboard/useOptimisticAppointments";
-import { NEXT_QUEUE_STATUS, isQueueVisible } from "@/lib/dashboard/queueStateMachine";
-import type { Appointment, DashboardService, QueueAppointment } from "@/lib/dashboard/types";
+import { isAppointmentOnCairoDate } from "@/lib/datetime/cairo";
+import { isQueueVisible } from "@/lib/dashboard/queueStateMachine";
+import type { Appointment, AppointmentStatus, DashboardService, QueueAppointment } from "@/lib/dashboard/types";
 import { AppointmentDetailPanel } from "./AppointmentDetailPanel";
 import { SmartQueue } from "./SmartQueue";
 
@@ -41,7 +42,7 @@ export function SmartQueueBoard({
 }: SmartQueueBoardProps) {
   const pendingTransitionRef = useRef<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [advancingId, setAdvancingId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [noShowPendingId, setNoShowPendingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -53,6 +54,7 @@ export function SmartQueueBoard({
       appointments.filter((item): item is QueueAppointment => {
         if (!isQueueVisible(item.status)) return false;
         if (item.status === "completed") return false;
+        if (!isAppointmentOnCairoDate(item.appointmentDate)) return false;
         return true;
       }),
     [appointments],
@@ -90,44 +92,6 @@ export function SmartQueueBoard({
     setSelectedId(appointment.id);
   }, []);
 
-  const handleAdvance = useCallback(
-    (appointment: QueueAppointment) => {
-      const nextStatus = NEXT_QUEUE_STATUS[appointment.status];
-      if (!nextStatus) return;
-
-      const previousStatus = appointment.status;
-      pendingTransitionRef.current.add(appointment.id);
-      setAdvancingId(appointment.id);
-
-      applyOptimistic({ type: "move", id: appointment.id, status: nextStatus });
-
-      startTransition(async () => {
-        const result = await updateAppointmentStatus(appointment.id, nextStatus);
-
-        pendingTransitionRef.current.delete(appointment.id);
-        setAdvancingId(null);
-
-        if (result.success) {
-          onAppointmentsChange((prev) =>
-            prev.map((item) =>
-              item.id === appointment.id ? { ...item, status: nextStatus } : item,
-            ),
-          );
-          if (nextStatus === "completed") {
-            setSelectedId((current) => (current === appointment.id ? null : current));
-          }
-        } else {
-          onAppointmentsChange((prev) =>
-            prev.map((item) =>
-              item.id === appointment.id ? { ...item, status: previousStatus } : item,
-            ),
-          );
-        }
-      });
-    },
-    [applyOptimistic, onAppointmentsChange],
-  );
-
   const handleNoShow = useCallback(
     (appointment: QueueAppointment) => {
       setNoShowPendingId(appointment.id);
@@ -155,29 +119,75 @@ export function SmartQueueBoard({
     [applyOptimistic, onAppointmentsChange, onNoShowMarked],
   );
 
+  const handleStatusChange = useCallback(
+    (appointment: QueueAppointment, newStatus: AppointmentStatus) => {
+      if (newStatus === appointment.status) return;
+
+      if (newStatus === "no_show") {
+        handleNoShow(appointment);
+        return;
+      }
+
+      if (!isQueueVisible(newStatus)) return;
+
+      const previousStatus = appointment.status;
+      pendingTransitionRef.current.add(appointment.id);
+      setUpdatingId(appointment.id);
+
+      applyOptimistic({ type: "move", id: appointment.id, status: newStatus });
+
+      startTransition(async () => {
+        const result = await updateAppointmentStatus(appointment.id, newStatus);
+
+        pendingTransitionRef.current.delete(appointment.id);
+        setUpdatingId(null);
+
+        if (result.success) {
+          onAppointmentsChange((prev) =>
+            prev.map((item) =>
+              item.id === appointment.id ? { ...item, status: newStatus } : item,
+            ),
+          );
+          if (newStatus === "completed") {
+            setSelectedId((current) => (current === appointment.id ? null : current));
+          }
+        } else {
+          onAppointmentsChange((prev) =>
+            prev.map((item) =>
+              item.id === appointment.id ? { ...item, status: previousStatus } : item,
+            ),
+          );
+        }
+      });
+    },
+    [applyOptimistic, handleNoShow, onAppointmentsChange],
+  );
+
   return (
     <div
-      className="flex flex-col gap-6 md:flex-row md:items-stretch"
+      className="flex h-full w-full min-h-0 flex-col gap-4 lg:flex-row lg:items-stretch"
       data-tenant-id={tenantId}
       aria-busy={isPending}
     >
-      <div className="min-w-0 md:order-1 md:flex-[3] rtl:md:order-2">
+      <div className="order-2 flex min-h-[48vh] w-full min-w-0 flex-[1.05] basis-0 lg:order-1 lg:min-h-0 rtl:lg:order-2">
         <AppointmentDetailPanel
           appointment={selectedAppointment}
           tenantId={tenantId}
           services={services}
           isNoShowPending={noShowPendingId === selectedId}
+          isUpdatingStatus={updatingId === selectedId}
           onNoShow={handleNoShow}
+          onStatusChange={handleStatusChange}
         />
       </div>
 
-      <div className="min-w-0 md:order-2 md:flex-[2] rtl:md:order-1">
+      <div className="order-1 flex min-h-[48vh] w-full min-w-0 flex-[0.95] basis-0 lg:order-2 lg:min-h-0 rtl:lg:order-1">
         <SmartQueue
           appointments={visibleAppointments}
           selectedId={selectedId}
-          advancingId={advancingId}
+          updatingId={updatingId}
           onSelect={handleSelect}
-          onAdvance={handleAdvance}
+          onStatusChange={handleStatusChange}
         />
       </div>
     </div>

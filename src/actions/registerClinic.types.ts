@@ -3,6 +3,7 @@ export type RegisterClinicErrorCode =
   | "WEAK_PASSWORD"
   | "INVALID_EMAIL"
   | "CLINIC_NAME_REQUIRED"
+  | "INVALID_PLAN"
   | "TENANT_CREATE_FAILED"
   | "SIGN_IN_FAILED"
   | "UNKNOWN";
@@ -12,6 +13,7 @@ export interface RegisterClinicInput {
   email: string;
   password: string;
   locale: string;
+  planId: string;
 }
 
 export interface RegisterClinicResult {

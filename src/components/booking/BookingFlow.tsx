@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { bookAppointment } from "@/actions/bookAppointment";
 import { getAvailableSlots } from "@/actions/getAvailableSlots";
+import { getCairoTodayKey } from "@/lib/datetime/cairo";
 import type { PatientBookingFormValues } from "@/lib/booking/schema";
 import type { BookingStep, Service, Tenant, TimeSlot } from "@/lib/booking/types";
 import { ClinicHero } from "./ClinicHero";
+import { DateSelector } from "./DateSelector";
 import { ServiceSelector } from "./ServiceSelector";
 import { SlotPicker } from "./SlotPicker";
 import { PatientForm } from "./PatientForm";
@@ -17,10 +19,9 @@ import { PatientForm } from "./PatientForm";
 interface BookingFlowProps {
   tenant: Tenant;
   services: Service[];
-  initialSlots: TimeSlot[];
 }
 
-export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps) {
+export function BookingFlow({ tenant, services }: BookingFlowProps) {
   const t = useTranslations("booking");
   const locale = useLocale();
   const router = useRouter();
@@ -29,28 +30,48 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
     initialService ? "slots" : "services",
   );
   const [selectedService, setSelectedService] = useState<Service | null>(initialService);
-  const [slots, setSlots] = useState<TimeSlot[]>(initialService ? initialSlots : []);
+  const [selectedDate, setSelectedDate] = useState(getCairoTodayKey());
+  const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [isSoftBanned, setIsSoftBanned] = useState(false);
   const [slotError, setSlotError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isLoadingSlots, startSlotsTransition] = useTransition();
 
-  function handleServiceSelect(service: Service) {
-    setSelectedService(service);
-    setSelectedSlot(null);
-    setSlotError(null);
-
+  function loadSlots(service: Service, date: string) {
     startSlotsTransition(async () => {
       const nextSlots = await getAvailableSlots(
         tenant.slug,
         tenant.id,
         service.id,
+        date,
         locale,
       );
       setSlots(nextSlots);
-      setStep("slots");
+      setSelectedSlot(null);
     });
+  }
+
+  useEffect(() => {
+    if (initialService) {
+      loadSlots(initialService, selectedDate);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleServiceSelect(service: Service) {
+    setSelectedService(service);
+    setSlotError(null);
+    loadSlots(service, selectedDate);
+    setStep("slots");
+  }
+
+  function handleDateSelect(date: string) {
+    setSelectedDate(date);
+    setSlotError(null);
+    if (selectedService) {
+      loadSlots(selectedService, date);
+    }
   }
 
   function handleSlotSelect(slot: TimeSlot) {
@@ -87,6 +108,7 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
       const result = await bookAppointment({
         tenantSlug: tenant.slug,
         serviceId: selectedService.id,
+        date: selectedDate,
         slotTime: selectedSlot.time,
         name: values.name,
         whatsapp: values.whatsapp,
@@ -99,6 +121,7 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
 
       if (result.errorCode === "SLOT_TAKEN") {
         setSlotError(t("slotTaken"));
+        loadSlots(selectedService, selectedDate);
         return;
       }
 
@@ -131,13 +154,13 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
                 selectedServiceId={selectedService?.id ?? null}
                 onSelect={handleServiceSelect}
               />
-              {isLoadingSlots && (
+              {isLoadingSlots ? (
                 <p className="px-5 pb-4 text-sm text-booking-muted">{t("loadingSlots")}</p>
-              )}
+              ) : null}
             </>
           )}
 
-          {step === "slots" && selectedService && (
+          {step === "slots" && selectedService ? (
             <>
               <div className="px-5 pb-3">
                 <button
@@ -155,9 +178,13 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
                 </p>
               </div>
 
+              <DateSelector selectedDate={selectedDate} onSelect={handleDateSelect} />
+
               <SlotPicker
+                selectedDate={selectedDate}
                 slots={slots}
                 selectedSlotId={selectedSlot?.id ?? null}
+                isLoading={isLoadingSlots}
                 onSelect={handleSlotSelect}
               />
 
@@ -179,9 +206,9 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
                 </button>
               </div>
             </>
-          )}
+          ) : null}
 
-          {step === "details" && selectedSlot && selectedService && (
+          {step === "details" && selectedSlot && selectedService ? (
             <PatientForm
               selectedTimeLabel={selectedSlot.label}
               clinicName={tenant.name}
@@ -192,7 +219,7 @@ export function BookingFlow({ tenant, services, initialSlots }: BookingFlowProps
               onBack={handleBackToSlots}
               onSubmit={handleSubmit}
             />
-          )}
+          ) : null}
         </motion.div>
       </AnimatePresence>
     </div>

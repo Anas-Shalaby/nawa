@@ -14,12 +14,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        base: "#0A0A0F",
-        surface: "#14141F",
-        elevated: "#1E1E2E",
-        subtle: "#2A2A3C",
-        primary: "#F0F0F5",
-        muted: "#8888A0",
+        base: "rgb(var(--color-base-rgb) / <alpha-value>)",
+        surface: "rgb(var(--color-surface-rgb) / <alpha-value>)",
+        elevated: "rgb(var(--color-elevated-rgb) / <alpha-value>)",
+        subtle: "rgb(var(--color-subtle-rgb) / <alpha-value>)",
+        primary: "rgb(var(--color-primary-rgb) / <alpha-value>)",
+        muted: "rgb(var(--color-muted-rgb) / <alpha-value>)",
         accent: {
           DEFAULT: "#6C5CE7",
           success: "#00CEC9",

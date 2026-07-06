@@ -1,5 +1,10 @@
 import type { AppointmentStatus } from "@/lib/dashboard/types";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
+import {
+  getCairoDayQueryBounds,
+  getCairoTodayKey,
+  normalizeStoredTimestamp,
+} from "@/lib/datetime/cairo";
 
 export interface AgendaAppointment {
   id: string;
@@ -54,7 +59,7 @@ function mapAgendaRow(row: AgendaRow): AgendaAppointment {
     serviceId: row.service_id,
     serviceName: service?.name ?? "Service",
     servicePriceEgp: service?.price_egp ?? null,
-    appointmentDate: row.appointment_date,
+    appointmentDate: normalizeStoredTimestamp(row.appointment_date),
     doctorNotes: row.doctor_notes,
     isReExamination: row.is_re_examination ?? false,
     status: row.status,
@@ -64,7 +69,7 @@ function mapAgendaRow(row: AgendaRow): AgendaAppointment {
 export async function fetchUpcomingAgenda(): Promise<AgendaAppointment[]> {
   const supabase = await createAuthenticatedClient();
   const tenantId = await resolveTenantId(supabase);
-  const nowIso = new Date().toISOString();
+  const { endExclusiveIso } = getCairoDayQueryBounds(getCairoTodayKey());
 
   const { data, error } = await supabase
     .from("appointments")
@@ -82,7 +87,7 @@ export async function fetchUpcomingAgenda(): Promise<AgendaAppointment[]> {
     `,
     )
     .eq("tenant_id", tenantId)
-    .gt("appointment_date", nowIso)
+    .gte("appointment_date", endExclusiveIso)
     .in("status", ["pending", "confirmed"])
     .order("appointment_date", { ascending: true });
 

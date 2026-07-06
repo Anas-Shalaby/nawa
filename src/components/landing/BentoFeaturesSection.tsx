@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { ChevronsLeftRight, TrendingUp } from "lucide-react";
+import Image from "next/image";
 
 const BENTO_MOTION = {
   hidden: { opacity: 0, y: 28, scale: 0.98 },
@@ -102,9 +103,24 @@ function MiniBeforeAfter() {
 function MiniMasterDetailQueue() {
   const t = useTranslations("landing.bento.queue");
   const rows = [
-    { name: t("patient1"), time: "10:30", active: true, status: t("statusInSession") },
-    { name: t("patient2"), time: "11:00", active: false, status: t("statusConfirmed") },
-    { name: t("patient3"), time: "11:30", active: false, status: t("statusCheckedIn") },
+    {
+      name: t("patient1"),
+      time: "10:30",
+      active: true,
+      status: t("statusInSession"),
+    },
+    {
+      name: t("patient2"),
+      time: "11:00",
+      active: false,
+      status: t("statusConfirmed"),
+    },
+    {
+      name: t("patient3"),
+      time: "11:30",
+      active: false,
+      status: t("statusCheckedIn"),
+    },
   ];
 
   return (
@@ -124,8 +140,12 @@ function MiniMasterDetailQueue() {
             ].join(" ")}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="truncate text-xs font-medium text-primary">{row.name}</span>
-              <span className="shrink-0 text-[10px] text-muted">{row.time}</span>
+              <span className="truncate text-xs font-medium text-primary">
+                {row.name}
+              </span>
+              <span className="shrink-0 text-[10px] text-muted">
+                {row.time}
+              </span>
             </div>
             <span
               className={[
@@ -149,11 +169,15 @@ function MiniMasterDetailQueue() {
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-lg border border-subtle/60 bg-base/50 p-2">
             <p className="text-[10px] text-muted">{t("detailService")}</p>
-            <p className="mt-1 text-xs font-medium">{t("detailServiceValue")}</p>
+            <p className="mt-1 text-xs font-medium">
+              {t("detailServiceValue")}
+            </p>
           </div>
           <div className="rounded-lg border border-subtle/60 bg-base/50 p-2">
             <p className="text-[10px] text-muted">{t("detailBalance")}</p>
-            <p className="mt-1 text-xs font-medium text-accent-warning">{t("detailBalanceValue")}</p>
+            <p className="mt-1 text-xs font-medium text-accent-warning">
+              {t("detailBalanceValue")}
+            </p>
           </div>
         </div>
         <div className="mt-3 flex gap-2">
@@ -186,7 +210,9 @@ export function BentoFeaturesSection() {
           transition={{ duration: 0.45 }}
           className="mb-12 max-w-2xl text-start"
         >
-          <p className="mb-3 text-sm font-semibold tracking-[0.2em] text-accent">{t("eyebrow")}</p>
+          <p className="mb-3 text-sm font-semibold tracking-[0.2em] text-accent">
+            {t("eyebrow")}
+          </p>
           <h2 className="text-3xl font-semibold md:text-4xl">{t("title")}</h2>
           <p className="mt-4 text-lg text-muted">{t("subtitle")}</p>
         </motion.div>
@@ -194,16 +220,26 @@ export function BentoFeaturesSection() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-min">
           <BentoShell className="md:col-span-2" delay={0}>
             <h3 className="text-xl font-semibold">{tRoi("title")}</h3>
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">{tRoi("body")}</p>
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">
+              {tRoi("body")}
+            </p>
             <MiniRoiTracker />
           </BentoShell>
 
           <BentoShell delay={0.06}>
             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#25D366]/30 bg-[#25D366]/10">
-              <img src="/icons/whatsapp.svg" alt="" className="h-6 w-6" />
+              <Image
+                src="/icons/whatsapp.svg"
+                alt=""
+                className="h-6 w-6"
+                width={24}
+                height={24}
+              />
             </div>
             <h3 className="mt-4 text-xl font-semibold">{tWhatsapp("title")}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted">{tWhatsapp("body")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              {tWhatsapp("body")}
+            </p>
             <div className="mt-6 space-y-2 rounded-xl border border-subtle/70 bg-base/50 p-3">
               {[tWhatsapp("msg1"), tWhatsapp("msg2")].map((msg) => (
                 <div
@@ -221,7 +257,9 @@ export function BentoFeaturesSection() {
 
           <BentoShell className="md:row-span-2" delay={0.1}>
             <h3 className="text-xl font-semibold">{tVisual("title")}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted">{tVisual("body")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              {tVisual("body")}
+            </p>
             <MiniBeforeAfter />
             <ul className="mt-4 space-y-2 text-xs text-muted">
               <li className="flex items-center gap-2">
@@ -237,7 +275,9 @@ export function BentoFeaturesSection() {
 
           <BentoShell className="md:col-span-2" delay={0.14}>
             <h3 className="text-xl font-semibold">{tQueue("title")}</h3>
-            <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted">{tQueue("body")}</p>
+            <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted">
+              {tQueue("body")}
+            </p>
             <MiniMasterDetailQueue />
           </BentoShell>
         </div>

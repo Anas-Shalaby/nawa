@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "./server";
 import { getMockTenantId, getSupabaseAnonKey, getSupabaseUrl } from "./config";
+import { isSubscriptionRowActive } from "@/lib/subscriptions/utils";
 
 async function assertTenantIsActive(tenantId: string): Promise<void> {
   const admin = createServiceRoleClient();
@@ -18,6 +19,20 @@ async function assertTenantIsActive(tenantId: string): Promise<void> {
 
   if (data?.is_active === false) {
     throw new Error("Clinic account is suspended. Contact Nawa support.");
+  }
+
+  const { data: subscription, error: subscriptionError } = await admin
+    .from("tenant_subscriptions")
+    .select("status, ends_at")
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+
+  if (subscriptionError) {
+    throw new Error(`Failed to verify subscription: ${subscriptionError.message}`);
+  }
+
+  if (!isSubscriptionRowActive(subscription)) {
+    throw new Error("Clinic subscription has expired. Contact Nawa support to renew.");
   }
 }
 

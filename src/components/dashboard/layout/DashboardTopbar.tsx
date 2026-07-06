@@ -2,14 +2,20 @@
 
 import { Menu } from "lucide-react";
 import { LocaleSwitcher } from "@/components/shared/LocaleSwitcher";
+import { BlockTimeModal } from "@/components/dashboard/BlockTimeModal";
 import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 
 interface DashboardTopbarProps {
   clinicName: string;
+  tenantId: string;
   onOpenMobileMenu: () => void;
 }
 
-export function DashboardTopbar({ clinicName, onOpenMobileMenu }: DashboardTopbarProps) {
+export function DashboardTopbar({
+  clinicName,
+  tenantId,
+  onOpenMobileMenu,
+}: DashboardTopbarProps) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-subtle bg-base/80 px-4 backdrop-blur-md sm:px-6">
       <div className="flex items-center gap-3">

@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Settings2 } from "lucide-react";
+import { CalendarClock, ChevronLeft, Settings2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import type { ClinicSettings } from "@/lib/queries/settings";
 import { CopyBookingLink } from "./CopyBookingLink";
 
@@ -28,6 +29,22 @@ export function SettingsShell({ settings }: SettingsShellProps) {
       </div>
 
       <CopyBookingLink slug={settings.slug} />
+
+      <Link
+        href="/dashboard/settings/availability"
+        className="mt-6 flex items-center justify-between rounded-2xl border border-subtle/70 bg-surface/50 px-4 py-4 text-start transition hover:border-accent/30"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15">
+            <CalendarClock className="h-5 w-5 text-accent" aria-hidden />
+          </div>
+          <div>
+            <p className="font-medium text-primary">{t("availabilityLinkTitle")}</p>
+            <p className="text-xs text-muted">{t("availabilityLinkHint")}</p>
+          </div>
+        </div>
+        <ChevronLeft className="h-5 w-5 text-muted rtl:rotate-180" aria-hidden />
+      </Link>
     </div>
   );
 }

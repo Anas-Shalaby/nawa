@@ -8,10 +8,11 @@ import { DashboardTopbar } from "./DashboardTopbar";
 
 interface DashboardLayoutShellProps {
   clinicName: string;
+  tenantId: string;
   children: React.ReactNode;
 }
 
-export function DashboardLayoutShell({ clinicName, children }: DashboardLayoutShellProps) {
+export function DashboardLayoutShell({ clinicName, tenantId, children }: DashboardLayoutShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const { isTheater } = useTheaterMode();
@@ -50,10 +51,19 @@ export function DashboardLayoutShell({ clinicName, children }: DashboardLayoutSh
         {!isTheater && (
           <DashboardTopbar
             clinicName={clinicName}
+            tenantId={tenantId}
             onOpenMobileMenu={() => setMobileOpen(true)}
           />
         )}
-        <main className={isTheater ? "" : "flex-1 px-4 py-6 sm:px-6"}>{children}</main>
+        <main
+          className={
+            isTheater
+              ? ""
+              : "flex min-h-0 flex-1 flex-col px-4 py-5 sm:px-6 lg:px-8"
+          }
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

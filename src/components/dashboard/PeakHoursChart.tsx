@@ -24,16 +24,16 @@ export function PeakHoursChart({ data }: PeakHoursChartProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.3 }}
-      className="rounded-xl border border-subtle bg-surface/80 px-4 py-4 backdrop-blur-sm"
+      className="rounded-2xl border border-subtle/50 bg-surface/80 px-6 py-5 backdrop-blur-sm"
     >
-      <div className="mb-4 text-start">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted">
+      <div className="mb-5 text-start">
+        <p className="text-sm font-medium text-muted">
           {t("kpiPeakHours")}
         </p>
-        <p className="mt-0.5 text-xs text-muted">{t("peakHoursHint")}</p>
+        <p className="mt-1 text-sm text-muted">{t("peakHoursHint")}</p>
       </div>
 
-      <div className="h-44 w-full" dir="ltr">
+      <div className="h-56 w-full sm:h-64" dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
             <XAxis
@@ -63,7 +63,7 @@ export function PeakHoursChart({ data }: PeakHoursChartProps) {
               dataKey="count"
               fill="#6C5CE7"
               radius={[6, 6, 0, 0]}
-              maxBarSize={32}
+              maxBarSize={48}
             />
           </BarChart>
         </ResponsiveContainer>

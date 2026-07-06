@@ -1,4 +1,5 @@
 import type { Appointment } from "@/lib/dashboard/types";
+import { normalizeStoredTimestamp } from "@/lib/datetime/cairo";
 
 type PatientJoin =
   | { name: string; phone_number: string; no_show_count: number }
@@ -41,7 +42,7 @@ export function mapAppointmentRow(row: AppointmentJoinRow): Appointment {
     serviceName: service?.name ?? "Service",
     durationMinutes: service?.duration_minutes ?? 30,
     priceEgp: service?.price_egp ?? null,
-    appointmentDate: row.appointment_date,
+    appointmentDate: normalizeStoredTimestamp(row.appointment_date),
     status: row.status,
   };
 }

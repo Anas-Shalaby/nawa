@@ -11,24 +11,39 @@ import { z } from "zod";
 import { Link } from "@/i18n/navigation";
 import { registerClinic } from "@/actions/registerClinic";
 import type { RegisterClinicErrorCode } from "@/actions/registerClinic.types";
+import type { SubscriptionPlan, SubscriptionPlanId } from "@/lib/subscriptions/types";
 import { AuthField } from "./AuthField";
+import { PlanSelector } from "./PlanSelector";
 
 const ERROR_KEYS: Record<RegisterClinicErrorCode, string> = {
   EMAIL_IN_USE: "errors.emailInUse",
   WEAK_PASSWORD: "errors.weakPassword",
   INVALID_EMAIL: "errors.invalidEmail",
   CLINIC_NAME_REQUIRED: "errors.clinicNameRequired",
+  INVALID_PLAN: "errors.invalidPlan",
   TENANT_CREATE_FAILED: "errors.tenantCreateFailed",
   SIGN_IN_FAILED: "errors.signInFailed",
   UNKNOWN: "errors.unknown",
 };
 
-export function RegisterForm() {
+interface RegisterFormProps {
+  plans: SubscriptionPlan[];
+  initialPlanId?: SubscriptionPlanId;
+}
+
+export function RegisterForm({ plans, initialPlanId }: RegisterFormProps) {
   const t = useTranslations("auth.register");
   const locale = useLocale();
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const defaultPlanId = plans[0]?.id ?? "free_6mo";
+  const resolvedInitialPlanId =
+    initialPlanId && plans.some((plan) => plan.id === initialPlanId)
+      ? initialPlanId
+      : defaultPlanId;
+  const [selectedPlanId, setSelectedPlanId] = useState<SubscriptionPlanId>(resolvedInitialPlanId);
+  const [planError, setPlanError] = useState<string | null>(null);
 
   const schema = useMemo(
     () =>
@@ -57,6 +72,12 @@ export function RegisterForm() {
 
   function onSubmit(values: RegisterFormValues) {
     setServerError(null);
+    setPlanError(null);
+
+    if (!plans.some((plan) => plan.id === selectedPlanId)) {
+      setPlanError(t("errors.invalidPlan"));
+      return;
+    }
 
     startTransition(async () => {
       const result = await registerClinic({
@@ -64,6 +85,7 @@ export function RegisterForm() {
         email: values.email,
         password: values.password,
         locale,
+        planId: selectedPlanId,
       });
 
       if (!result.success) {
@@ -91,6 +113,20 @@ export function RegisterForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {plans.length > 0 ? (
+          <PlanSelector
+            plans={plans}
+            locale={locale}
+            value={selectedPlanId}
+            onChange={setSelectedPlanId}
+            error={planError ?? undefined}
+          />
+        ) : (
+          <p className="rounded-xl border border-red-900/40 bg-red-950/20 px-4 py-3 text-sm text-red-300">
+            {t("errors.plansUnavailable")}
+          </p>
+        )}
+
         <AuthField
           id="clinicName"
           label={t("clinicName")}
@@ -131,7 +167,7 @@ export function RegisterForm() {
 
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || plans.length === 0}
           className={[
             "flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3",
             "text-sm font-semibold text-white shadow-[0_0_32px_rgba(108,92,231,0.28)]",

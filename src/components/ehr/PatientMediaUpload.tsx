@@ -4,8 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Camera, Loader2, Upload } from "lucide-react";
-import { insertPatientMediaRecord } from "@/actions/mediaActions";
-import { uploadEhrImageToStorage } from "@/lib/media/storage";
+import { uploadPatientMedia } from "@/actions/mediaActions";
 import { EHR_MEDIA_TAGS, type PatientMediaTag } from "@/lib/media/types";
 
 interface PatientMediaUploadProps {
@@ -27,7 +26,7 @@ interface PatientMediaUploadProps {
 
 export function PatientMediaUpload({
   patientId,
-  tenantId,
+  tenantId: _tenantId,
   onUploaded,
   onUploadComplete,
   onUploadFailed,
@@ -51,40 +50,34 @@ export function PatientMediaUpload({
       const optimisticId = `optimistic-${crypto.randomUUID()}`;
       onUploaded(optimisticId, file, tag, notes);
 
-      const uploadResult = await uploadEhrImageToStorage(file, tenantId, patientId);
-      if ("error" in uploadResult) {
-        setError(uploadResult.error);
-        onUploadFailed(optimisticId);
-        setUploading(false);
-        return;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("patientId", patientId);
+      formData.append("tag", tag);
+      if (notes.trim()) {
+        formData.append("notes", notes.trim());
       }
 
-      const recordResult = await insertPatientMediaRecord({
-        patientId,
-        filePath: uploadResult.filePath,
-        tag,
-        notes: notes || null,
-      });
-
-      if (!recordResult.success || !recordResult.media) {
-        setError(recordResult.error ?? t("uploadError"));
+      const uploadResult = await uploadPatientMedia(formData);
+      if (!uploadResult.success || !uploadResult.media) {
+        setError(uploadResult.error ?? t("uploadError"));
         onUploadFailed(optimisticId);
         setUploading(false);
         return;
       }
 
       onUploadComplete(optimisticId, {
-        id: recordResult.media.id,
-        filePath: recordResult.media.filePath,
-        tag: recordResult.media.tag,
-        notes: recordResult.media.notes,
-        createdAt: recordResult.media.createdAt,
+        id: uploadResult.media.id,
+        filePath: uploadResult.media.filePath,
+        tag: uploadResult.media.tag,
+        notes: uploadResult.media.notes,
+        createdAt: uploadResult.media.createdAt,
       });
 
       setNotes("");
       setUploading(false);
     },
-    [patientId, tenantId, tag, notes, onUploaded, onUploadComplete, onUploadFailed, t],
+    [patientId, tag, notes, onUploaded, onUploadComplete, onUploadFailed, t],
   );
 
   return (
@@ -152,7 +145,7 @@ export function PatientMediaUpload({
         <input
           ref={inputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/heic"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
           className="sr-only"
           onChange={(event) => {
             if (event.target.files) void processFiles(event.target.files);

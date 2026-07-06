@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { motion } from "framer-motion";
-import { Loader2, Plus, Stethoscope } from "lucide-react";
-import { deleteService } from "@/actions/manageServices";
+import { Plus, Stethoscope } from "lucide-react";
 import type { Service } from "@/lib/booking/types";
 import { ServiceCard } from "./ServiceCard";
+import { ServiceDeleteModal } from "./ServiceDeleteModal";
 import { ServiceFormModal, type ServiceFormValues } from "./ServiceFormModal";
 
 interface ServicesShellProps {
@@ -20,9 +20,8 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
   const [services, setServices] = useState(initialServices);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [deletingService, setDeletingService] = useState<Service | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     setServices(initialServices);
@@ -35,13 +34,11 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
 
   function openCreateModal() {
     setEditingService(null);
-    setError(null);
     setModalOpen(true);
   }
 
   function openEditModal(service: Service) {
     setEditingService(service);
-    setError(null);
     setModalOpen(true);
   }
 
@@ -50,32 +47,28 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
     setEditingService(null);
   }
 
+  function openDeleteModal(service: Service) {
+    setDeletingService(service);
+    setDeleteModalOpen(true);
+  }
+
+  function closeDeleteModal() {
+    setDeleteModalOpen(false);
+    setDeletingService(null);
+  }
+
   function handleSaved() {
     closeModal();
     router.refresh();
   }
 
-  function handleDelete(serviceId: string) {
-    setError(null);
-    setDeletingId(serviceId);
-
-    startTransition(async () => {
-      const result = await deleteService(serviceId);
-
-      if (!result.success) {
-        setError(result.error ?? t("deleteError"));
-        setDeletingId(null);
-        return;
-      }
-
-      setServices((current) => current.filter((service) => service.id !== serviceId));
-      setDeletingId(null);
-      router.refresh();
-    });
+  function handleDeleted(serviceId: string) {
+    setServices((current) => current.filter((service) => service.id !== serviceId));
+    router.refresh();
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="w-full">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="text-start">
           <div className="mb-3 flex items-center gap-2">
@@ -100,18 +93,12 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
         </button>
       </div>
 
-      {error && (
-        <p className="mb-4 rounded-xl border border-accent-danger/20 bg-accent-danger/5 px-4 py-3 text-sm text-accent-danger">
-          {error}
-        </p>
-      )}
-
       {services.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-subtle px-6 py-16 text-center">
           <p className="text-sm text-muted">{t("empty")}</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {services.map((service, index) => (
             <motion.div
               key={service.id}
@@ -121,9 +108,9 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
             >
               <ServiceCard
                 service={service}
-                deleting={deletingId === service.id || isPending}
+                deleting={deleteModalOpen && deletingService?.id === service.id}
                 onEdit={() => openEditModal(service)}
-                onDelete={() => handleDelete(service.id)}
+                onDelete={() => openDeleteModal(service)}
               />
             </motion.div>
           ))}
@@ -146,6 +133,13 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
         serviceId={editingService?.id}
         onClose={closeModal}
         onSaved={handleSaved}
+      />
+
+      <ServiceDeleteModal
+        open={deleteModalOpen}
+        service={deletingService}
+        onClose={closeDeleteModal}
+        onDeleted={handleDeleted}
       />
     </div>
   );

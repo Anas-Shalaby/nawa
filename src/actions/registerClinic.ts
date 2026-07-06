@@ -5,6 +5,8 @@ import {
   type RegisterClinicResult,
 } from "@/actions/registerClinic.types";
 import { generateUniqueTenantSlug } from "@/lib/onboarding/slug";
+import { createTenantSubscription } from "@/lib/subscriptions/createTenantSubscription";
+import { isSubscriptionPlanId } from "@/lib/subscriptions/types";
 import { createClient as createServerClient } from "@/utils/supabase/server";
 import { createServiceRoleClient } from "@/utils/supabase/auth";
 
@@ -54,6 +56,15 @@ export async function registerClinic(
   const email = input.email.trim().toLowerCase();
   const password = input.password;
   const locale = input.locale === "en" ? "en" : "ar";
+  const planId = input.planId.trim();
+
+  if (!isSubscriptionPlanId(planId)) {
+    return {
+      success: false,
+      errorCode: "INVALID_PLAN",
+      message: "Invalid subscription plan.",
+    };
+  }
 
   if (clinicName.length < 2) {
     return {
@@ -101,6 +112,8 @@ export async function registerClinic(
     if (tenantError || !tenant) {
       throw new Error(tenantError?.message ?? "Could not create clinic workspace.");
     }
+
+    await createTenantSubscription(admin, tenant.id, planId);
 
     const { error: metadataError } = await admin.auth.admin.updateUserById(createdUserId, {
       app_metadata: {

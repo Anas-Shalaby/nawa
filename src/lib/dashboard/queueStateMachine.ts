@@ -44,8 +44,20 @@ export function getQueueStatusColor(status: AppointmentStatus): string {
   if (isQueueVisible(status)) {
     return QUEUE_STATUS_COLORS[status];
   }
+  if (status === "no_show") {
+    return "#FF6B6B";
+  }
   return "#8888A0";
 }
+
+/** Statuses the secretary can pick from the queue dropdown. */
+export const QUEUE_SELECTABLE_STATUSES: readonly QueueVisibleStatus[] = [
+  "pending",
+  "confirmed",
+  "checked_in",
+  "in_session",
+  "completed",
+] as const;
 
 /** @deprecated Use isQueueVisible — kept for gradual migration */
 export function isKanbanColumn(status: AppointmentStatus): status is QueueVisibleStatus {

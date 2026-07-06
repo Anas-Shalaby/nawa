@@ -3,7 +3,7 @@
 > **Save State:** Update this file whenever you start, finish, or pause work.
 > Move tasks between sections. Only one task should be in **IN PROGRESS** at a time.
 
-**Last updated:** 2026-07-05 (Phase 22 — Enterprise Real-Time Notifications)
+**Last updated:** 2026-07-05 (Phase 25 — Hybrid Operational Dashboard Refactor)
 
 ---
 
@@ -14,6 +14,31 @@ _Nothing in progress. Pick the next TODO task._
 ---
 
 ## DONE (Recent)
+
+### Phase 25: Hybrid Operational Dashboard Refactor
+
+- [x] **Hybrid Operational Dashboard Refactor**
+  - `DailyMiniStatsBar` — today-only KPI strip (total, waiting, completed, revenue gated by role)
+  - Home queue fills viewport height; heavy Recharts analytics moved to `/dashboard/analytics`
+  - Sidebar «الإحصائيات» link; RSC fetch trimmed to today appointments only on home
+  - Completed: 2026-07-05
+
+### Phase 24: Time Exceptions Engine
+
+- [x] **Time Exceptions Engine**
+  - `blocked_slots` migration (`015_blocked_slots.sql`) with strict tenant RLS
+  - `BlockTimeModal` — amber-themed quick block UI in topbar + agenda (optimistic toast)
+  - `createTimeBlock` server action; slot engine merges blocks into collision detection
+  - Completed: 2026-07-05
+
+### Phase 23: Time Engine & Availability Scheduling
+
+- [x] **Time Engine & Availability Scheduling**
+  - `working_hours` migration (`014_working_hours.sql`) with strict tenant RLS
+  - Doctor settings UI at `/dashboard/settings/availability` — weekly toggles + time pickers
+  - `getAvailableSlots` in `src/actions/slots.ts` — Cairo-local slot generation with duration-aware collision detection
+  - Patient booking — horizontal date scroller (14 days), dark time pills, empty state in Arabic
+  - Completed: 2026-07-05
 
 ### Phase 22: Enterprise Real-Time Notifications
 

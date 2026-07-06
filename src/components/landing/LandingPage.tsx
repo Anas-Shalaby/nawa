@@ -4,12 +4,13 @@ import { BentoFeaturesSection } from "./BentoFeaturesSection";
 import { ValuePropositionSection } from "./ValuePropositionSection";
 import { PricingSection } from "./PricingSection";
 import { LandingFooter } from "./LandingFooter";
+import { LandingThemeProvider } from "./LandingThemeProvider";
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-base text-primary">
+    <LandingThemeProvider>
       <div
-        className="pointer-events-none fixed inset-0 bg-[linear-gradient(to_bottom,rgba(108,92,231,0.06),transparent_28%)]"
+        className="landing-page-glow pointer-events-none fixed inset-0"
         aria-hidden
       />
       <LandingNav />
@@ -20,6 +21,6 @@ export function LandingPage() {
         <PricingSection />
       </main>
       <LandingFooter />
-    </div>
+    </LandingThemeProvider>
   );
 }

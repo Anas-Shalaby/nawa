@@ -3,8 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, Plus } from "lucide-react";
-import { insertPatientMediaRecord } from "@/actions/mediaActions";
-import { uploadEhrImageToStorage } from "@/lib/media/storage";
+import { uploadPatientMedia } from "@/actions/mediaActions";
 import { EHR_MEDIA_TAGS, type PatientMediaTag } from "@/lib/media/types";
 
 interface SessionMediaUploadProps {
@@ -27,7 +26,6 @@ interface SessionMediaUploadProps {
 
 export function SessionMediaUpload({
   patientId,
-  tenantId,
   sessionLabel,
   onUploaded,
   onUploadComplete,
@@ -40,49 +38,47 @@ export function SessionMediaUpload({
   const [notes, setNotes] = useState("");
   const [uploading, setUploading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const processFiles = useCallback(
     async (files: FileList | File[]) => {
       const file = Array.from(files)[0];
       if (!file) return;
 
+      setError(null);
       setUploading(true);
       const optimisticId = `optimistic-${crypto.randomUUID()}`;
       onUploaded(optimisticId, file, tag, notes);
 
-      const uploadResult = await uploadEhrImageToStorage(file, tenantId, patientId);
-      if ("error" in uploadResult) {
-        onUploadFailed(optimisticId);
-        setUploading(false);
-        return;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("patientId", patientId);
+      formData.append("tag", tag);
+      if (notes.trim()) {
+        formData.append("notes", notes.trim());
       }
 
-      const recordResult = await insertPatientMediaRecord({
-        patientId,
-        filePath: uploadResult.filePath,
-        tag,
-        notes: notes || null,
-      });
-
-      if (!recordResult.success || !recordResult.media) {
+      const result = await uploadPatientMedia(formData);
+      if (!result.success || !result.media) {
+        setError(result.error ?? t("uploadError"));
         onUploadFailed(optimisticId);
         setUploading(false);
         return;
       }
 
       onUploadComplete(optimisticId, {
-        id: recordResult.media.id,
-        filePath: recordResult.media.filePath,
-        tag: recordResult.media.tag,
-        notes: recordResult.media.notes,
-        createdAt: recordResult.media.createdAt,
+        id: result.media.id,
+        filePath: result.media.filePath,
+        tag: result.media.tag,
+        notes: result.media.notes,
+        createdAt: result.media.createdAt,
       });
 
       setNotes("");
       setUploading(false);
       setExpanded(false);
     },
-    [patientId, tenantId, tag, notes, onUploaded, onUploadComplete, onUploadFailed],
+    [patientId, tag, notes, onUploaded, onUploadComplete, onUploadFailed, t],
   );
 
   if (!expanded) {
@@ -156,7 +152,7 @@ export function SessionMediaUpload({
         <input
           ref={inputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/heic"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif"
           className="sr-only"
           onChange={(event) => {
             if (event.target.files) void processFiles(event.target.files);
@@ -164,6 +160,8 @@ export function SessionMediaUpload({
           }}
         />
       </div>
+
+      {error ? <p className="mt-2 text-xs text-accent-danger">{error}</p> : null}
     </div>
   );
 }

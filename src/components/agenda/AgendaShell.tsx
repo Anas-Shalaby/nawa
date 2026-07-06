@@ -11,6 +11,7 @@ import {
   formatAgendaTime,
   groupAgendaByDate,
 } from "@/lib/agenda/groupByDate";
+import { formatAppointmentDateLong, formatAppointmentTime } from "@/lib/datetime/cairo";
 import type { AgendaAppointment } from "@/lib/queries/agenda";
 import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
 
@@ -19,15 +20,7 @@ interface AgendaShellProps {
 }
 
 function formatAppointmentDateForWhatsApp(isoDate: string, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-EG", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Africa/Cairo",
-  }).format(new Date(isoDate));
+  return `${formatAppointmentDateLong(isoDate, locale)} · ${formatAppointmentTime(isoDate, locale)}`;
 }
 
 export function AgendaShell({ appointments }: AgendaShellProps) {
@@ -37,7 +30,7 @@ export function AgendaShell({ appointments }: AgendaShellProps) {
   const groups = useMemo(() => groupAgendaByDate(appointments), [appointments]);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="w-full space-y-6">
       <header className="text-start">
         <h1 className="text-2xl font-semibold text-primary">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted">{t("subtitle", { count: appointments.length })}</p>
@@ -62,8 +55,8 @@ export function AgendaShell({ appointments }: AgendaShellProps) {
               transition={{ delay: groupIndex * 0.04 }}
               className="rounded-2xl border border-subtle bg-surface/50 overflow-hidden"
             >
-              <header className="border-b border-subtle bg-base/40 px-5 py-3 text-start">
-                <h2 className="text-sm font-semibold text-primary">
+              <header className="border-b border-subtle bg-base/40 px-6 py-4 text-start">
+                <h2 className="text-base font-semibold text-primary">
                   {formatAgendaSectionLabel(group.dateKey, locale, {
                     today: t("today"),
                     tomorrow: t("tomorrow"),
@@ -122,11 +115,11 @@ function AgendaRow({
       initial={{ opacity: 0, x: -6 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.02 }}
-      className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between"
+      className="flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:justify-between"
     >
-      <div className="flex min-w-0 flex-1 items-start gap-3 text-start">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15">
-          <UserRound className="h-5 w-5 text-accent" aria-hidden />
+      <div className="flex min-w-0 flex-1 items-start gap-4 text-start">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/15">
+          <UserRound className="h-6 w-6 text-accent" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -136,13 +129,13 @@ function AgendaRow({
             >
               {appointment.patientName}
             </Link>
-            <span className="text-xs tabular-nums text-muted" dir="ltr">
+            <span className="text-sm tabular-nums text-muted" dir="ltr">
               {appointment.phoneNumber}
             </span>
           </div>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-primary">{appointment.serviceName}</span>
+            <span className="text-base text-primary">{appointment.serviceName}</span>
             {appointment.isReExamination && (
               <span className="rounded-full bg-[#A29BFE]/15 px-2 py-0.5 text-xs font-medium text-[#A29BFE]">
                 {t("reExamBadge")}
@@ -159,7 +152,7 @@ function AgendaRow({
             )}
           </div>
 
-          <p className="mt-1 text-xs text-muted">
+          <p className="mt-1.5 text-sm text-muted">
             {formatAgendaTime(appointment.appointmentDate, locale)}
           </p>
 

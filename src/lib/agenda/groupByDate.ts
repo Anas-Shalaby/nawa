@@ -1,4 +1,8 @@
 import { addCairoDays, formatCairoDateKey } from "@/lib/datetime/followUp";
+import {
+  formatAppointmentTime,
+  getCairoDateKeyFromIso,
+} from "@/lib/datetime/cairo";
 import type { AgendaAppointment } from "@/lib/queries/agenda";
 
 const CAIRO_TZ = "Africa/Cairo";
@@ -9,12 +13,7 @@ export interface AgendaDateGroup {
 }
 
 export function getAgendaDateKey(isoDate: string): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: CAIRO_TZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(isoDate));
+  return getCairoDateKeyFromIso(isoDate);
 }
 
 export function groupAgendaByDate(appointments: AgendaAppointment[]): AgendaDateGroup[] {
@@ -53,10 +52,5 @@ export function formatAgendaSectionLabel(
 }
 
 export function formatAgendaTime(isoDate: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-EG", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: CAIRO_TZ,
-  }).format(new Date(isoDate));
+  return formatAppointmentTime(isoDate, locale);
 }

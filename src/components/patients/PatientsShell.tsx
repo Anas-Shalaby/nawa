@@ -144,7 +144,7 @@ export function PatientsShell({
   ];
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="w-full">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="text-start">
           <div className="mb-3 flex items-center gap-2">
@@ -219,16 +219,16 @@ export function PatientsShell({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
-                className="grid gap-3 px-5 py-4 md:grid-cols-[1.4fr_1fr_0.8fr_auto] md:items-center"
+                className="grid gap-4 px-6 py-5 md:grid-cols-[1.4fr_1fr_0.8fr_auto] md:items-center"
               >
-                <div className="flex items-start gap-3 text-start">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-base">
-                    <UserRound className="h-4 w-4 text-accent" aria-hidden />
+                <div className="flex items-start gap-4 text-start">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-base">
+                    <UserRound className="h-5 w-5 text-accent" aria-hidden />
                   </div>
                   <div>
                     <Link
                       href={`/dashboard/patients/${patient.id}`}
-                      className="font-medium text-primary transition hover:text-accent"
+                      className="text-base font-medium text-primary transition hover:text-accent"
                     >
                       {patient.name}
                     </Link>

@@ -40,7 +40,7 @@ export default async function PatientDetailPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="w-full">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
         <PatientDetailShell
           patient={patient}

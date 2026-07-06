@@ -13,7 +13,9 @@ export default async function DashboardLayout({
   return (
     <TheaterModeProvider>
       <DashboardNotificationsRoot tenantId={tenantId}>
-        <DashboardLayoutShell clinicName={clinicName}>{children}</DashboardLayoutShell>
+        <DashboardLayoutShell clinicName={clinicName} tenantId={tenantId}>
+          {children}
+        </DashboardLayoutShell>
       </DashboardNotificationsRoot>
     </TheaterModeProvider>
   );

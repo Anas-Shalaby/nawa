@@ -8,20 +8,33 @@ import {
   mapAppointmentRow,
   type AppointmentJoinRow,
 } from "@/lib/dashboard/mapAppointment";
+import { resolveStaffPermissions } from "@/lib/auth/staffPermissions";
+import {
+  computeDailyMiniStats,
+  type DailyMiniStats,
+} from "@/lib/dashboard/miniStats";
 import { mapServiceRow, SERVICE_SELECT } from "@/lib/services/mapService";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
-import { getCairoDayBounds } from "@/lib/datetime/cairo";
+import {
+  getCairoDayQueryBounds,
+  getCairoTodayKey,
+  isAppointmentOnCairoDate,
+} from "@/lib/datetime/cairo";
 
 export async function fetchTodayAppointments(): Promise<{
   appointments: Appointment[];
   clinicName: string;
   tenantId: string;
   pulse: DailyPulseStats;
+  miniStats: DailyMiniStats;
+  canViewRevenue: boolean;
   services: DashboardService[];
 }> {
   const supabase = await createAuthenticatedClient();
   const tenantId = await resolveTenantId(supabase);
-  const { startIso, endIso } = getCairoDayBounds();
+  const { canViewRevenue } = await resolveStaffPermissions(supabase);
+  const todayKey = getCairoTodayKey();
+  const { startIso, endExclusiveIso } = getCairoDayQueryBounds(todayKey);
 
   const [
     { data: tenant, error: tenantError },
@@ -35,7 +48,7 @@ export async function fetchTodayAppointments(): Promise<{
       .select(APPOINTMENT_SELECT)
       .eq("tenant_id", tenantId)
       .gte("appointment_date", startIso)
-      .lte("appointment_date", endIso)
+      .lt("appointment_date", endExclusiveIso)
       .not("status", "in", "(no_show,canceled)")
       .order("appointment_date", { ascending: true }),
     supabase
@@ -43,7 +56,7 @@ export async function fetchTodayAppointments(): Promise<{
       .select("status")
       .eq("tenant_id", tenantId)
       .gte("appointment_date", startIso)
-      .lte("appointment_date", endIso)
+      .lt("appointment_date", endExclusiveIso)
       .neq("status", "canceled"),
       supabase
         .from("services")
@@ -68,7 +81,10 @@ export async function fetchTodayAppointments(): Promise<{
     throw new Error(`Failed to load services: ${servicesError.message}`);
   }
 
-  const appointments = ((rows ?? []) as AppointmentJoinRow[]).map(mapAppointmentRow);
+  const appointments = ((rows ?? []) as AppointmentJoinRow[])
+    .map(mapAppointmentRow)
+    .filter((appointment) => isAppointmentOnCairoDate(appointment.appointmentDate, todayKey));
+  const miniStats = computeDailyMiniStats(appointments);
 
   const pulse: DailyPulseStats = {
     total: allToday?.length ?? 0,
@@ -84,6 +100,8 @@ export async function fetchTodayAppointments(): Promise<{
     clinicName: tenant.name,
     tenantId,
     pulse,
+    miniStats,
+    canViewRevenue,
     services,
   };
 }

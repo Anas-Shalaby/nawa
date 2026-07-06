@@ -1,10 +1,10 @@
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { routing, localeDirection, type Locale } from "@/i18n/routing";
 import { GlobalLocaleSwitcher } from "@/components/shared/GlobalLocaleSwitcher";
-import "../globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,6 +24,19 @@ type Props = {
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const t = await getTranslations({ locale: params.locale, namespace: "metadata" });
+
+  return {
+    title: t("appTitle"),
+    description: t("appDescription"),
+  };
 }
 
 export default async function LocaleLayout({ children, params }: Props) {

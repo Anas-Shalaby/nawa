@@ -3,50 +3,36 @@
 import { forwardRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { formatAppointmentTime } from "@/lib/datetime/cairo";
 import type { Locale } from "@/i18n/routing";
-import {
-  NEXT_QUEUE_STATUS,
-  QUEUE_ACTION_BY_STATUS,
-  getQueueStatusColor,
-} from "@/lib/dashboard/queueStateMachine";
+import type { AppointmentStatus } from "@/lib/dashboard/types";
+import { getQueueStatusColor } from "@/lib/dashboard/queueStateMachine";
 import type { QueueAppointment } from "@/lib/dashboard/types";
+import { QueueStatusSelect } from "./QueueStatusSelect";
 
 interface QueueRowProps {
   appointment: QueueAppointment;
   isSelected: boolean;
-  isAdvancing: boolean;
+  isUpdating: boolean;
   onSelect: (appointment: QueueAppointment) => void;
-  onAdvance: (appointment: QueueAppointment) => void;
-}
-
-function formatTime(isoDate: string, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-EG", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Africa/Cairo",
-  }).format(new Date(isoDate));
+  onStatusChange: (appointment: QueueAppointment, status: AppointmentStatus) => void;
 }
 
 export const QueueRow = forwardRef<HTMLLIElement, QueueRowProps>(function QueueRow(
   {
     appointment,
     isSelected,
-    isAdvancing,
+    isUpdating,
     onSelect,
-    onAdvance,
+    onStatusChange,
   },
   ref,
 ) {
-  const t = useTranslations("dashboard.queue");
   const tDash = useTranslations("dashboard");
   const locale = useLocale() as Locale;
 
-  const actionKey = QUEUE_ACTION_BY_STATUS[appointment.status];
-  const nextStatus = NEXT_QUEUE_STATUS[appointment.status];
   const statusColor = getQueueStatusColor(appointment.status);
-  const isCompleted = appointment.status === "completed";
+  const timeLabel = formatAppointmentTime(appointment.appointmentDate, locale);
 
   const strikeLabel =
     appointment.noShowCount === 1
@@ -63,10 +49,10 @@ export const QueueRow = forwardRef<HTMLLIElement, QueueRowProps>(function QueueR
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ layout: { type: "spring", stiffness: 380, damping: 32 } }}
       className={[
-        "rounded-xl border bg-surface transition-colors",
+        "group rounded-2xl border transition-all duration-200",
         isSelected
-          ? "border-accent/40 ring-1 ring-accent/20"
-          : "border-subtle hover:border-zinc-600",
+          ? "border-accent/50 bg-accent/[0.06] shadow-[0_0_0_1px_rgba(108,92,231,0.15)]"
+          : "border-subtle/50 bg-base/40 hover:border-subtle hover:bg-surface/60",
       ].join(" ")}
     >
       <div
@@ -79,64 +65,37 @@ export const QueueRow = forwardRef<HTMLLIElement, QueueRowProps>(function QueueR
             onSelect(appointment);
           }
         }}
-        className="flex cursor-pointer items-center gap-3 p-3 sm:gap-4 sm:p-4"
+        className="flex cursor-pointer items-center gap-4 p-4 sm:gap-5 sm:p-5"
       >
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-start">
+        <div
+          className="flex h-[4.5rem] w-[5rem] shrink-0 items-center justify-center rounded-xl border px-1.5 text-center sm:h-20 sm:w-[5.5rem]"
+          style={{
+            borderColor: `${statusColor}33`,
+            backgroundColor: `${statusColor}12`,
+          }}
+        >
+          <span className="text-xs font-bold leading-tight tabular-nums sm:text-sm" style={{ color: statusColor }}>
+            {timeLabel}
+          </span>
+        </div>
+
+        <div className="flex min-w-0 flex-1 flex-col gap-1 text-start">
           <div className="flex flex-wrap items-center gap-2">
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium tabular-nums"
-              style={{
-                backgroundColor: `${statusColor}18`,
-                color: statusColor,
-              }}
-            >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: statusColor }}
-                aria-hidden
-              />
-              {formatTime(appointment.appointmentDate, locale)}
-            </span>
-            {appointment.noShowCount > 0 && (
-              <span className="rounded-full bg-accent-danger/10 px-2 py-0.5 text-xs font-medium text-accent-danger">
+            <p className="truncate text-lg font-semibold text-primary">{appointment.patientName}</p>
+            {appointment.noShowCount > 0 ? (
+              <span className="rounded-full bg-accent-danger/10 px-2.5 py-1 text-xs font-medium text-accent-danger">
                 {strikeLabel}
               </span>
-            )}
+            ) : null}
           </div>
-
-          <p className="truncate text-base font-medium text-primary">
-            {appointment.patientName}
-          </p>
-
-          <p className="truncate text-sm text-muted">{appointment.serviceName}</p>
+          <p className="truncate text-base text-muted">{appointment.serviceName}</p>
         </div>
 
-        <div className="shrink-0">
-          {isCompleted ? (
-            <span className="inline-flex items-center rounded-lg border border-subtle bg-base/60 px-3 py-2 text-xs font-medium text-muted">
-              {t("statusCompleted")}
-            </span>
-          ) : actionKey && nextStatus ? (
-            <button
-              type="button"
-              disabled={isAdvancing}
-              onClick={(event) => {
-                event.stopPropagation();
-                onAdvance(appointment);
-              }}
-              className={[
-                "inline-flex min-w-[7.5rem] items-center justify-center gap-1.5 rounded-lg px-3 py-2",
-                "text-sm font-medium text-white transition",
-                "bg-accent hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60",
-              ].join(" ")}
-            >
-              {isAdvancing ? (
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              ) : null}
-              {t(`actions.${actionKey}`)}
-            </button>
-          ) : null}
-        </div>
+        <QueueStatusSelect
+          value={appointment.status}
+          isUpdating={isUpdating}
+          onChange={(status) => onStatusChange(appointment, status)}
+        />
       </div>
     </motion.li>
   );

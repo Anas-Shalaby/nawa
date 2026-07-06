@@ -21,6 +21,7 @@ export const EHR_ALLOWED_MIME_TYPES = [
   "image/png",
   "image/webp",
   "image/heic",
+  "image/heif",
 ] as const;
 
 export const EHR_MAX_FILE_BYTES = 10 * 1024 * 1024;

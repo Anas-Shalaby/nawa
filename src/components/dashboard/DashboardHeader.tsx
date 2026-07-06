@@ -7,7 +7,6 @@ import type { Locale } from "@/i18n/routing";
 interface DashboardHeaderProps {
   clinicName: string;
   date: string;
-  appointmentCount: number;
 }
 
 function formatDisplayDate(isoDate: string, locale: Locale): string {
@@ -15,44 +14,26 @@ function formatDisplayDate(isoDate: string, locale: Locale): string {
     weekday: "long",
     day: "numeric",
     month: "long",
-    year: "numeric",
     timeZone: "Africa/Cairo",
   }).format(new Date(isoDate));
 }
 
-export function DashboardHeader({
-  clinicName,
-  date,
-  appointmentCount,
-}: DashboardHeaderProps) {
+export function DashboardHeader({ clinicName, date }: DashboardHeaderProps) {
   const t = useTranslations("dashboard");
   const locale = useLocale() as Locale;
 
   return (
-    <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="text-start">
-        <div className="mb-2 flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15">
-            <span className="text-sm font-bold text-accent">N</span>
-          </div>
-          <span className="text-xs font-medium uppercase tracking-widest text-muted">
-            Nawa
-          </span>
-        </div>
-        <h1 className="text-2xl font-semibold text-primary">{clinicName}</h1>
-        <p className="mt-1 text-sm text-muted">{t("dailyQueue")}</p>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 rounded-xl border border-subtle bg-surface px-4 py-2.5">
-          <CalendarDays className="h-4 w-4 text-accent" aria-hidden />
-          <span className="text-sm text-primary">{formatDisplayDate(date, locale)}</span>
-        </div>
-        <div className="rounded-xl border border-subtle bg-surface px-4 py-2.5">
-          <span className="text-sm text-muted">
-            {t("todayCount", { count: appointmentCount })}
-          </span>
-        </div>
+    <header className="text-start">
+      <p className="text-xs font-medium uppercase tracking-widest text-accent/80">Nawa</p>
+      <h1 className="mt-1 text-xl font-semibold text-primary sm:text-2xl">{clinicName}</h1>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">
+          {t("dailyQueue")}
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-xs text-muted sm:text-sm">
+          <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          {formatDisplayDate(date, locale)}
+        </span>
       </div>
     </header>
   );

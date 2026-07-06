@@ -1,13 +1,10 @@
 import type { Service, Tenant, TimeSlot } from "@/lib/booking/types";
 import { mapServiceRow, SERVICE_SELECT } from "@/lib/services/mapService";
-import {
-  buildAppointmentDateIso,
-  formatSlotLabel,
-  generateWorkingDaySlots,
-  getCairoDayBounds,
-} from "@/lib/datetime/cairo";
+import { formatSlotLabel, getCairoTodayKey } from "@/lib/datetime/cairo";
+import { getAvailableSlots as computeAvailableSlots } from "@/actions/slots";
 import { getClinicWhatsAppFallback } from "@/utils/supabase/config";
 import { createServiceRoleClient } from "@/utils/supabase/auth";
+import { isSubscriptionRowActive } from "@/lib/subscriptions/utils";
 
 /**
  * Public booking reads — server-only via service role, scoped by slug / tenant_id.
@@ -28,6 +25,20 @@ export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | nu
   }
 
   if (!data) {
+    return null;
+  }
+
+  const { data: subscription, error: subscriptionError } = await supabase
+    .from("tenant_subscriptions")
+    .select("status, ends_at")
+    .eq("tenant_id", data.id)
+    .maybeSingle();
+
+  if (subscriptionError) {
+    throw new Error(`Failed to verify clinic subscription: ${subscriptionError.message}`);
+  }
+
+  if (!isSubscriptionRowActive(subscription)) {
     return null;
   }
 
@@ -60,12 +71,13 @@ export async function fetchAvailableSlotsPublic(
   tenantId: string,
   serviceId: string,
   locale = "ar",
+  date = getCairoTodayKey(),
 ): Promise<TimeSlot[]> {
   const supabase = createServiceRoleClient();
 
   const { data: service, error: serviceError } = await supabase
     .from("services")
-    .select("id")
+    .select(SERVICE_SELECT)
     .eq("id", serviceId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -78,37 +90,14 @@ export async function fetchAvailableSlotsPublic(
     throw new Error("Service not found for this clinic.");
   }
 
-  const { startIso, endIso } = getCairoDayBounds();
+  const mapped = mapServiceRow(service);
+  const times = await computeAvailableSlots(tenantId, date, mapped.durationMinutes);
 
-  const { data: booked, error } = await supabase
-    .from("appointments")
-    .select("appointment_date, status")
-    .eq("tenant_id", tenantId)
-    .gte("appointment_date", startIso)
-    .lte("appointment_date", endIso)
-    .not("status", "in", "(no_show,completed,canceled)");
-
-  if (error) {
-    throw new Error(`Failed to load booked slots: ${error.message}`);
-  }
-
-  const takenTimes = new Set(
-    (booked ?? []).map((row) => {
-      const date = new Date(row.appointment_date);
-      return new Intl.DateTimeFormat("en-GB", {
-        timeZone: "Africa/Cairo",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }).format(date);
-    }),
-  );
-
-  return generateWorkingDaySlots().map((time) => ({
-    id: `slot-${time}`,
+  return times.map((time) => ({
+    id: `slot-${date}-${time}`,
     time,
-    label: formatSlotLabel(time, locale),
-    available: !takenTimes.has(time),
+    label: formatSlotLabel(time, locale, date),
+    available: true,
   }));
 }
 

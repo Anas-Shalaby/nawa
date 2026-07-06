@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { LocaleSwitcher } from "@/components/shared/LocaleSwitcher";
+import { LandingThemeToggle } from "./LandingThemeToggle";
 
 export function LandingNav() {
   const t = useTranslations("landing.nav");
@@ -41,6 +42,7 @@ export function LandingNav() {
           >
             {t("pricing")}
           </a>
+          <LandingThemeToggle />
           <LocaleSwitcher />
           <Link
             href="/register"

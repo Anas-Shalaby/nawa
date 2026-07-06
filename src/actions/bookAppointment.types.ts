@@ -13,6 +13,7 @@ export class BookingActionError extends Error {
 export interface BookAppointmentInput {
   tenantSlug: string;
   serviceId: string;
+  date: string;
   slotTime: string;
   name: string;
   whatsapp: string;

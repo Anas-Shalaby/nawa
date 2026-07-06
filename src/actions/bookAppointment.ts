@@ -5,8 +5,10 @@ import {
   type BookAppointmentInput,
   type BookAppointmentResult,
 } from "@/actions/bookAppointment.types";
+import { isSlotAvailable } from "@/actions/slots";
 import {
-  buildAppointmentDateIso,
+  buildCairoAppointmentIso,
+  getCairoDateKeyFromIso,
   toStoredPhoneNumber,
 } from "@/lib/datetime/cairo";
 import { normalizeEgyptPhone } from "@/lib/booking/schema";
@@ -23,7 +25,6 @@ export async function bookAppointment(
     const supabase = createServiceRoleClient();
     const normalizedPhone = normalizeEgyptPhone(formData.whatsapp);
     const phoneNumber = toStoredPhoneNumber(normalizedPhone);
-    const appointmentDate = buildAppointmentDateIso(formData.slotTime);
 
     const { data: tenant, error: tenantError } = await supabase
       .from("tenants")
@@ -44,7 +45,7 @@ export async function bookAppointment(
 
     const { data: service, error: serviceError } = await supabase
       .from("services")
-      .select("id")
+      .select("id, duration_minutes")
       .eq("id", formData.serviceId)
       .eq("tenant_id", tenantId)
       .maybeSingle();
@@ -55,6 +56,28 @@ export async function bookAppointment(
 
     if (!service) {
       throw new BookingActionError("UNKNOWN", "Service not found.");
+    }
+
+    const slotTime = formData.slotTime.slice(0, 5);
+    const appointmentDate = buildCairoAppointmentIso(formData.date, slotTime);
+    const durationMinutes = service.duration_minutes ?? 30;
+
+    if (getCairoDateKeyFromIso(appointmentDate) !== formData.date) {
+      throw new BookingActionError("UNKNOWN", "Invalid appointment date or time.");
+    }
+
+    const slotStillFree = await isSlotAvailable(
+      tenantId,
+      formData.date,
+      slotTime,
+      durationMinutes,
+    );
+
+    if (!slotStillFree) {
+      throw new BookingActionError(
+        "SLOT_TAKEN",
+        "This slot was just taken. Please choose another time.",
+      );
     }
 
     const { data: existingPatient, error: patientLookupError } = await supabase

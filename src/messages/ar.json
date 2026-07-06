@@ -60,6 +60,9 @@
     "serviceDuration": "{minutes} د",
     "changeService": "تغيير الخدمة",
     "loadingSlots": "جاري تحميل الأوقات…",
+    "chooseDate": "اختر التاريخ",
+    "today": "اليوم",
+    "noSlotsDay": "عفواً، لا توجد مواعيد متاحة في هذا اليوم.",
     "noServicesAvailable": "لا توجد خدمات متاحة للحجز حاليًا. يرجى التواصل مع العيادة.",
     "backHome": "العودة للرئيسية",
     "servicePrice": "{amount} جنيه",
@@ -103,6 +106,18 @@
     "pulsePending": "قيد الانتظار",
     "pulseCompleted": "مكتمل",
     "pulseNoShows": "لم يحضر",
+    "miniStats": {
+      "total": "إجمالي اليوم",
+      "waiting": "في الانتظار",
+      "completed": "تم الكشف",
+      "revenue": "الإيراد المتوقع",
+      "revenueValue": "{amount} جنيه"
+    },
+    "analyticsPage": {
+      "metaTitle": "الإحصائيات — نواة",
+      "title": "إحصائيات العيادة",
+      "subtitle": "مؤشرات تاريخية ومنحنى الحجوزات — آخر 30 يومًا."
+    },
     "analytics": {
       "kpiAttendance": "معدل الانضباط العام",
       "kpiSavedHours": "الوقت المسترد",
@@ -118,6 +133,8 @@
       "listLabel": "قائمة مواعيد اليوم",
       "count": "{count} موعد",
       "empty": "لا توجد مواعيد اليوم.",
+      "statusLabel": "حالة المريض",
+      "noShowOption": "لم يحضر",
       "statusCompleted": "مكتمل",
       "actions": {
         "confirm": "تأكيد",
@@ -155,6 +172,25 @@
       "cancel": "إلغاء",
       "close": "إغلاق",
       "error": "تعذرت إضافة الحضور المباشر."
+    },
+    "blockTime": {
+      "blockTime": "إغلاق وقت",
+      "badge": "استثناء وقت",
+      "title": "إغلاق فترة زمنية",
+      "subtitle": "إخفاء ساعات محددة عن الحجز الإلكتروني دون تغيير جدولك الأسبوعي.",
+      "dateLabel": "التاريخ",
+      "fromLabel": "من",
+      "toLabel": "إلى",
+      "reasonLabel": "السبب (اختياري)",
+      "reasonPlaceholder": "مثال: استراحة غداء، طوارئ",
+      "submit": "إغلاق الوقت",
+      "submitting": "جاري الإغلاق…",
+      "cancel": "إلغاء",
+      "close": "إغلاق",
+      "error": "تعذّر إغلاق هذا الوقت.",
+      "successToast": "تم إغلاق الوقت",
+      "successToastHint": "لن يرى المرضى هذه المواعيد في الحجز.",
+      "errorToast": "فشل الإغلاق"
     },
     "followUp": {
       "title": "حجز الموعد القادم",
@@ -206,6 +242,7 @@
       "navInventory": "إدارة المخزون",
       "navStaff": "فريق العمل",
       "navFinancials": "الحسابات",
+      "navAnalytics": "الإحصائيات",
       "navMarketing": "حملات التسويق",
       "navAiAssistant": "المساعد الذكي",
       "navSettings": "الإعدادات",
@@ -234,6 +271,17 @@
     "edit": "تعديل",
     "delete": "حذف",
     "deleteError": "تعذّر حذف الخدمة.",
+    "deleteModal": {
+      "title": "حذف الخدمة",
+      "subtitle": "هل تريد حذف «{name}»؟",
+      "body": "لا يمكن التراجع عن هذا الإجراء. إذا كانت الخدمة مرتبطة بمواعيد سابقة أو قادمة، لن يتم الحذف.",
+      "cancel": "إلغاء",
+      "confirm": "نعم، احذف",
+      "deleting": "جاري الحذف…",
+      "close": "إغلاق",
+      "error": "تعذّر حذف الخدمة.",
+      "hasAppointments": "لا يمكن حذف هذه الخدمة لأنها مرتبطة بمواعيد. يمكنك تعديل اسمها أو إخفاؤها من الحجز بدل الحذف."
+    },
     "form": {
       "name": "اسم الخدمة",
       "namePlaceholder": "مثال: كشف — متابعة — تنظيف",
@@ -425,7 +473,33 @@
     "deleteError": "تعذّر حذف الخدمة.",
     "delete": "حذف",
     "noServices": "لم تُضف أي خدمات بعد. أضف خدمتك الأولى أعلاه.",
-    "duration": "{minutes} دقيقة"
+    "duration": "{minutes} دقيقة",
+    "availabilityLinkTitle": "ساعات العمل",
+    "availabilityLinkHint": "حدّد الأوقات التي يمكن للمرضى الحجز فيها"
+  },
+  "availability": {
+    "metaTitle": "ساعات العمل — نواة",
+    "title": "ساعات العمل",
+    "subtitle": "حدّد جدولك الأسبوعي. يمكن للمرضى الحجز فقط خلال ساعات العمل.",
+    "backToSettings": "العودة للإعدادات",
+    "toggleOpen": "مفتوح",
+    "openLabel": "يقبل الحجوزات",
+    "closedLabel": "مغلق",
+    "from": "من",
+    "to": "إلى",
+    "save": "حفظ الجدول",
+    "saving": "جاري الحفظ…",
+    "saved": "تم حفظ الجدول.",
+    "saveError": "تعذّر حفظ الجدول.",
+    "days": {
+      "saturday": "السبت",
+      "sunday": "الأحد",
+      "monday": "الإثنين",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء",
+      "thursday": "الخميس",
+      "friday": "الجمعة"
+    }
   },
   "validation": {
     "nameMin": "يجب أن يكون الاسم حرفين على الأقل",
@@ -449,20 +523,55 @@
       "features": "المميزات",
       "value": "لماذا نواة",
       "pricing": "الأسعار",
-      "cta": "ابدأ الآن"
+      "cta": "ابدأ الآن",
+      "themeLight": "الوضع الفاتح",
+      "themeDark": "الوضع الداكن"
     },
     "hero": {
       "badge": "لعيادات الأسنان والجلدية والنفسية",
       "headline": "عيادتك.. تعمل بدقة ساعة سويسرية.",
-      "subheadline": "نظام الإدارة السحابي الأذكى لعيادات الأسنان والجلدية والنفسية. ضاعف إيراداتك، اقضِ على غياب المرضى، وتواصل مجاناً.",
+      "subheadline": "النظام السحابي الأول لإدارة عيادات الأسنان والجلدية و النفسية. تحكم في مواعيدك، ضاعف أرباحك، وتواصل مع مرضاك بذكاء.",
       "ctaPrimary": "ابدأ الآن",
-      "ctaSecondary": "تصفح المميزات",
+      "ctaSecondary": "استكشف النظام",
       "stat1Value": "٤٠٪",
       "stat1Label": "تقليل الغياب",
       "stat2Value": "صفر",
       "stat2Label": "تكلفة واتساب",
       "stat3Value": "٦ أشهر",
-      "stat3Label": "عائد مضمون"
+      "stat3Label": "عائد مضمون",
+      "preview": {
+        "windowTitle": "لوحة تحكم نواة",
+        "clinicName": "عيادة نواة — الدقي",
+        "queueSubtitle": "الإثنين ٦ يوليو ٢٠٢٦",
+        "tabQueue": "طابور اليوم",
+        "tabFinance": "الإحصائيات المالية",
+        "detailLabel": "تفاصيل الموعد",
+        "detailService": "الخدمة",
+        "detailTime": "الموعد",
+        "actionPrimary": "إتمام الجلسة",
+        "actionSecondary": "جدولة متابعة",
+        "patient1": "سارة محمود",
+        "patient2": "أحمد حسن",
+        "patient3": "نور إبراهيم",
+        "service1": "تبييض أسنان",
+        "service2": "جلسة علاج نفسي",
+        "service3": "متابعة جلدية",
+        "statusInSession": "جاري الكشف",
+        "statusConfirmed": "تم التأكيد",
+        "statusCheckedIn": "تم الحضور",
+        "savedRevenueLabel": "الإيرادات المستردة",
+        "savedRevenueValue": "+٤٢,٥٠٠ ج.م",
+        "savedRevenueDelta": "+٢٨٪",
+        "savedRevenueHint": "من تذكيرات واتساب وتأكيدات المواعيد",
+        "chartTitle": "نمو الإيرادات الشهري",
+        "chartStart": "يناير",
+        "chartEnd": "يونيو",
+        "notificationLabel": "الإشعارات",
+        "notificationTitle": "حجز جديد",
+        "notificationBody": "قام أحمد حسن بحجز جلسة علاج نفسي الساعة ١١:٠٠",
+        "mobileQueueLabel": "الطابور النشط",
+        "mobileRevenueLabel": "الإيرادات المستردة"
+      }
     },
     "bento": {
       "eyebrow": "ترسانة نواة",
@@ -531,23 +640,30 @@
     "pricing": {
       "eyebrow": "أسعار شفافة",
       "title": "استثمار يُدفع عن نفسه",
-      "subtitle": "بدون رسوم خفية. تفعيل شخصي لعيادتك ثم اشتراك نصف سنوي واضح.",
-      "hook": "أقل من ثمن كشف واحد ضائع",
-      "planName": "خطة العيادة",
-      "planDuration": "٦ أشهر",
-      "onboardingLabel": "التفعيل",
-      "onboardingValue": "تأهيل شخصي White-glove",
-      "setupFeeLabel": "رسوم التفعيل",
-      "setupFee": "٥٠٠ جنيه",
-      "oneTime": "مرة واحدة",
-      "subscriptionLabel": "الاشتراك",
-      "subscriptionFee": "٣,٠٠٠ جنيه / ٦ أشهر",
+      "subtitle": "ابدأ مجانًا لمدة ٦ أشهر، أو فعّل الخطة الكاملة مع تفعيل شخصي للعيادة.",
+      "free": {
+        "badge": "جديد — مجانًا",
+        "name": "الخطة المجانية",
+        "duration": "٦ أشهر",
+        "price": "٠ جنيه",
+        "setupFee": "بدون رسوم تفعيل",
+        "description": "جرّب نواة كاملة بدون أي تكلفة — مثالية للبدء السريع.",
+        "cta": "ابدأ مجانًا"
+      },
+      "paid": {
+        "badge": "الخطة الكاملة",
+        "name": "خطة العيادة",
+        "duration": "٦ أشهر",
+        "price": "٣,٠٠٠ جنيه",
+        "setupFee": "+ ٥٠٠ جنيه تفعيل (مرة واحدة)",
+        "description": "تفعيل شخصي White-glove لعيادتك مع اشتراك نصف سنوي واضح.",
+        "cta": "اختر الخطة الكاملة"
+      },
       "benefit1": "رابط حجز PWA خاص بعيادتك",
       "benefit2": "شاشة تحكم مزدوجة للطابور",
       "benefit3": "سجل طبي مصور + قبل/بعد",
       "benefit4": "واتساب مجاني بدون CRM",
-      "benefit5": "دعم فني بالعربية",
-      "cta": "ابدأ الآن"
+      "benefit5": "دعم فني بالعربية"
     },
     "footer": {
       "brand": "نواة — Nawa",
@@ -590,9 +706,9 @@
     },
     "register": {
       "metaTitle": "إنشاء حساب العيادة — نواة",
-      "metaDescription": "سجّل عيادتك وابدأ بإدارة المواعيد خلال دقائق.",
+      "metaDescription": "سجّل عيادتك واختر خطة الاشتراك وابدأ بإدارة المواعيد خلال دقائق.",
       "title": "أنشئ مساحة عيادتك",
-      "subtitle": "أدخل بيانات العيادة — ستُوجّه مباشرةً إلى لوحة التحكم.",
+      "subtitle": "اختر خطتك، أدخل بيانات العيادة — ستُوجّه مباشرةً إلى لوحة التحكم.",
       "clinicName": "اسم العيادة",
       "clinicNamePlaceholder": "عيادة النور",
       "email": "البريد الإلكتروني للطبيب",
@@ -603,11 +719,20 @@
       "submitting": "جاري الإنشاء…",
       "hasAccount": "لديك حساب بالفعل؟",
       "loginLink": "تسجيل الدخول",
+      "plans": {
+        "title": "اختر خطة الاشتراك",
+        "subtitle": "ابدأ مجانًا لمدة ٦ أشهر أو فعّل الخطة الكاملة مباشرة.",
+        "freeBadge": "جديد",
+        "setupFee": "+ {amount} جنيه تفعيل (مرة واحدة)",
+        "noSetupFee": "بدون رسوم تفعيل"
+      },
       "errors": {
         "emailInUse": "البريد الإلكتروني مستخدم بالفعل.",
         "weakPassword": "كلمة المرور يجب أن تكون 6 أحرف على الأقل.",
         "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
         "clinicNameRequired": "اسم العيادة مطلوب (حرفان على الأقل).",
+        "invalidPlan": "يرجى اختيار خطة اشتراك صالحة.",
+        "plansUnavailable": "تعذّر تحميل خطط الاشتراك. تواصل مع الدعم أو حاول لاحقًا.",
         "tenantCreateFailed": "تعذّر إنشاء مساحة العيادة. يرجى المحاولة مرة أخرى.",
         "signInFailed": "تم إنشاء الحساب لكن تعذّر تسجيل الدخول. حاول تسجيل الدخول يدويًا.",
         "unknown": "حدث خطأ. يرجى المحاولة مرة أخرى."

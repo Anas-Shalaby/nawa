@@ -13,6 +13,7 @@ export interface ServiceInput {
 export interface ManageServiceResult {
   success: boolean;
   error?: string;
+  errorCode?: "HAS_APPOINTMENTS" | "UNKNOWN";
 }
 
 type ValidatedServiceInput =
@@ -146,11 +147,15 @@ export async function deleteService(serviceId: string): Promise<ManageServiceRes
       .eq("tenant_id", tenantId);
 
     if (error) {
-      const message = error.message.includes("violates foreign key")
-        ? "This service has appointments and cannot be deleted."
-        : error.message;
+      const hasAppointments = error.message.includes("violates foreign key");
 
-      return { success: false, error: message };
+      return {
+        success: false,
+        errorCode: hasAppointments ? "HAS_APPOINTMENTS" : "UNKNOWN",
+        error: hasAppointments
+          ? "This service has appointments and cannot be deleted."
+          : error.message,
+      };
     }
 
     revalidateServicePaths();

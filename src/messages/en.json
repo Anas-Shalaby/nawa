@@ -60,6 +60,9 @@
     "serviceDuration": "{minutes} min",
     "changeService": "Change service",
     "loadingSlots": "Loading available times…",
+    "chooseDate": "Choose a date",
+    "today": "Today",
+    "noSlotsDay": "Sorry, no available slots on this day.",
     "noServicesAvailable": "Online booking is not available yet. Please contact the clinic.",
     "backHome": "Back to home",
     "servicePrice": "{amount} EGP",
@@ -103,6 +106,18 @@
     "pulsePending": "Pending",
     "pulseCompleted": "Completed",
     "pulseNoShows": "No-Shows",
+    "miniStats": {
+      "total": "Today's total",
+      "waiting": "Waiting",
+      "completed": "Completed",
+      "revenue": "Expected revenue",
+      "revenueValue": "{amount} EGP"
+    },
+    "analyticsPage": {
+      "metaTitle": "Analytics — Nawa",
+      "title": "Clinic analytics",
+      "subtitle": "Historical KPIs and booking trends — last 30 days."
+    },
     "analytics": {
       "kpiAttendance": "Attendance Rate",
       "kpiSavedHours": "Saved Hours",
@@ -118,6 +133,8 @@
       "listLabel": "Today's appointment list",
       "count": "{count} appointments",
       "empty": "No appointments for today.",
+      "statusLabel": "Patient status",
+      "noShowOption": "No-show",
       "statusCompleted": "Done",
       "actions": {
         "confirm": "Confirm",
@@ -155,6 +172,25 @@
       "cancel": "Cancel",
       "close": "Close",
       "error": "Could not add walk-in."
+    },
+    "blockTime": {
+      "blockTime": "Block time",
+      "badge": "Time exception",
+      "title": "Block time slot",
+      "subtitle": "Hide specific hours from online booking without changing your weekly schedule.",
+      "dateLabel": "Date",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "e.g. Lunch break, Emergency",
+      "submit": "Block time",
+      "submitting": "Blocking…",
+      "cancel": "Cancel",
+      "close": "Close",
+      "error": "Could not block this time.",
+      "successToast": "Time blocked",
+      "successToastHint": "Patients will no longer see these slots.",
+      "errorToast": "Block failed"
     },
     "followUp": {
       "title": "Schedule Next Visit",
@@ -206,6 +242,7 @@
       "navInventory": "Inventory",
       "navStaff": "Staff",
       "navFinancials": "Billing & ROI",
+      "navAnalytics": "Analytics",
       "navMarketing": "Marketing",
       "navAiAssistant": "AI assistant",
       "navSettings": "Settings",
@@ -234,6 +271,17 @@
     "edit": "Edit",
     "delete": "Delete",
     "deleteError": "Could not delete service.",
+    "deleteModal": {
+      "title": "Delete service",
+      "subtitle": "Delete «{name}»?",
+      "body": "This cannot be undone. If the service is linked to past or upcoming appointments, deletion will be blocked.",
+      "cancel": "Cancel",
+      "confirm": "Yes, delete",
+      "deleting": "Deleting…",
+      "close": "Close",
+      "error": "Could not delete service.",
+      "hasAppointments": "This service cannot be deleted because it has linked appointments. Edit the name or stop offering it for booking instead."
+    },
     "form": {
       "name": "Service name",
       "namePlaceholder": "e.g. Consultation, Follow-up, Cleaning",
@@ -425,7 +473,33 @@
     "deleteError": "Could not delete service.",
     "delete": "Delete",
     "noServices": "No services yet. Add your first service above.",
-    "duration": "{minutes} min"
+    "duration": "{minutes} min",
+    "availabilityLinkTitle": "Working hours",
+    "availabilityLinkHint": "Set when patients can book appointments"
+  },
+  "availability": {
+    "metaTitle": "Working hours — Nawa",
+    "title": "Working hours",
+    "subtitle": "Set your weekly schedule. Patients can only book during open hours.",
+    "backToSettings": "Back to settings",
+    "toggleOpen": "Open",
+    "openLabel": "Accepting bookings",
+    "closedLabel": "Closed",
+    "from": "From",
+    "to": "To",
+    "save": "Save schedule",
+    "saving": "Saving…",
+    "saved": "Schedule saved.",
+    "saveError": "Could not save schedule.",
+    "days": {
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday"
+    }
   },
   "validation": {
     "nameMin": "Name must be at least 2 characters",
@@ -449,20 +523,55 @@
       "features": "Features",
       "value": "Why Nawa",
       "pricing": "Pricing",
-      "cta": "Get started"
+      "cta": "Get started",
+      "themeLight": "Light mode",
+      "themeDark": "Dark mode"
     },
     "hero": {
       "badge": "For dental, dermatology & mental health clinics",
       "headline": "Your clinic.. runs like Swiss clockwork.",
-      "subheadline": "The smartest cloud management system for dental, dermatology, and mental health clinics. Double revenue, eliminate no-shows, communicate for free.",
+      "subheadline": "The first cloud system built for dental, dermatology, and mental health clinics. Control your schedule, grow revenue, and reach patients intelligently.",
       "ctaPrimary": "Get started",
-      "ctaSecondary": "Browse features",
+      "ctaSecondary": "Explore the system",
       "stat1Value": "40%",
       "stat1Label": "Fewer no-shows",
       "stat2Value": "Zero",
       "stat2Label": "WhatsApp cost",
       "stat3Value": "6 mo",
-      "stat3Label": "Guaranteed ROI"
+      "stat3Label": "Guaranteed ROI",
+      "preview": {
+        "windowTitle": "Nawa Dashboard",
+        "clinicName": "Nawa Clinic — Dokki",
+        "queueSubtitle": "Monday, July 6, 2026",
+        "tabQueue": "Today's queue",
+        "tabFinance": "Financial stats",
+        "detailLabel": "Appointment details",
+        "detailService": "Service",
+        "detailTime": "Time",
+        "actionPrimary": "Complete session",
+        "actionSecondary": "Schedule follow-up",
+        "patient1": "Sara Mahmoud",
+        "patient2": "Ahmed Hassan",
+        "patient3": "Nour Ibrahim",
+        "service1": "Teeth whitening",
+        "service2": "Therapy session",
+        "service3": "Dermatology follow-up",
+        "statusInSession": "In session",
+        "statusConfirmed": "Confirmed",
+        "statusCheckedIn": "Checked in",
+        "savedRevenueLabel": "Recovered revenue",
+        "savedRevenueValue": "+42,500 EGP",
+        "savedRevenueDelta": "+28%",
+        "savedRevenueHint": "From WhatsApp reminders and confirmations",
+        "chartTitle": "Monthly revenue growth",
+        "chartStart": "Jan",
+        "chartEnd": "Jun",
+        "notificationLabel": "Notifications",
+        "notificationTitle": "New booking",
+        "notificationBody": "Ahmed Hassan booked a therapy session at 11:00 AM",
+        "mobileQueueLabel": "Active queue",
+        "mobileRevenueLabel": "Recovered revenue"
+      }
     },
     "bento": {
       "eyebrow": "The Nawa arsenal",
@@ -531,23 +640,30 @@
     "pricing": {
       "eyebrow": "Transparent pricing",
       "title": "An investment that pays for itself",
-      "subtitle": "No hidden fees. White-glove onboarding, then a clear semi-annual subscription.",
-      "hook": "Less than the cost of one missed visit",
-      "planName": "Clinic plan",
-      "planDuration": "6 months",
-      "onboardingLabel": "Onboarding",
-      "onboardingValue": "White-glove setup",
-      "setupFeeLabel": "Setup fee",
-      "setupFee": "500 EGP",
-      "oneTime": "One-time",
-      "subscriptionLabel": "Subscription",
-      "subscriptionFee": "3,000 EGP / 6 months",
+      "subtitle": "Start free for 6 months, or activate the full clinic plan with white-glove onboarding.",
+      "free": {
+        "badge": "New — Free",
+        "name": "Free plan",
+        "duration": "6 months",
+        "price": "0 EGP",
+        "setupFee": "No setup fee",
+        "description": "Try the full Nawa experience at no cost — perfect for getting started fast.",
+        "cta": "Start free"
+      },
+      "paid": {
+        "badge": "Full plan",
+        "name": "Clinic plan",
+        "duration": "6 months",
+        "price": "3,000 EGP",
+        "setupFee": "+ 500 EGP setup (one-time)",
+        "description": "White-glove onboarding for your clinic with a clear semi-annual subscription.",
+        "cta": "Choose full plan"
+      },
       "benefit1": "Private PWA booking link",
       "benefit2": "Master-detail queue screen",
       "benefit3": "Visual EHR + before/after",
       "benefit4": "Free WhatsApp — no CRM",
-      "benefit5": "Arabic-first support",
-      "cta": "Get started"
+      "benefit5": "Arabic-first support"
     },
     "footer": {
       "brand": "Nawa — نواة",
@@ -590,9 +706,9 @@
     },
     "register": {
       "metaTitle": "Create clinic account — Nawa",
-      "metaDescription": "Register your clinic and start managing appointments in minutes.",
+      "metaDescription": "Register your clinic, choose a subscription plan, and start managing appointments in minutes.",
       "title": "Create your clinic workspace",
-      "subtitle": "Enter your clinic details — you'll land on your dashboard right away.",
+      "subtitle": "Pick a plan, enter your clinic details — you'll land on your dashboard right away.",
       "clinicName": "Clinic name",
       "clinicNamePlaceholder": "Al-Noor Clinic",
       "email": "Doctor's email address",
@@ -603,11 +719,20 @@
       "submitting": "Creating…",
       "hasAccount": "Already have an account?",
       "loginLink": "Sign in",
+      "plans": {
+        "title": "Choose a subscription plan",
+        "subtitle": "Start free for 6 months or activate the full clinic plan now.",
+        "freeBadge": "New",
+        "setupFee": "+ {amount} EGP setup (one-time)",
+        "noSetupFee": "No setup fee"
+      },
       "errors": {
         "emailInUse": "Email already in use.",
         "weakPassword": "Password must be at least 6 characters.",
         "invalidEmail": "Enter a valid email address.",
         "clinicNameRequired": "Clinic name is required (at least 2 characters).",
+        "invalidPlan": "Please choose a valid subscription plan.",
+        "plansUnavailable": "Subscription plans could not be loaded. Contact support or try again later.",
         "tenantCreateFailed": "Could not create clinic workspace. Please try again.",
         "signInFailed": "Account created but sign-in failed. Try logging in manually.",
         "unknown": "Something went wrong. Please try again."

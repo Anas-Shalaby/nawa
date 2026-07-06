@@ -8,6 +8,7 @@ import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import {
   Banknote,
+  BarChart3,
   Bot,
   CalendarDays,
   ChevronLeft,
@@ -61,6 +62,11 @@ const NAV_SECTIONS: NavSection[] = [
   {
     sectionKey: "sectionFinance",
     items: [
+      {
+        href: "/dashboard/analytics",
+        labelKey: "navAnalytics",
+        icon: BarChart3,
+      },
       {
         href: "/dashboard/financials",
         labelKey: "navFinancials",

@@ -6,8 +6,17 @@ import { updateSession } from "./utils/supabase/middleware";
 const intlMiddleware = createIntlMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/super-admin")) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/super-admin")) {
     const response = NextResponse.next();
+    return updateSession(request, response);
+  }
+
+  if (pathname === "/") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/ar";
+    const response = NextResponse.redirect(url);
     return updateSession(request, response);
   }
 

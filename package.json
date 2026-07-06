@@ -6,8 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:passenger": "node server.js",
     "lint": "next lint",
     "seed:dev-user": "node --env-file=.env scripts/seed-dev-user.mjs"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

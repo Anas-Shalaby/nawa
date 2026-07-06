@@ -7,6 +7,7 @@ import {
   mapAppointmentRow,
   type AppointmentJoinRow,
 } from "@/lib/dashboard/mapAppointment";
+import { isAppointmentOnCairoDate } from "@/lib/datetime/cairo";
 import { isQueueVisible, type Appointment } from "@/lib/dashboard/types";
 
 interface UseAppointmentsRealtimeOptions {
@@ -60,7 +61,14 @@ export function useAppointmentsRealtime({
 
           if (error || !data) return;
 
-          onUpsert(mapAppointmentRow(data as AppointmentJoinRow));
+          const appointment = mapAppointmentRow(data as AppointmentJoinRow);
+
+          if (!isAppointmentOnCairoDate(appointment.appointmentDate)) {
+            onRemove(row.id);
+            return;
+          }
+
+          onUpsert(appointment);
         },
       )
       .subscribe();

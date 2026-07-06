@@ -2,65 +2,74 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { CalendarDays } from "lucide-react";
+import { Clock3 } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
+import { formatCairoWeekday } from "@/lib/datetime/cairo";
 import type { TimeSlot } from "@/lib/booking/types";
 
 interface SlotPickerProps {
+  selectedDate: string;
   slots: TimeSlot[];
   selectedSlotId: string | null;
+  isLoading?: boolean;
   onSelect: (slot: TimeSlot) => void;
 }
 
-export function SlotPicker({ slots, selectedSlotId, onSelect }: SlotPickerProps) {
+export function SlotPicker({
+  selectedDate,
+  slots,
+  selectedSlotId,
+  isLoading = false,
+  onSelect,
+}: SlotPickerProps) {
   const t = useTranslations("booking");
   const locale = useLocale() as Locale;
-
-  const today = new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-EG", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    timeZone: "Africa/Cairo",
-  }).format(new Date());
 
   return (
     <section className="px-5 text-start">
       <div className="mb-4 flex items-center gap-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-booking-accent-light">
-          <CalendarDays className="h-4 w-4 text-booking-accent" aria-hidden />
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/5">
+          <Clock3 className="h-4 w-4 text-booking-accent" aria-hidden />
         </div>
         <div>
           <h2 className="text-lg font-semibold text-booking-text">{t("availableTimes")}</h2>
-          <p className="text-xs text-booking-muted">{today}</p>
+          <p className="text-xs text-booking-muted">{formatCairoWeekday(selectedDate, locale)}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
-        {slots.map((slot) => {
-          const isSelected = selectedSlotId === slot.id;
-          const isDisabled = !slot.available;
+      {isLoading ? (
+        <p className="py-8 text-center text-sm text-booking-muted">{t("loadingSlots")}</p>
+      ) : slots.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-gray-200 bg-booking-surface px-4 py-10 text-center">
+          <p className="text-sm text-booking-muted">{t("noSlotsDay")}</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+          {slots.map((slot, index) => {
+            const isSelected = selectedSlotId === slot.id;
 
-          return (
-            <motion.button
-              key={slot.id}
-              type="button"
-              disabled={isDisabled}
-              onClick={() => onSelect(slot)}
-              whileTap={isDisabled ? undefined : { scale: 0.96 }}
-              className={[
-                "relative min-h-[52px] rounded-xl text-sm font-medium transition-colors",
-                isDisabled
-                  ? "cursor-not-allowed bg-gray-100 text-gray-300 line-through"
-                  : isSelected
-                    ? "bg-booking-accent text-white shadow-md shadow-booking-accent/25"
-                    : "border border-gray-200 bg-booking-surface text-booking-text hover:border-booking-accent/40",
-              ].join(" ")}
-            >
-              {slot.label}
-            </motion.button>
-          );
-        })}
-      </div>
+            return (
+              <motion.button
+                key={slot.id}
+                type="button"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.02, duration: 0.25 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => onSelect(slot)}
+                className={[
+                  "min-h-[48px] rounded-full text-sm font-medium transition-colors",
+                  isSelected
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
+                    : "bg-slate-800 text-slate-100 hover:bg-blue-600",
+                ].join(" ")}
+              >
+                {slot.label}
+              </motion.button>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

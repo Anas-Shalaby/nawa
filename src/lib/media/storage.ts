@@ -1,4 +1,3 @@
-import { createClient } from "@/utils/supabase/client";
 import {
   EHR_ALLOWED_MIME_TYPES,
   EHR_BUCKET,
@@ -16,13 +15,52 @@ function extensionForMime(mime: string): string {
       return "webp";
     case "image/heic":
       return "heic";
+    case "image/heif":
+      return "heif";
     default:
       return "jpg";
   }
 }
 
-export function validateEhrImage(file: File): string | null {
-  if (!EHR_ALLOWED_MIME_TYPES.includes(file.type as (typeof EHR_ALLOWED_MIME_TYPES)[number])) {
+/** Browsers (especially mobile) often leave file.type empty — infer from extension. */
+export function resolveImageMimeType(file: File): string {
+  const normalized = file.type?.toLowerCase().trim();
+
+  if (normalized === "image/jpg") {
+    return "image/jpeg";
+  }
+
+  if (
+    normalized &&
+    EHR_ALLOWED_MIME_TYPES.includes(normalized as (typeof EHR_ALLOWED_MIME_TYPES)[number])
+  ) {
+    return normalized;
+  }
+
+  const ext = file.name.split(".").pop()?.toLowerCase();
+
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "webp":
+      return "image/webp";
+    case "heic":
+      return "image/heic";
+    case "heif":
+      return "image/heif";
+    default:
+      return normalized || "";
+  }
+}
+
+export function validateEhrImage(file: File, mimeType = resolveImageMimeType(file)): string | null {
+  if (
+    !mimeType ||
+    !EHR_ALLOWED_MIME_TYPES.includes(mimeType as (typeof EHR_ALLOWED_MIME_TYPES)[number])
+  ) {
     return "Unsupported image type.";
   }
 
@@ -36,9 +74,9 @@ export function validateEhrImage(file: File): string | null {
 export function buildEhrStoragePath(
   tenantId: string,
   patientId: string,
-  file: File,
+  mimeType: string,
 ): string {
-  const ext = extensionForMime(file.type);
+  const ext = extensionForMime(mimeType);
   const fileId = crypto.randomUUID();
   return `${tenantId}/${patientId}/${fileId}.${ext}`;
 }
@@ -48,18 +86,20 @@ export async function uploadEhrImageToStorage(
   tenantId: string,
   patientId: string,
 ): Promise<{ filePath: string } | { error: string }> {
-  const validationError = validateEhrImage(file);
+  const mimeType = resolveImageMimeType(file);
+  const validationError = validateEhrImage(file, mimeType);
   if (validationError) {
     return { error: validationError };
   }
 
+  const { createClient } = await import("@/utils/supabase/client");
   const supabase = createClient();
-  const filePath = buildEhrStoragePath(tenantId, patientId, file);
+  const filePath = buildEhrStoragePath(tenantId, patientId, mimeType);
 
   const { error } = await supabase.storage.from(EHR_BUCKET).upload(filePath, file, {
     cacheControl: "3600",
     upsert: false,
-    contentType: file.type,
+    contentType: mimeType,
   });
 
   if (error) {
@@ -70,6 +110,7 @@ export async function uploadEhrImageToStorage(
 }
 
 export async function deleteEhrImageFromStorage(filePath: string): Promise<string | null> {
+  const { createClient } = await import("@/utils/supabase/client");
   const supabase = createClient();
   const { error } = await supabase.storage.from(EHR_BUCKET).remove([filePath]);
   return error?.message ?? null;
@@ -81,6 +122,7 @@ export async function createSignedEhrUrls(
 ): Promise<Record<string, string>> {
   if (filePaths.length === 0) return {};
 
+  const { createClient } = await import("@/utils/supabase/client");
   const supabase = createClient();
   const urls: Record<string, string> = {};
 

@@ -1,26 +1,22 @@
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { fetchDashboardAnalytics } from "@/lib/queries/analytics";
+import { getCairoTodayDisplayIso } from "@/lib/datetime/cairo";
 import { fetchTodayAppointments } from "@/lib/queries/dashboard";
 
-export default async function DashboardPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const today = new Date().toISOString();
-  const [{ appointments, clinicName, tenantId, pulse, services }, analytics] =
-    await Promise.all([fetchTodayAppointments(), fetchDashboardAnalytics(locale)]);
+export default async function DashboardPage() {
+  const today = getCairoTodayDisplayIso();
+  const { appointments, clinicName, tenantId, miniStats, canViewRevenue, services } =
+    await fetchTodayAppointments();
 
   return (
-    <div className="mx-auto max-w-[1440px]">
+    <div className="flex h-full w-full max-w-none flex-col overflow-hidden">
       <DashboardShell
         clinicName={clinicName}
         date={today}
         tenantId={tenantId}
         initialAppointments={appointments}
+        initialMiniStats={miniStats}
+        canViewRevenue={canViewRevenue}
         services={services}
-        analytics={analytics}
       />
     </div>
   );

@@ -9,6 +9,7 @@ import {
   type ClinicalSession,
 } from "@/lib/ehr/groupSessions";
 import type { PatientMediaWithUrl } from "@/lib/media/types";
+import { PatientMediaUpload } from "./PatientMediaUpload";
 import { SessionMediaUpload } from "./SessionMediaUpload";
 
 type OptimisticItem = PatientMediaWithUrl & { optimistic?: boolean };
@@ -66,11 +67,20 @@ export function MedicalTimeline({
 
   if (sessions.length === 0) {
     return (
-      <div className="flex flex-col items-center rounded-xl border border-dashed border-subtle px-6 py-14 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-subtle bg-base">
-          <ClipboardList className="h-6 w-6 text-muted" strokeWidth={1.5} />
+      <div className="space-y-6">
+        <div className="flex flex-col items-center rounded-xl border border-dashed border-subtle px-6 py-10 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-subtle bg-base">
+            <ClipboardList className="h-6 w-6 text-muted" strokeWidth={1.5} />
+          </div>
+          <p className="text-sm text-muted">{t("timelineEmpty")}</p>
         </div>
-        <p className="text-sm text-muted">{t("timelineEmpty")}</p>
+        <PatientMediaUpload
+          patientId={patientId}
+          tenantId={tenantId}
+          onUploaded={onUploaded}
+          onUploadComplete={onUploadComplete}
+          onUploadFailed={onUploadFailed}
+        />
       </div>
     );
   }

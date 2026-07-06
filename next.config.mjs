@@ -15,7 +15,19 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/ar",
+        permanent: false,
+      },
+    ];
+  },
   experimental: {
+    serverActions: {
+      bodySizeLimit: "12mb",
+    },
     // Next.js 14: keep Supabase out of server bundles to avoid stale vendor-chunk errors in dev.
     serverComponentsExternalPackages: [
       "@supabase/supabase-js",
