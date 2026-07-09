@@ -175,7 +175,8 @@
         "checked_in": "Checked-in",
         "in_session": "In Session",
         "completed": "Completed",
-        "no_show": "No-show"
+        "no_show": "No-show",
+        "canceled": "Canceled"
       }
     },
     "walkIn": {
@@ -275,6 +276,63 @@
       "empty": "No notifications yet",
       "markAllRead": "Mark all read",
       "bellLabel": "Notification center"
+    },
+    "commandCenter": {
+      "title": "Daily Command Center",
+      "currency": "EGP",
+      "fallbackPatient": "Patient",
+      "kpis": {
+        "todayRevenue": {
+          "title": "Today's Revenue",
+          "delta": "vs yesterday"
+        },
+        "totalPatients": {
+          "title": "Total Patients",
+          "newLabel": "New",
+          "returningLabel": "Returning"
+        },
+        "waiting": {
+          "title": "Waiting Queue",
+          "avg": "Avg: {mins} mins"
+        },
+        "recoveredDebt": {
+          "title": "Recovered Debt",
+          "hint": "Recovered collections through smart follow-up"
+        }
+      },
+      "flowChart": {
+        "title": "Patient Flow & Revenue by Hour",
+        "subtitle": "Track today's peak clinic periods",
+        "badge": "Peak Active",
+        "patientsMetric": "Patients",
+        "hourLabel": "Hour"
+      },
+      "liveQueue": {
+        "title": "Live Action Queue",
+        "sendToDoctor": "Send to Doctor",
+        "empty": "No patients are waiting right now."
+      },
+      "topServices": {
+        "title": "Top Performing Services Today",
+        "servicesCount": "services",
+        "countLabel": "cases",
+        "empty": "No completed services yet."
+      },
+      "alerts": {
+        "title": "Smart AI Alerts",
+        "confirmation": "⚠️ {count} patients have not confirmed tomorrow's booking.",
+        "waiting": "💡 Patient ({name}) exceeded waiting time by {mins} minutes.",
+        "footer": "Total cases today: {total}"
+      },
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "checked_in": "Checked-in",
+        "in_session": "In Clinic",
+        "completed": "Completed",
+        "no_show": "No-show",
+        "canceled": "Canceled"
+      }
     }
   },
   "services": {
@@ -341,6 +399,8 @@
     "clearWarning": "Clear warning",
     "archive": "Archive",
     "restore": "Restore",
+    "delete": "Delete",
+    "deleteConfirm": "Delete {name}? This action cannot be undone.",
     "form": {
       "name": "Patient name",
       "namePlaceholder": "Ahmed Hassan",
@@ -437,7 +497,22 @@
     "createSuccess": "Appointment booked successfully",
     "updateSuccess": "Appointment updated successfully",
     "cancelSuccess": "Appointment cancelled",
-    "error": "Could not complete this action"
+    "error": "Could not complete this action",
+    "filterAll": "All",
+    "filterWeek": "This Week",
+    "filterMonth": "Next Month",
+    "dateRange": "Date range",
+    "rangeFrom": "From",
+    "rangeTo": "To",
+    "rangeApply": "Apply",
+    "rangeClear": "Clear",
+    "actionsMenu": "Appointment actions",
+    "rescheduleAction": "Reschedule",
+    "cancelBooking": "Cancel booking",
+    "cancelConfirm": "Cancel this appointment? This cannot be undone.",
+    "rangeEmpty": "No appointments scheduled in this period.",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed"
   },
   "recalls": {
     "metaTitle": "Patient Recalls — Nawa",
@@ -457,6 +532,27 @@
     "tabGeneral": "General Info",
     "tabVisitRecord": "Patient record",
     "tabVisualEhr": "Visual EHR",
+    "tabMedical": "Medical history",
+    "tabAppointments": "Appointments history",
+    "tabFinancials": "Financials",
+    "whatsappNow": "Message on WhatsApp",
+    "bookAppointment": "Book new appointment",
+    "pillVisits": "Total visits: {count}",
+    "pillBalance": "Outstanding balance: {amount} EGP",
+    "pillLastVisit": "Last visit: {date}",
+    "pillNoVisit": "No visits yet",
+    "doctorNotes": "Doctor's notes",
+    "doctorNotesPlaceholder": "No doctor's notes yet.",
+    "medicalImages": "Medical images",
+    "appointmentsEmpty": "No appointment history for this patient yet.",
+    "financialEmpty": "No invoices available for this patient.",
+    "totalCost": "Total cost",
+    "totalPaid": "Paid",
+    "remainingBalance": "Remaining",
+    "invoiceTotal": "Total",
+    "invoicePaid": "Paid",
+    "invoiceRemaining": "Remaining",
+    "currency": "EGP",
     "visitRecord": {
       "title": "Patient visit history",
       "subtitle": "All recorded appointments and visits — {count} visits",

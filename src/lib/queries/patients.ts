@@ -9,6 +9,8 @@ export interface PatientRecord {
   isArchived: boolean;
   totalBalanceDue: number;
   createdAt: string;
+  totalVisits?: number;
+  lastVisitAt?: string | null;
 }
 
 export async function fetchPatients(): Promise<PatientRecord[]> {
@@ -25,7 +27,33 @@ export async function fetchPatients(): Promise<PatientRecord[]> {
     throw new Error(`Failed to load patients: ${error.message}`);
   }
 
+  const patientIds = (data ?? []).map((patient) => patient.id);
+  const visitsMap = new Map<string, { totalVisits: number; lastVisitAt: string | null }>();
+
+  if (patientIds.length > 0) {
+    const { data: appointmentRows, error: appointmentError } = await supabase
+      .from("appointments")
+      .select("patient_id, appointment_date, status")
+      .eq("tenant_id", tenantId)
+      .in("patient_id", patientIds)
+      .order("appointment_date", { ascending: false });
+
+    if (appointmentError) {
+      throw new Error(`Failed to load patient visits: ${appointmentError.message}`);
+    }
+
+    for (const row of appointmentRows ?? []) {
+      if (row.status === "canceled" || row.status === "no_show") continue;
+      const current = visitsMap.get(row.patient_id) ?? { totalVisits: 0, lastVisitAt: null };
+      visitsMap.set(row.patient_id, {
+        totalVisits: current.totalVisits + 1,
+        lastVisitAt: current.lastVisitAt ?? row.appointment_date,
+      });
+    }
+  }
+
   return (data ?? []).map((patient) => ({
+    ...(visitsMap.get(patient.id) ?? { totalVisits: 0, lastVisitAt: null }),
     id: patient.id,
     name: patient.name,
     phoneNumber: patient.phone_number,

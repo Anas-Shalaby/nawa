@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { PatientsShell } from "@/components/patients/PatientsShell";
+import { PatientsDirectoryShell } from "@/components/patients/PatientsDirectoryShell";
 import { fetchPatients } from "@/lib/queries/patients";
 
 export async function generateMetadata({
@@ -18,5 +18,5 @@ export async function generateMetadata({
 export default async function PatientsPage() {
   const patients = await fetchPatients();
 
-  return <PatientsShell patients={patients} />;
+  return <PatientsDirectoryShell patients={patients} />;
 }

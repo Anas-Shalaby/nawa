@@ -1,4 +1,4 @@
-import { AgendaShell } from "@/components/agenda/AgendaShell";
+import { UpcomingAppointmentsShell } from "@/components/agenda/UpcomingAppointmentsShell";
 import { fetchUpcomingAgenda } from "@/lib/queries/agenda";
 import { fetchPatients } from "@/lib/queries/patients";
 import { fetchDashboardServices } from "@/lib/queries/services";
@@ -30,7 +30,7 @@ export default async function UpcomingPage() {
     }));
 
   return (
-    <AgendaShell
+    <UpcomingAppointmentsShell
       appointments={appointments}
       services={services}
       patients={activePatients}

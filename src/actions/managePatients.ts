@@ -166,6 +166,47 @@ export async function restorePatient(patientId: string): Promise<ManagePatientRe
   }
 }
 
+export async function deletePatient(patientId: string): Promise<ManagePatientResult> {
+  if (!patientId) {
+    return { success: false, error: "Patient id is required." };
+  }
+
+  try {
+    const supabase = await createAuthenticatedClient();
+    const tenantId = await resolveTenantId(supabase);
+
+    const { data, error } = await supabase
+      .from("patients")
+      .delete()
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId)
+      .select("id");
+
+    if (error) {
+      return {
+        success: false,
+        error:
+          error.code === "23503"
+            ? "This patient has related records and cannot be deleted. Archive them instead."
+            : error.message,
+      };
+    }
+
+    if (!data || data.length === 0) {
+      return { success: false, error: "Patient not found." };
+    }
+
+    revalidatePatientPaths();
+    return { success: true, patientId };
+  } catch (error) {
+    console.error("[deletePatient]", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not delete patient.",
+    };
+  }
+}
+
 export async function clearPatientWarning(
   patientId: string,
 ): Promise<ManagePatientResult> {

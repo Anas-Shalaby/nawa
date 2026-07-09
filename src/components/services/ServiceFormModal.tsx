@@ -9,6 +9,7 @@ import { DURATION_OPTIONS } from "@/lib/services/mapService";
 
 export interface ServiceFormValues {
   name: string;
+  category: string;
   durationMinutes: number;
   priceEgp: number | null;
   preVisitInstructions: string | null;
@@ -17,14 +18,16 @@ export interface ServiceFormValues {
 interface ServiceFormModalProps {
   open: boolean;
   title: string;
+  categoryOptions?: string[];
   serviceId?: string;
   initialValues?: ServiceFormValues;
   onClose: () => void;
-  onSaved: () => void;
+  onSaved: (values: ServiceFormValues) => void;
 }
 
 const EMPTY_FORM: ServiceFormValues = {
   name: "",
+  category: "خدمات عامة",
   durationMinutes: 30,
   priceEgp: null,
   preVisitInstructions: null,
@@ -33,6 +36,7 @@ const EMPTY_FORM: ServiceFormValues = {
 export function ServiceFormModal({
   open,
   title,
+  categoryOptions = [],
   serviceId,
   initialValues,
   onClose,
@@ -79,7 +83,7 @@ export function ServiceFormModal({
         return;
       }
 
-      onSaved();
+      onSaved(form);
     });
   }
 
@@ -128,6 +132,27 @@ export function ServiceFormModal({
                   className="w-full rounded-xl border border-subtle bg-surface px-4 py-3 text-sm text-primary outline-none ring-accent/40 focus:ring-2"
                   placeholder={t("namePlaceholder")}
                 />
+              </div>
+
+              <div>
+                <label htmlFor="service-category" className="mb-1.5 block text-sm text-muted">
+                  التصنيف
+                </label>
+                <input
+                  id="service-category"
+                  list="service-category-options"
+                  value={form.category}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, category: event.target.value }))
+                  }
+                  className="w-full rounded-xl border border-subtle bg-surface px-4 py-3 text-sm text-primary outline-none ring-accent/40 focus:ring-2"
+                  placeholder="مثال: تجميل الأسنان"
+                />
+                <datalist id="service-category-options">
+                  {categoryOptions.map((category) => (
+                    <option key={category} value={category} />
+                  ))}
+                </datalist>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">

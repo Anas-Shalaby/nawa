@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PatientDetailShell } from "@/components/ehr/PatientDetailShell";
-import { PatientFinancialCard } from "@/components/patients/PatientFinancialCard";
 import { fetchPatientMedia } from "@/lib/queries/patientMedia";
 import { fetchPatientPayments } from "@/lib/queries/patientPayments";
 import { fetchPatientById, fetchPatientTenantId } from "@/lib/queries/patients";
@@ -43,22 +42,14 @@ export default async function PatientDetailPage({
 
   return (
     <div className="w-full">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
-        <PatientDetailShell
-          patient={patient}
-          tenantId={tenantId}
-          initialMedia={media}
-          initialVisits={visits}
-          services={services}
-        />
-        <PatientFinancialCard
-          patientId={patient.id}
-          patientName={patient.name}
-          phoneNumber={patient.phoneNumber}
-          initialBalanceDue={patient.totalBalanceDue}
-          initialPayments={payments}
-        />
-      </div>
+      <PatientDetailShell
+        patient={patient}
+        tenantId={tenantId}
+        initialMedia={media}
+        initialVisits={visits}
+        initialPayments={payments}
+        services={services}
+      />
     </div>
   );
 }

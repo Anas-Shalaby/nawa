@@ -23,9 +23,30 @@ export interface FinancialTransaction {
   isBackfill: boolean;
 }
 
+export interface DebtPatient {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  amountDue: number;
+}
+
+export interface FinancialTrendPoint {
+  dateKey: string;
+  label: string;
+  incomeEgp: number;
+  expenseEgp: number;
+}
+
 export interface FinancialOverview {
   dailyRevenueEgp: number;
   monthlyRevenueEgp: number;
   nawaSavedRevenueEgp: number;
+  dailyExpensesEgp: number;
+  monthlyExpensesEgp: number;
+  outstandingDebtsEgp: number;
+  monthlyGrowthPct: number;
+  trendLast30Days: FinancialTrendPoint[];
+  debtPatients: DebtPatient[];
   recentTransactions: FinancialTransaction[];
+  recentExpenses: FinancialTransaction[];
 }

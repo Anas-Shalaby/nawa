@@ -175,7 +175,8 @@
         "checked_in": "تم الحضور",
         "in_session": "في الكشف",
         "completed": "مكتمل",
-        "no_show": "عدم الحضور"
+        "no_show": "عدم الحضور",
+        "canceled" :"تم الالغاء"
       }
     },
     "walkIn": {
@@ -275,6 +276,63 @@
       "empty": "لا إشعارات جديدة",
       "markAllRead": "تعليم الكل كمقروء",
       "bellLabel": "مركز الإشعارات"
+    },
+    "commandCenter": {
+      "title": "مركز التحكم اليومي",
+      "currency": "ج.م",
+      "fallbackPatient": "مريض",
+      "kpis": {
+        "todayRevenue": {
+          "title": "إيرادات اليوم",
+          "delta": "مقارنة بالأمس"
+        },
+        "totalPatients": {
+          "title": "المرضى",
+          "newLabel": "جدد",
+          "returningLabel": "متابعون"
+        },
+        "waiting": {
+          "title": "طابور الانتظار",
+          "avg": "متوسط: {mins} دقيقة"
+        },
+        "recoveredDebt": {
+          "title": "المديونيات المحصلة",
+          "hint": "تحصيلات مستردة عبر المتابعة الذكية"
+        }
+      },
+      "flowChart": {
+        "title": "حركة المرضى والإيراد خلال اليوم",
+        "subtitle": "تتبّع ساعات الذروة لحظيًا",
+        "badge": "الذروة النشطة",
+        "patientsMetric": "مرضى",
+        "hourLabel": "الساعة"
+      },
+      "liveQueue": {
+        "title": "الطابور المباشر",
+        "sendToDoctor": "دخول للطبيب",
+        "empty": "لا يوجد مرضى بانتظار الدخول الآن."
+      },
+      "topServices": {
+        "title": "الخدمات الأكثر طلبًا اليوم",
+        "servicesCount": "خدمة",
+        "countLabel": "حالة",
+        "empty": "لا توجد خدمات مكتملة بعد."
+      },
+      "alerts": {
+        "title": "التنبيهات الذكية",
+        "confirmation": "⚠️ {count} مرضى لم يؤكدوا حجز الغد.",
+        "waiting": "💡 مريض ({name}) تجاوز مدة الانتظار بـ {mins} دقيقة.",
+        "footer": "إجمالي حالات اليوم: {total}"
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "confirmed": "مؤكد",
+        "checked_in": "تم الحضور",
+        "in_session": "داخل العيادة",
+        "completed": "مكتمل",
+        "no_show": "لم يحضر",
+        "canceled": "تم الإلغاء"
+      }
     }
   },
   "services": {
@@ -341,6 +399,8 @@
     "clearWarning": "إزالة التحذير",
     "archive": "أرشفة",
     "restore": "استعادة",
+    "delete": "حذف",
+    "deleteConfirm": "حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
     "form": {
       "name": "اسم المريض",
       "namePlaceholder": "أحمد حسن",
@@ -437,7 +497,22 @@
     "createSuccess": "تم حجز الموعد بنجاح",
     "updateSuccess": "تم تحديث الموعد بنجاح",
     "cancelSuccess": "تم إلغاء الموعد",
-    "error": "تعذّر إكمال العملية"
+    "error": "تعذّر إكمال العملية",
+    "filterAll": "الكل",
+    "filterWeek": "هذا الأسبوع",
+    "filterMonth": "الشهر القادم",
+    "dateRange": "نطاق التاريخ",
+    "rangeFrom": "من",
+    "rangeTo": "إلى",
+    "rangeApply": "تطبيق",
+    "rangeClear": "مسح",
+    "actionsMenu": "إجراءات الموعد",
+    "rescheduleAction": "إعادة جدولة",
+    "cancelBooking": "إلغاء الحجز",
+    "cancelConfirm": "إلغاء هذا الموعد؟ لا يمكن التراجع عن ذلك.",
+    "rangeEmpty": "لا توجد مواعيد مجدولة في هذه الفترة.",
+    "statusPending": "قيد الانتظار",
+    "statusConfirmed": "مؤكد"
   },
   "recalls": {
     "metaTitle": "استدعاء المرضى — نواة",
@@ -457,6 +532,27 @@
     "tabGeneral": "معلومات عامة",
     "tabVisitRecord": "سجل المريض",
     "tabVisualEhr": "السجل البصري",
+    "tabMedical": "السجل الطبي",
+    "tabAppointments": "سجل المواعيد",
+    "tabFinancials": "الحسابات",
+    "whatsappNow": "مراسلة واتساب",
+    "bookAppointment": "حجز موعد جديد",
+    "pillVisits": "إجمالي الزيارات: {count}",
+    "pillBalance": "الرصيد المستحق: {amount} جنيه",
+    "pillLastVisit": "آخر زيارة: {date}",
+    "pillNoVisit": "لا توجد زيارات بعد",
+    "doctorNotes": "ملاحظات الطبيب",
+    "doctorNotesPlaceholder": "لا توجد ملاحظات للطبيب حتى الآن.",
+    "medicalImages": "الصور الطبية",
+    "appointmentsEmpty": "لا يوجد سجل مواعيد للمريض حتى الآن.",
+    "financialEmpty": "لا توجد فواتير متاحة لهذا المريض.",
+    "totalCost": "إجمالي التكلفة",
+    "totalPaid": "المدفوع",
+    "remainingBalance": "المتبقي",
+    "invoiceTotal": "الإجمالي",
+    "invoicePaid": "المدفوع",
+    "invoiceRemaining": "المتبقي",
+    "currency": "جنيه",
     "visitRecord": {
       "title": "سجل زيارات المريض",
       "subtitle": "كل المواعيد والكشوفات المسجّلة — {count} زيارة",

@@ -1,71 +1,75 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Clock, Loader2, Pencil, Tag, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { CircleEllipsis, Clock, Loader2, Pencil, Trash2 } from "lucide-react";
 import type { Service } from "@/lib/booking/types";
 
 interface ServiceCardProps {
   service: Service;
+  category: string;
   deleting: boolean;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-export function ServiceCard({ service, deleting, onEdit, onDelete }: ServiceCardProps) {
+export function ServiceCard({ service, category, deleting, onEdit, onDelete }: ServiceCardProps) {
   const t = useTranslations("services");
 
+  const priceLabel =
+    service.priceEgp === null ? t("price", { amount: "—" }) : t("price", { amount: service.priceEgp.toLocaleString() });
+
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-subtle bg-surface p-6 text-start">
-      <div className="mb-5 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-semibold text-primary">{service.name}</h2>
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-base text-muted">
-            <span className="inline-flex items-center gap-2">
-              <Clock className="h-4 w-4" aria-hidden />
-              {t("duration", { minutes: service.durationMinutes })}
-            </span>
-            {service.priceEgp !== null && (
-              <span className="inline-flex items-center gap-2 text-accent-success">
-                <Tag className="h-4 w-4" aria-hidden />
-                {t("price", { amount: service.priceEgp.toLocaleString() })}
-              </span>
+    <motion.article
+      whileHover={{ scale: 1.02 }}
+      className="group relative overflow-hidden rounded-2xl border border-subtle bg-surface p-5 text-start transition-all hover:border-accent/50"
+    >
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="mb-1 text-xs text-muted">{category}</p>
+          <h2 className="truncate text-base font-bold text-primary">{service.name}</h2>
+        </div>
+        <div className="flex items-center gap-1 rounded-lg border border-subtle bg-base/30 p-1 text-muted transition group-hover:text-accent">
+          <button
+            type="button"
+            onClick={onEdit}
+            className="rounded-md p-1.5 transition hover:bg-elevated hover:text-primary"
+            aria-label={t("edit")}
+          >
+            <Pencil className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={deleting}
+            className="rounded-md p-1.5 transition hover:bg-accent-danger/10 hover:text-accent-danger disabled:opacity-50"
+            aria-label={t("delete")}
+          >
+            {deleting ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            ) : (
+              <Trash2 className="h-4 w-4" aria-hidden />
             )}
-          </div>
+          </button>
+       
         </div>
       </div>
 
-      {service.preVisitInstructions && (
-        <div className="mb-5 rounded-xl border border-subtle bg-base px-5 py-4">
-          <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted">
-            {t("instructionsLabel")}
-          </p>
-          <p className="text-base leading-relaxed text-primary">{service.preVisitInstructions}</p>
-        </div>
-      )}
-
-      <div className="mt-auto flex gap-3 pt-3">
-        <button
-          type="button"
-          onClick={onEdit}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-subtle px-4 py-3 text-sm font-medium text-muted transition hover:bg-elevated hover:text-primary"
-        >
-          <Pencil className="h-4 w-4" aria-hidden />
-          {t("edit")}
-        </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          disabled={deleting}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-accent-danger/20 px-4 py-3 text-sm font-medium text-accent-danger transition hover:bg-accent-danger/10 disabled:opacity-50"
-        >
-          {deleting ? (
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-          ) : (
-            <Trash2 className="h-4 w-4" aria-hidden />
-          )}
-          {t("delete")}
-        </button>
+      <div className="flex items-center justify-between gap-3">
+        <span className="inline-flex items-center gap-1.5 text-sm text-muted">
+          <Clock className="h-4 w-4" aria-hidden />
+          {t("duration", { minutes: service.durationMinutes })}
+        </span>
+        <span className="rounded-lg bg-accent/10 px-3 py-1 text-sm font-bold text-accent">
+          {priceLabel}
+        </span>
       </div>
-    </article>
+
+      {service.preVisitInstructions ? (
+        <div className="mt-4 rounded-xl border border-subtle bg-base/40 px-3 py-2.5">
+          <p className="line-clamp-2 text-xs leading-relaxed text-muted">{service.preVisitInstructions}</p>
+        </div>
+      ) : null}
+    </motion.article>
   );
 }
