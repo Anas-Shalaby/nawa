@@ -11,12 +11,18 @@ import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarX2,
+  ChevronDown,
+  Loader2,
   MoreHorizontal,
   Pencil,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cancelAgendaAppointment } from "@/actions/manageAgendaAppointment";
+import {
+  cancelAgendaAppointment,
+  updateAgendaAppointmentStatus,
+  type AgendaEditableStatus,
+} from "@/actions/manageAgendaAppointment";
 import type { Locale } from "@/i18n/routing";
 import {
   formatAgendaSectionLabel,
@@ -41,16 +47,18 @@ interface UpcomingAppointmentsShellProps {
   patients: AgendaPatientOption[];
 }
 
-const STATUS_STYLES: Record<string, string> = {
-  pending: "bg-[#A29BFE]/15 text-[#A29BFE] ring-1 ring-inset ring-[#A29BFE]/20",
-  confirmed: "bg-accent/15 text-accent ring-1 ring-inset ring-accent/20",
+const STATUS_STYLES: Record<AgendaEditableStatus, string> = {
+  pending: "bg-status-pending/15 text-status-pending ring-1 ring-inset ring-status-pending/20",
+  confirmed: "bg-status-confirmed/15 text-status-confirmed ring-1 ring-inset ring-status-confirmed/20",
 };
 
+const AGENDA_STATUSES: AgendaEditableStatus[] = ["pending", "confirmed"];
+
 function statusStyle(status: AppointmentStatus): string {
-  return (
-    STATUS_STYLES[status] ??
-    "bg-slate-500/10 text-slate-300 ring-1 ring-inset ring-slate-500/20"
-  );
+  if (status === "pending" || status === "confirmed") {
+    return STATUS_STYLES[status];
+  }
+  return "bg-subtle/30 text-muted ring-1 ring-inset ring-subtle";
 }
 
 export function UpcomingAppointmentsShell({
@@ -112,6 +120,12 @@ export function UpcomingAppointmentsShell({
     );
   }
 
+  function handleStatusChanged(appointmentId: string, status: AgendaEditableStatus) {
+    setAppointments((current) =>
+      current.map((item) => (item.id === appointmentId ? { ...item, status } : item)),
+    );
+  }
+
   const chips: { id: QuickFilter; label: string }[] = [
     { id: "all", label: t("filterAll") },
     { id: "week", label: t("filterWeek") },
@@ -169,6 +183,7 @@ export function UpcomingAppointmentsShell({
                       locale={locale}
                       onReschedule={openReschedule}
                       onCancelled={handleCancelled}
+                      onStatusChanged={handleStatusChanged}
                     />
                   ))}
                 </AnimatePresence>
@@ -199,15 +214,18 @@ function AppointmentCard({
   locale,
   onReschedule,
   onCancelled,
+  onStatusChanged,
 }: {
   appointment: AgendaAppointment;
   locale: Locale;
   onReschedule: (appointment: AgendaAppointment) => void;
   onCancelled: (appointmentId: string) => void;
+  onStatusChanged: (appointmentId: string, status: AgendaEditableStatus) => void;
 }) {
   const t = useTranslations("agenda");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [statusUpdating, setStatusUpdating] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -223,12 +241,27 @@ function AppointmentCard({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
 
-  const statusLabel =
-    appointment.status === "pending"
-      ? t("statusPending")
-      : appointment.status === "confirmed"
-        ? t("statusConfirmed")
-        : appointment.status;
+  function handleStatusChange(nextStatus: AgendaEditableStatus) {
+    if (nextStatus === appointment.status || statusUpdating || isPending) return;
+
+    const previousStatus = appointment.status as AgendaEditableStatus;
+    onStatusChanged(appointment.id, nextStatus);
+    setStatusUpdating(true);
+
+    startTransition(async () => {
+      const result = await updateAgendaAppointmentStatus(appointment.id, nextStatus);
+
+      if (!result.success) {
+        onStatusChanged(appointment.id, previousStatus);
+        toast.error(t("error"), { description: result.error });
+        setStatusUpdating(false);
+        return;
+      }
+
+      toast.success(t("statusChangeSuccess"));
+      setStatusUpdating(false);
+    });
+  }
 
   function handleCancel() {
     setMenuOpen(false);
@@ -256,7 +289,7 @@ function AppointmentCard({
       transition={{ duration: 0.2 }}
       className={[
         "grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-xl border border-subtle bg-surface p-4 transition-all hover:border-accent/30",
-        isPending ? "opacity-50" : "",
+        isPending || statusUpdating ? "opacity-50" : "",
       ].join(" ")}
     >
       <div className="border-e border-subtle pe-4 text-center">
@@ -276,14 +309,43 @@ function AppointmentCard({
       </div>
 
       <div className="flex flex-col items-end gap-2">
-        <span
-          className={[
-            "rounded-full px-2.5 py-0.5 text-xs font-medium",
-            statusStyle(appointment.status),
-          ].join(" ")}
+        <div
+          className="relative shrink-0"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
         >
-          {statusLabel}
-        </span>
+          {statusUpdating ? (
+            <span className="inline-flex h-8 min-w-[6.5rem] items-center justify-center rounded-full border border-subtle bg-base/80 text-muted">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+            </span>
+          ) : (
+            <>
+              <select
+                value={appointment.status}
+                disabled={isPending}
+                aria-label={t("statusLabel")}
+                onChange={(event) =>
+                  handleStatusChange(event.target.value as AgendaEditableStatus)
+                }
+                className={[
+                  "h-8 min-w-[6.5rem] cursor-pointer appearance-none rounded-full pe-7 ps-3 text-xs font-medium outline-none transition",
+                  "focus:ring-2 focus:ring-accent/25 disabled:cursor-not-allowed disabled:opacity-50",
+                  statusStyle(appointment.status),
+                ].join(" ")}
+              >
+                {AGENDA_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status === "pending" ? t("statusPending") : t("statusConfirmed")}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute end-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
+                aria-hidden
+              />
+            </>
+          )}
+        </div>
 
         <div className="relative" ref={menuRef}>
           <button

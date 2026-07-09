@@ -17,7 +17,9 @@ export interface ManageAgendaAppointmentResult {
   error?: string;
 }
 
-const EDITABLE_STATUSES = new Set(["pending", "confirmed"]);
+export type AgendaEditableStatus = "pending" | "confirmed";
+
+const EDITABLE_STATUSES = new Set<AgendaEditableStatus>(["pending", "confirmed"]);
 
 function revalidateAgendaPaths() {
   revalidatePath("/[locale]/dashboard/upcoming", "page");
@@ -220,6 +222,66 @@ export async function updateAgendaAppointment(
     return {
       success: false,
       error: error instanceof Error ? error.message : "Could not update appointment.",
+    };
+  }
+}
+
+export async function updateAgendaAppointmentStatus(
+  appointmentId: string,
+  newStatus: AgendaEditableStatus,
+): Promise<ManageAgendaAppointmentResult> {
+  try {
+    const supabase = await createAuthenticatedClient();
+    const tenantId = await resolveTenantId(supabase);
+
+    const { data: appointment, error: fetchError } = await supabase
+      .from("appointments")
+      .select("id, status, appointment_date")
+      .eq("id", appointmentId)
+      .eq("tenant_id", tenantId)
+      .maybeSingle();
+
+    if (fetchError || !appointment) {
+      return { success: false, error: fetchError?.message ?? "Appointment not found." };
+    }
+
+    if (!EDITABLE_STATUSES.has(appointment.status as AgendaEditableStatus)) {
+      return { success: false, error: "This appointment status can no longer be changed." };
+    }
+
+    if (appointment.status === newStatus) {
+      return { success: true, appointmentId };
+    }
+
+    const appointmentDate = new Date(appointment.appointment_date);
+    if (Number.isNaN(appointmentDate.getTime()) || appointmentDate.getTime() <= Date.now()) {
+      return { success: false, error: "Only upcoming appointments can have their status changed." };
+    }
+
+    const { data: updated, error: updateError } = await supabase
+      .from("appointments")
+      .update({ status: newStatus })
+      .eq("id", appointmentId)
+      .eq("tenant_id", tenantId)
+      .in("status", ["pending", "confirmed"])
+      .select("id")
+      .maybeSingle();
+
+    if (updateError) {
+      return { success: false, error: updateError.message };
+    }
+
+    if (!updated) {
+      return { success: false, error: "Appointment not found or status already changed." };
+    }
+
+    revalidateAgendaPaths();
+    return { success: true, appointmentId };
+  } catch (error) {
+    console.error("[updateAgendaAppointmentStatus]", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not update appointment status.",
     };
   }
 }

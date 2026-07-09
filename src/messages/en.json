@@ -512,7 +512,11 @@
     "cancelConfirm": "Cancel this appointment? This cannot be undone.",
     "rangeEmpty": "No appointments scheduled in this period.",
     "statusPending": "Pending",
-    "statusConfirmed": "Confirmed"
+    "statusConfirmed": "Confirmed",
+    "statusLabel": "Appointment status",
+    "statusChangeSuccess": "Appointment status updated",
+    "markConfirmed": "Confirm booking",
+    "markPending": "Mark as pending"
   },
   "recalls": {
     "metaTitle": "Patient Recalls — Nawa",

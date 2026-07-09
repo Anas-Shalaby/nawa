@@ -512,7 +512,11 @@
     "cancelConfirm": "إلغاء هذا الموعد؟ لا يمكن التراجع عن ذلك.",
     "rangeEmpty": "لا توجد مواعيد مجدولة في هذه الفترة.",
     "statusPending": "قيد الانتظار",
-    "statusConfirmed": "مؤكد"
+    "statusConfirmed": "مؤكد",
+    "statusLabel": "حالة الموعد",
+    "statusChangeSuccess": "تم تحديث حالة الموعد",
+    "markConfirmed": "تأكيد الحجز",
+    "markPending": "تعيين قيد الانتظار"
   },
   "recalls": {
     "metaTitle": "استدعاء المرضى — نواة",
