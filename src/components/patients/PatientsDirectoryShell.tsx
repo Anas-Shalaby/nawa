@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  ChevronLeft,
+  ChevronRight,
   CircleEllipsis,
   Eye,
   Loader2,
@@ -12,9 +14,12 @@ import {
   Search,
   SlidersHorizontal,
   Trash2,
+  UserX,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { deletePatient } from "@/actions/managePatients";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { deletePatient, givePatientStrike } from "@/actions/managePatients";
 import { matchesPatientSearch } from "@/lib/patients/search";
 import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
 import type { PatientRecord } from "@/lib/queries/patients";
@@ -55,6 +60,7 @@ function initials(name: string): string {
 export function PatientsDirectoryShell({
   patients: initialPatients,
 }: PatientsDirectoryShellProps) {
+  const t = useTranslations("patients");
   const [patients, setPatients] = useState(initialPatients);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<GridFilter>("all");
@@ -63,9 +69,13 @@ export function PatientsDirectoryShell({
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<PatientRecord | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<PatientRecord | null>(null);
+  const [strikePatient, setStrikePatient] = useState<PatientRecord | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [page, setPage] = useState(1);
   const filterRef = useRef<HTMLDivElement>(null);
+
+  const PAGE_SIZE = 10;
 
   useEffect(() => {
     setPatients(initialPatients);
@@ -102,6 +112,24 @@ export function PatientsDirectoryShell({
       return true;
     });
   }, [patients, search, filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, page]);
+
+  const showingFrom = filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const showingTo = Math.min(page * PAGE_SIZE, filtered.length);
 
   function openCreate() {
     setEditingPatient(null);
@@ -168,6 +196,48 @@ export function PatientsDirectoryShell({
     startTransition(async () => {
       const result = await deletePatient(patient.id);
       if (!result.success) setPatients(snapshot);
+      setPendingId(null);
+    });
+  }
+
+  function requestStrike(patient: PatientRecord) {
+    setStrikePatient(patient);
+    setMenuOpenId(null);
+  }
+
+  function confirmStrike() {
+    if (!strikePatient) return;
+    const patient = strikePatient;
+    const snapshot = patients;
+    setStrikePatient(null);
+    setPendingId(patient.id);
+    setPatients((current) =>
+      current.map((item) =>
+        item.id === patient.id
+          ? { ...item, noShowCount: item.noShowCount + 1 }
+          : item,
+      ),
+    );
+
+    startTransition(async () => {
+      const result = await givePatientStrike(patient.id);
+
+      if (!result.success) {
+        setPatients(snapshot);
+        toast.error(t("strikeError"), { description: result.error });
+        setPendingId(null);
+        return;
+      }
+
+      const count = result.newNoShowCount ?? patient.noShowCount + 1;
+      setPatients((current) =>
+        current.map((item) =>
+          item.id === patient.id ? { ...item, noShowCount: count } : item,
+        ),
+      );
+      toast.success(t("strikeSuccess"), {
+        description: t("strikeSuccessHint", { name: patient.name, count }),
+      });
       setPendingId(null);
     });
   }
@@ -285,7 +355,7 @@ export function PatientsDirectoryShell({
           </div>
 
           <motion.ul variants={rowsVariants} initial="hidden" animate="show" className="divide-y divide-subtle">
-            {filtered.map((patient) => {
+            {paged.map((patient) => {
               const due = patient.totalBalanceDue ?? 0;
               const visitCount = patient.totalVisits ?? 0;
               const whatsappUrl = buildWhatsAppActionUrl(patient.phoneNumber, "appointment", {
@@ -304,7 +374,14 @@ export function PatientsDirectoryShell({
                       {initials(patient.name)}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-primary">{patient.name}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate text-sm font-semibold text-primary">{patient.name}</p>
+                        {patient.noShowCount > 0 ? (
+                          <span className="rounded-full bg-accent-danger/10 px-2 py-0.5 text-[11px] font-medium text-accent-danger">
+                            {t("strikes", { count: patient.noShowCount })}
+                          </span>
+                        ) : null}
+                      </div>
                       <p className="mt-0.5 truncate text-xs text-muted" dir="ltr">
                         {patient.phoneNumber}
                       </p>
@@ -368,8 +445,23 @@ export function PatientsDirectoryShell({
                             className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-primary transition hover:bg-elevated"
                           >
                             <Pencil className="h-4 w-4" />
-                            تعديل
+                            {t("edit")}
                           </button>
+                          {!patient.isArchived && (
+                            <button
+                              type="button"
+                              disabled={pendingId === patient.id || isPending}
+                              onClick={() => requestStrike(patient)}
+                              className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-accent-danger transition hover:bg-accent-danger/10 disabled:opacity-50"
+                            >
+                              {pendingId === patient.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <UserX className="h-4 w-4" />
+                              )}
+                              {t("giveStrike")}
+                            </button>
+                          )}
                           <button
                             type="button"
                             disabled={pendingId === patient.id || isPending}
@@ -381,7 +473,7 @@ export function PatientsDirectoryShell({
                             ) : (
                               <Trash2 className="h-4 w-4" />
                             )}
-                            حذف
+                            {t("delete")}
                           </button>
                         </div>
                       )}
@@ -391,6 +483,43 @@ export function PatientsDirectoryShell({
               );
             })}
           </motion.ul>
+
+          {filtered.length > PAGE_SIZE && (
+            <div className="flex flex-col gap-3 border-t border-subtle px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-muted">
+                {t("pagination.showing", {
+                  from: showingFrom,
+                  to: showingTo,
+                  total: filtered.length,
+                })}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  className="inline-flex items-center gap-1 rounded-lg border border-subtle px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ChevronRight className="h-3.5 w-3.5 rtl:hidden" aria-hidden />
+                  <ChevronLeft className="hidden h-3.5 w-3.5 rtl:block" aria-hidden />
+                  {t("pagination.previous")}
+                </button>
+                <span className="min-w-[7rem] text-center text-xs font-medium text-muted">
+                  {t("pagination.page", { page, totalPages })}
+                </span>
+                <button
+                  type="button"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                  className="inline-flex items-center gap-1 rounded-lg border border-subtle px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-elevated disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {t("pagination.next")}
+                  <ChevronLeft className="h-3.5 w-3.5 rtl:hidden" aria-hidden />
+                  <ChevronRight className="hidden h-3.5 w-3.5 rtl:block" aria-hidden />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -410,7 +539,7 @@ export function PatientsDirectoryShell({
           <>
             <motion.button
               type="button"
-              aria-label="إغلاق"
+              aria-label={t("form.close")}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -425,9 +554,9 @@ export function PatientsDirectoryShell({
               exit={{ opacity: 0, y: 10, scale: 0.98 }}
               className="fixed inset-x-4 top-[22%] z-[60] mx-auto w-full max-w-md rounded-2xl border border-subtle bg-surface p-5"
             >
-              <h3 className="text-base font-semibold text-primary">تأكيد الحذف</h3>
+              <h3 className="text-base font-semibold text-primary">{t("delete")}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">
-                حذف {deletingPatient.name}؟ لا يمكن التراجع عن هذا الإجراء.
+                {t("deleteConfirm", { name: deletingPatient.name })}
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <button
@@ -435,14 +564,59 @@ export function PatientsDirectoryShell({
                   onClick={() => setDeletingPatient(null)}
                   className="flex-1 rounded-xl border border-subtle px-4 py-2 text-sm font-medium text-muted transition hover:bg-elevated hover:text-primary"
                 >
-                  إلغاء
+                  {t("form.cancel")}
                 </button>
                 <button
                   type="button"
                   onClick={confirmDelete}
                   className="flex-1 rounded-xl bg-accent-danger px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-danger/90"
                 >
-                  حذف
+                  {t("delete")}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {strikePatient && (
+          <>
+            <motion.button
+              type="button"
+              aria-label={t("form.close")}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setStrikePatient(null)}
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              className="fixed inset-x-4 top-[22%] z-[60] mx-auto w-full max-w-md rounded-2xl border border-subtle bg-surface p-5"
+            >
+              <h3 className="text-base font-semibold text-primary">{t("strikeConfirmTitle")}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                {t("strikeConfirmBody", { name: strikePatient.name })}
+              </p>
+              <div className="mt-4 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStrikePatient(null)}
+                  className="flex-1 rounded-xl border border-subtle px-4 py-2 text-sm font-medium text-muted transition hover:bg-elevated hover:text-primary"
+                >
+                  {t("strikeCancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmStrike}
+                  className="flex-1 rounded-xl bg-accent-danger px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-danger/90"
+                >
+                  {t("strikeConfirm")}
                 </button>
               </div>
             </motion.div>

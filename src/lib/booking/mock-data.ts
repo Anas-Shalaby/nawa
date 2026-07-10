@@ -7,6 +7,12 @@ const MOCK_TENANTS: Record<string, Tenant> = {
     slug: "nova-dental",
     whatsappNumber: "+20 100 123 4567",
     type: "dental",
+    doctorName: "د. أحمد محمود",
+    specialty: "استشاري جراحة الوجه والفكين",
+    bio: "خبرة واسعة في طب الأسنان التجميلي والجراحي.",
+    credentials: ["البورد الأمريكي", "خبرة 15 عاماً"],
+    avatarUrl: null,
+    coverUrl: null,
   },
   "glow-derm": {
     id: "tenant-002",
@@ -14,6 +20,12 @@ const MOCK_TENANTS: Record<string, Tenant> = {
     slug: "glow-derm",
     whatsappNumber: "+20 101 987 6543",
     type: "dermatology",
+    doctorName: "د. سارة نور",
+    specialty: "استشارية الأمراض الجلدية",
+    bio: "متخصصة في علاجات البشرة والتجميل الطبي.",
+    credentials: ["زمالة أوروبية"],
+    avatarUrl: null,
+    coverUrl: null,
   },
 };
 

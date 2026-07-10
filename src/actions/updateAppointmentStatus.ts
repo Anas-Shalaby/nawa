@@ -79,15 +79,75 @@ export async function updateAppointmentStatus(
   }
 }
 
+/**
+ * Marks appointment as no-show and increments the patient's strike (no_show_count).
+ * Returns the new strike count when successful.
+ */
 export async function markAppointmentNoShow(
   appointmentId: string,
-  _patientId: string,
+  patientId: string,
 ): Promise<MarkNoShowResult> {
-  const result = await updateAppointmentStatus(appointmentId, "no_show");
+  try {
+    const supabase = await createAuthenticatedClient();
+    const tenantId = await resolveTenantId(supabase);
 
-  if (!result.success) {
-    return { success: false, error: result.error };
+    const { data: appointment, error: fetchError } = await supabase
+      .from("appointments")
+      .select("id, patient_id, status")
+      .eq("id", appointmentId)
+      .eq("tenant_id", tenantId)
+      .eq("patient_id", patientId)
+      .single();
+
+    if (fetchError || !appointment) {
+      return { success: false, error: fetchError?.message ?? "Appointment not found." };
+    }
+
+    if (appointment.status === "no_show" || appointment.status === "canceled") {
+      return { success: false, error: "This appointment can no longer receive a strike." };
+    }
+
+    const { data: patient, error: patientError } = await supabase
+      .from("patients")
+      .select("no_show_count")
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId)
+      .single();
+
+    if (patientError || !patient) {
+      return { success: false, error: patientError?.message ?? "Patient not found." };
+    }
+
+    const newNoShowCount = patient.no_show_count + 1;
+
+    const { error: updateError } = await supabase
+      .from("appointments")
+      .update({ status: "no_show" })
+      .eq("id", appointmentId)
+      .eq("tenant_id", tenantId)
+      .neq("status", "no_show")
+      .neq("status", "canceled");
+
+    if (updateError) {
+      return { success: false, error: updateError.message };
+    }
+
+    const { error: strikeError } = await supabase
+      .from("patients")
+      .update({ no_show_count: newNoShowCount })
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId);
+
+    if (strikeError) {
+      return { success: false, error: strikeError.message };
+    }
+
+    return { success: true, newNoShowCount };
+  } catch (error) {
+    console.error("[markAppointmentNoShow]", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not give strike.",
+    };
   }
-
-  return { success: true };
 }

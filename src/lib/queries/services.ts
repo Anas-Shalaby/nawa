@@ -39,19 +39,32 @@ export async function fetchClinicBrief(): Promise<{
   clinicName: string;
   slug: string;
   tenantId: string;
+  doctorName: string;
 }> {
   const supabase = await createAuthenticatedClient();
   const tenantId = await resolveTenantId(supabase);
 
-  const { data, error } = await supabase
-    .from("tenants")
-    .select("name, slug")
-    .eq("id", tenantId)
-    .single();
+  const [{ data, error }, { data: authData }] = await Promise.all([
+    supabase.from("tenants").select("name, slug").eq("id", tenantId).single(),
+    supabase.auth.getUser(),
+  ]);
 
   if (error) {
     throw new Error(`Failed to load clinic: ${error.message}`);
   }
 
-  return { clinicName: data.name, slug: data.slug, tenantId };
+  const user = authData.user;
+  const meta = user?.user_metadata ?? {};
+  const doctorName =
+    (typeof meta.display_name === "string" && meta.display_name.trim()) ||
+    (typeof meta.full_name === "string" && meta.full_name.trim()) ||
+    (typeof meta.name === "string" && meta.name.trim()) ||
+    data.name;
+
+  return {
+    clinicName: data.name,
+    slug: data.slug,
+    tenantId,
+    doctorName,
+  };
 }

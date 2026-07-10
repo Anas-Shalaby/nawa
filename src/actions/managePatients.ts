@@ -15,6 +15,7 @@ export interface ManagePatientResult {
   success: boolean;
   patientId?: string;
   error?: string;
+  newNoShowCount?: number;
 }
 
 function validatePatientInput(input: PatientInput): ManagePatientResult | PatientInput {
@@ -33,9 +34,12 @@ function validatePatientInput(input: PatientInput): ManagePatientResult | Patien
   return { name, whatsapp: toStoredPhoneNumber(digits), notes };
 }
 
-function revalidatePatientPaths() {
+function revalidatePatientPaths(patientId?: string) {
   revalidatePath("/[locale]/dashboard/patients", "page");
   revalidatePath("/[locale]/dashboard", "page");
+  if (patientId) {
+    revalidatePath(`/[locale]/dashboard/patients/${patientId}`, "page");
+  }
 }
 
 export async function createPatient(input: PatientInput): Promise<ManagePatientResult> {
@@ -224,13 +228,67 @@ export async function clearPatientWarning(
       return { success: false, error: error.message };
     }
 
-    revalidatePatientPaths();
-    return { success: true, patientId };
+    revalidatePatientPaths(patientId);
+    return { success: true, patientId, newNoShowCount: 0 };
   } catch (error) {
     console.error("[clearPatientWarning]", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Could not clear warning.",
+    };
+  }
+}
+
+/**
+ * Manually adds one discipline strike to a patient (increments no_show_count).
+ */
+export async function givePatientStrike(
+  patientId: string,
+): Promise<ManagePatientResult> {
+  try {
+    const supabase = await createAuthenticatedClient();
+    const tenantId = await resolveTenantId(supabase);
+
+    const { data: patient, error: fetchError } = await supabase
+      .from("patients")
+      .select("id, no_show_count, is_archived")
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId)
+      .maybeSingle();
+
+    if (fetchError || !patient) {
+      return { success: false, error: fetchError?.message ?? "Patient not found." };
+    }
+
+    if (patient.is_archived) {
+      return { success: false, error: "Cannot give a strike to an archived patient." };
+    }
+
+    const newNoShowCount = patient.no_show_count + 1;
+
+    const { data: updated, error: updateError } = await supabase
+      .from("patients")
+      .update({ no_show_count: newNoShowCount })
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId)
+      .select("id")
+      .maybeSingle();
+
+    if (updateError) {
+      return { success: false, error: updateError.message };
+    }
+
+    if (!updated) {
+      return { success: false, error: "Patient not found." };
+    }
+
+    revalidatePatientPaths(patientId);
+    return { success: true, patientId, newNoShowCount };
+  } catch (error) {
+    console.error("[givePatientStrike]", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not give strike.",
     };
   }
 }

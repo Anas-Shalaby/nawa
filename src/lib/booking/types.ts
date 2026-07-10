@@ -4,6 +4,12 @@ export interface Tenant {
   slug: string;
   whatsappNumber: string;
   type: "dental" | "dermatology";
+  doctorName: string;
+  specialty: string;
+  bio: string;
+  credentials: string[];
+  avatarUrl: string | null;
+  coverUrl: string | null;
 }
 
 export interface Service {

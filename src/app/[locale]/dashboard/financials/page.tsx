@@ -1,5 +1,6 @@
 import { FinancialsShell } from "@/components/financials/FinancialsShell";
 import { fetchFinancialOverview } from "@/lib/queries/financials";
+import { fetchClinicBrief } from "@/lib/queries/services";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
@@ -13,6 +14,16 @@ export async function generateMetadata({
 }
 
 export default async function FinancialsPage() {
-  const overview = await fetchFinancialOverview();
-  return <FinancialsShell overview={overview} />;
+  const [overview, clinic] = await Promise.all([
+    fetchFinancialOverview(),
+    fetchClinicBrief(),
+  ]);
+
+  return (
+    <FinancialsShell
+      overview={overview}
+      clinicName={clinic.clinicName}
+      doctorName={clinic.doctorName}
+    />
+  );
 }

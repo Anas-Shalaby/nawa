@@ -17,16 +17,34 @@ export interface Database {
           slug: string;
           is_active: boolean;
           created_at: string;
+          doctor_name: string | null;
+          specialty: string | null;
+          bio: string | null;
+          credentials: string[] | unknown;
+          avatar_url: string | null;
+          cover_url: string | null;
         };
         Insert: {
           name: string;
           slug: string;
           is_active?: boolean;
+          doctor_name?: string | null;
+          specialty?: string | null;
+          bio?: string | null;
+          credentials?: string[] | unknown;
+          avatar_url?: string | null;
+          cover_url?: string | null;
         };
         Update: {
           name?: string;
           slug?: string;
           is_active?: boolean;
+          doctor_name?: string | null;
+          specialty?: string | null;
+          bio?: string | null;
+          credentials?: string[] | unknown;
+          avatar_url?: string | null;
+          cover_url?: string | null;
         };
       };
       services: {

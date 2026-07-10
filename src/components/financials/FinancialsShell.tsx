@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
-import { Download, TrendingDown, TrendingUp } from "lucide-react";
+import { Download, Loader2, TrendingDown, TrendingUp } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -11,12 +11,20 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
+import { toast } from "sonner";
 import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
-import type { FinancialOverview } from "@/lib/dashboard/analyticsTypes";
+import {
+  InvoicePrint,
+  type InvoicePrintData,
+  type InvoicePrintHandle,
+} from "@/components/InvoicePrint";
+import type { FinancialOverview, FinancialTransaction } from "@/lib/dashboard/analyticsTypes";
 import type { Locale } from "@/i18n/routing";
 
 interface FinancialsShellProps {
   overview: FinancialOverview;
+  clinicName: string;
+  doctorName: string;
 }
 
 function formatMoney(amount: number, locale: Locale): string {
@@ -35,6 +43,11 @@ function formatDate(isoDate: string, locale: Locale): string {
     hour12: true,
     timeZone: "Africa/Cairo",
   }).format(new Date(isoDate));
+}
+
+function buildInvoiceNumber(tx: FinancialTransaction, year: number): string {
+  const short = tx.id.replaceAll("-", "").slice(0, 6).toUpperCase();
+  return `#INV-${year}-${short}`;
 }
 
 function AnimatedMoney({
@@ -67,19 +80,97 @@ function AnimatedMoney({
   return <>{text}</>;
 }
 
-export function FinancialsShell({ overview }: FinancialsShellProps) {
+export function FinancialsShell({
+  overview,
+  clinicName,
+  doctorName,
+}: FinancialsShellProps) {
   const t = useTranslations("financials");
+  const tInvoice = useTranslations("invoice");
   const locale = useLocale() as Locale;
   const [overviewState] = useState(overview);
   const [ledgerTab, setLedgerTab] = useState<"income" | "expense">("income");
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [pendingInvoice, setPendingInvoice] = useState<InvoicePrintData | null>(null);
+  const invoiceRef = useRef<InvoicePrintHandle>(null);
 
   const ledgerRows =
     ledgerTab === "income"
       ? overviewState.recentTransactions
       : overviewState.recentExpenses;
 
+  useEffect(() => {
+    if (!pendingInvoice) return;
+
+    let cancelled = false;
+
+    const timer = window.setTimeout(async () => {
+      try {
+        await invoiceRef.current?.downloadPdf();
+        if (!cancelled) toast.success(t("receiptDownloaded"));
+      } catch (error) {
+        if (!cancelled) {
+          toast.error(error instanceof Error ? error.message : "PDF failed");
+        }
+      } finally {
+        if (!cancelled) {
+          setPendingInvoice(null);
+          setDownloadingId(null);
+        }
+      }
+    }, 120);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [pendingInvoice, t]);
+
+  function handleDownloadReceipt(tx: FinancialTransaction) {
+    if (downloadingId) return;
+    setDownloadingId(tx.id);
+
+    const year = new Date(tx.appointmentDate).getFullYear() || new Date().getFullYear();
+    const amount = Math.max(0, tx.priceEgp);
+    const isIncome = ledgerTab === "income";
+
+    setPendingInvoice({
+      invoiceNumber: buildInvoiceNumber(tx, year),
+      dateLabel: formatDate(tx.appointmentDate, locale),
+      clinicName,
+      clinicLogoUrl: "/icons/icon-192.png",
+      patientName: tx.patientName,
+      patientPhone: "—",
+      patientId: tx.id.slice(0, 8).toUpperCase(),
+      doctorName,
+      department: tInvoice("defaultDepartment"),
+      lineItems: [
+        {
+          description: tx.serviceName,
+          quantity: 1,
+          unitPrice: amount,
+        },
+      ],
+      subtotal: amount,
+      discount: 0,
+      vat: 0,
+      amountPaid: isIncome ? amount : 0,
+      currency: t("currency"),
+      qrValue: `NAWA|${tx.id}|${amount}`,
+    });
+  }
+
   return (
-    <div className=" bg-base" dir="rtl" style={{maxWidth:"100vw"}}>
+    <div className=" bg-base" dir="rtl" style={{ maxWidth: "100vw" }}>
+      {pendingInvoice ? (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed -start-[9999px] top-0 w-[1024px]"
+        >
+          <InvoicePrint ref={invoiceRef} data={pendingInvoice} showActions={false} />
+        </div>
+      ) : null}
+
       <div className="mb-8 text-start">
         <h1 className="text-2xl font-semibold text-primary">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>
@@ -95,7 +186,7 @@ export function FinancialsShell({ overview }: FinancialsShellProps) {
           variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
           className="rounded-2xl border border-subtle bg-surface p-5 text-start"
         >
-          <p className="text-sm text-muted">إيرادات اليوم</p>
+          <p className="text-sm text-muted">{t("dailyRevenue")}</p>
           <p className="mt-3 text-3xl font-semibold text-accent-success">
             <AnimatedMoney value={overviewState.dailyRevenueEgp} locale={locale} />{" "}
             {t("currency")}
@@ -106,7 +197,7 @@ export function FinancialsShell({ overview }: FinancialsShellProps) {
           variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
           className="rounded-2xl border border-subtle bg-surface p-5 text-start"
         >
-          <p className="text-sm text-muted">إيرادات الشهر</p>
+          <p className="text-sm text-muted">{t("monthlyRevenue")}</p>
           <p className="mt-3 text-3xl font-semibold text-primary">
             <AnimatedMoney value={overviewState.monthlyRevenueEgp} locale={locale} />{" "}
             {t("currency")}
@@ -306,10 +397,17 @@ export function FinancialsShell({ overview }: FinancialsShellProps) {
                   </p>
                   <button
                     type="button"
-                    className="rounded-lg p-1.5 text-muted transition hover:bg-elevated hover:text-primary"
-                    aria-label="تحميل الإيصال"
+                    onClick={() => handleDownloadReceipt(tx)}
+                    disabled={downloadingId === tx.id}
+                    className="rounded-lg p-1.5 text-muted transition hover:bg-elevated hover:text-primary disabled:opacity-50"
+                    aria-label={t("downloadReceipt")}
+                    title={t("downloadReceipt")}
                   >
-                    <Download className="h-4 w-4" />
+                    {downloadingId === tx.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </motion.div>

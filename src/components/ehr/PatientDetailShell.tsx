@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,10 +8,14 @@ import {
   ArrowRight,
   CalendarPlus,
   CalendarRange,
+  Loader2,
   MessageCircle,
   Phone,
+  UserX,
   Wallet,
 } from "lucide-react";
+import { toast } from "sonner";
+import { givePatientStrike } from "@/actions/managePatients";
 import type { Locale } from "@/i18n/routing";
 import type { PatientMediaRecord } from "@/lib/media/types";
 import type { PatientRecord } from "@/lib/queries/patients";
@@ -121,11 +125,19 @@ export function PatientDetailShell({
   compact = false,
 }: PatientDetailShellProps) {
   const t = useTranslations("ehr");
+  const tPatients = useTranslations("patients");
   const tStatus = useTranslations("dashboard.detail.status");
   const locale = useLocale() as Locale;
   const [activeTab, setActiveTab] = useState<PatientDetailTab>("medical");
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [strikeConfirmOpen, setStrikeConfirmOpen] = useState(false);
+  const [noShowCount, setNoShowCount] = useState(patient.noShowCount);
+  const [isStrikePending, startStrikeTransition] = useTransition();
   const visits = initialVisits ?? [];
+
+  useEffect(() => {
+    setNoShowCount(patient.noShowCount);
+  }, [patient.id, patient.noShowCount]);
 
   const totalVisits = visits.length;
   const lastVisit = visits[0]?.appointmentDate ?? null;
@@ -148,6 +160,33 @@ export function PatientDetailShell({
     { id: "appointments", label: t("tabAppointments"), icon: CalendarPlus },
     { id: "financials", label: t("tabFinancials"), icon: Wallet },
   ];
+
+  function handleConfirmStrike() {
+    if (isStrikePending || patient.isArchived) return;
+
+    const previousCount = noShowCount;
+    setStrikeConfirmOpen(false);
+    setNoShowCount((current) => current + 1);
+
+    startStrikeTransition(async () => {
+      const result = await givePatientStrike(patient.id);
+
+      if (!result.success) {
+        setNoShowCount(previousCount);
+        toast.error(tPatients("strikeError"), { description: result.error });
+        return;
+      }
+
+      const count = result.newNoShowCount ?? previousCount + 1;
+      setNoShowCount(count);
+      toast.success(tPatients("strikeSuccess"), {
+        description: tPatients("strikeSuccessHint", {
+          name: patient.name,
+          count,
+        }),
+      });
+    });
+  }
 
   return (
     <>
@@ -194,6 +233,11 @@ export function PatientDetailShell({
                       })
                     : t("pillNoVisit")}
                 </span>
+                {noShowCount > 0 ? (
+                  <span className="rounded-full bg-accent-danger/10 px-3 py-1 text-xs font-medium text-accent-danger">
+                    {tPatients("strikes", { count: noShowCount })}
+                  </span>
+                ) : null}
               </div>
             </div>
 
@@ -215,6 +259,21 @@ export function PatientDetailShell({
                 <CalendarPlus className="h-4 w-4" aria-hidden />
                 {t("bookAppointment")}
               </button>
+              {!patient.isArchived && (
+                <button
+                  type="button"
+                  disabled={isStrikePending}
+                  onClick={() => setStrikeConfirmOpen(true)}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-accent-danger/25 bg-accent-danger/10 px-4 py-2.5 text-sm font-medium text-accent-danger transition hover:bg-accent-danger/20 disabled:opacity-50"
+                >
+                  {isStrikePending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  ) : (
+                    <UserX className="h-4 w-4" aria-hidden />
+                  )}
+                  {isStrikePending ? tPatients("givingStrike") : tPatients("giveStrike")}
+                </button>
+              )}
               {!compact && (
                 <Link
                   href={backHref}
@@ -430,6 +489,51 @@ export function PatientDetailShell({
         tenantId={tenantId}
         onClose={() => setScheduleOpen(false)}
       />
+
+      <AnimatePresence>
+        {strikeConfirmOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-base/70 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="patient-strike-title"
+              initial={{ opacity: 0, scale: 0.96, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 8 }}
+              className="w-full max-w-md rounded-2xl border border-subtle bg-surface p-6 shadow-2xl shadow-black/40"
+            >
+              <h3 id="patient-strike-title" className="text-start text-lg font-semibold text-primary">
+                {tPatients("strikeConfirmTitle")}
+              </h3>
+              <p className="mt-2 text-start text-sm text-muted">
+                {tPatients("strikeConfirmBody", { name: patient.name })}
+              </p>
+              <div className="mt-6 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStrikeConfirmOpen(false)}
+                  className="rounded-xl border border-subtle px-4 py-2 text-sm font-medium text-primary transition hover:bg-elevated"
+                >
+                  {tPatients("strikeCancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmStrike}
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent-danger px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                >
+                  <UserX className="h-4 w-4" aria-hidden />
+                  {tPatients("strikeConfirm")}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -6,6 +6,19 @@ import { getClinicWhatsAppFallback } from "@/utils/supabase/config";
 import { createServiceRoleClient } from "@/utils/supabase/auth";
 import { isSubscriptionRowActive } from "@/lib/subscriptions/utils";
 
+type TenantProfileRow = {
+  id: string;
+  name: string;
+  slug: string;
+  is_active: boolean;
+  doctor_name: string | null;
+  specialty: string | null;
+  bio: string | null;
+  credentials: unknown;
+  avatar_url: string | null;
+  cover_url: string | null;
+};
+
 /**
  * Public booking reads — server-only via service role, scoped by slug / tenant_id.
  * Never expose the service role client to the browser.
@@ -13,19 +26,45 @@ import { isSubscriptionRowActive } from "@/lib/subscriptions/utils";
 export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | null> {
   const supabase = createServiceRoleClient();
 
-  const { data, error } = await supabase
+  const withProfile = await supabase
     .from("tenants")
-    .select("id, name, slug, is_active")
+    .select(
+      "id, name, slug, is_active, doctor_name, specialty, bio, credentials, avatar_url, cover_url",
+    )
     .eq("slug", slug)
     .eq("is_active", true)
     .maybeSingle();
 
-  if (error) {
-    throw new Error(`Failed to load clinic: ${error.message}`);
-  }
+  let data: TenantProfileRow | null = withProfile.data as TenantProfileRow | null;
 
-  if (!data) {
-    return null;
+  if (withProfile.error || !data) {
+    const fallback = await supabase
+      .from("tenants")
+      .select("id, name, slug, is_active")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (fallback.error) {
+      throw new Error(`Failed to load clinic: ${fallback.error.message}`);
+    }
+
+    if (!fallback.data) {
+      return null;
+    }
+
+    data = {
+      id: fallback.data.id,
+      name: fallback.data.name,
+      slug: fallback.data.slug,
+      is_active: fallback.data.is_active,
+      doctor_name: null,
+      specialty: null,
+      bio: null,
+      credentials: [],
+      avatar_url: null,
+      cover_url: null,
+    };
   }
 
   const { data: subscription, error: subscriptionError } = await supabase
@@ -42,12 +81,22 @@ export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | nu
     return null;
   }
 
+  const credentials = Array.isArray(data.credentials)
+    ? data.credentials.filter((item): item is string => typeof item === "string")
+    : [];
+
   return {
     id: data.id,
     name: data.name,
     slug: data.slug,
     whatsappNumber: getClinicWhatsAppFallback(),
     type: "dental",
+    doctorName: data.doctor_name?.trim() || data.name,
+    specialty: data.specialty?.trim() || "",
+    bio: data.bio?.trim() || "",
+    credentials,
+    avatarUrl: data.avatar_url ?? null,
+    coverUrl: data.cover_url ?? null,
   };
 }
 

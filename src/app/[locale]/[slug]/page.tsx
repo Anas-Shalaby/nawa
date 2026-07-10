@@ -32,7 +32,9 @@ export async function generateMetadata({ params }: BookingPageProps) {
   });
 
   return {
-    title: tenant ? `${t("bookingTitle")} — ${tenant.name}` : t("bookingTitle"),
+    title: tenant
+      ? `${t("bookingTitle")} — ${tenant.doctorName}`
+      : t("bookingTitle"),
     description: t("bookingDescription"),
   };
 }
