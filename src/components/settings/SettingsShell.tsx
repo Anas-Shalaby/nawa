@@ -48,7 +48,7 @@ export function SettingsShell({ settings }: SettingsShellProps) {
         </Link>
 
         <Link
-          href="/dashboard/settings/availability"
+          href="/dashboard/settings/schedule"
           className="flex items-center justify-between rounded-2xl border border-subtle/70 bg-surface/50 px-4 py-4 text-start transition hover:border-accent/30"
         >
           <div className="flex items-center gap-3">

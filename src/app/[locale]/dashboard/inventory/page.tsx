@@ -1,5 +1,6 @@
+import { InventoryShell } from "@/components/inventory/InventoryShell";
+import { fetchInventoryOverview } from "@/lib/queries/inventory";
 import { getTranslations } from "next-intl/server";
-import { ComingSoonPlaceholder } from "@/components/dashboard/ComingSoonPlaceholder";
 
 export async function generateMetadata({
   params,
@@ -7,20 +8,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "comingSoon.inventory" });
+  const t = await getTranslations({ locale, namespace: "inventory" });
   return { title: t("metaTitle") };
 }
 
 export default async function InventoryPage() {
-  const t = await getTranslations("comingSoon");
-  const feature = await getTranslations("comingSoon.inventory");
-
-  return (
-    <ComingSoonPlaceholder
-      title={feature("title")}
-      description={feature("description")}
-      badge={t("badge")}
-      icon="package"
-    />
-  );
+  const overview = await fetchInventoryOverview();
+  return <InventoryShell overview={overview} />;
 }

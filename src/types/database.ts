@@ -181,6 +181,7 @@ export interface Database {
           is_open: boolean;
           start_time: string | null;
           end_time: string | null;
+          shifts: unknown;
           created_at: string;
           updated_at: string;
         };
@@ -190,11 +191,13 @@ export interface Database {
           is_open?: boolean;
           start_time?: string | null;
           end_time?: string | null;
+          shifts?: unknown;
         };
         Update: {
           is_open?: boolean;
           start_time?: string | null;
           end_time?: string | null;
+          shifts?: unknown;
           updated_at?: string;
         };
       };
@@ -283,6 +286,35 @@ export interface Database {
           status?: "trialing" | "active" | "expired" | "cancelled";
           starts_at?: string;
           ends_at?: string;
+        };
+      };
+      inventory_items: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          name: string;
+          category: string;
+          quantity: number;
+          min_threshold: number;
+          unit_cost_egp: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          name: string;
+          category?: string;
+          quantity?: number;
+          min_threshold?: number;
+          unit_cost_egp?: number;
+        };
+        Update: {
+          name?: string;
+          category?: string;
+          quantity?: number;
+          min_threshold?: number;
+          unit_cost_egp?: number;
+          updated_at?: string;
         };
       };
     };

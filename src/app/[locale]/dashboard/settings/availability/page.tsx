@@ -1,22 +1,11 @@
-import { fetchWorkingHours } from "@/actions/workingHours";
-import { AvailabilitySettingsShell } from "@/components/settings/AvailabilitySettingsShell";
+import { redirect } from "next/navigation";
 
-export async function generateMetadata({
+/** Legacy route — schedule canvas lives at /dashboard/settings/schedule */
+export default async function AvailabilitySettingsPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const { getTranslations } = await import("next-intl/server");
-  const t = await getTranslations({ locale: params.locale, namespace: "availability" });
-
-  return {
-    title: t("metaTitle"),
-    description: t("subtitle"),
-  };
-}
-
-export default async function AvailabilitySettingsPage() {
-  const days = await fetchWorkingHours();
-
-  return <AvailabilitySettingsShell initialDays={days} />;
+  const { locale } = await params;
+  redirect(`/${locale}/dashboard/settings/schedule`);
 }

@@ -37,19 +37,82 @@ export async function getAvailableSlots(
 
   const { data: hours, error: hoursError } = await supabase
     .from("working_hours")
-    .select("is_open, start_time, end_time")
+    .select("is_open, start_time, end_time, shifts")
     .eq("tenant_id", tenantId)
     .eq("day_of_week", dayOfWeek)
     .maybeSingle();
 
   if (hoursError) {
-    throw new Error(`Failed to load working hours: ${hoursError.message}`);
+    // Fallback before shifts migration
+    const legacy = await supabase
+      .from("working_hours")
+      .select("is_open, start_time, end_time")
+      .eq("tenant_id", tenantId)
+      .eq("day_of_week", dayOfWeek)
+      .maybeSingle();
+
+    if (legacy.error) {
+      throw new Error(`Failed to load working hours: ${legacy.error.message}`);
+    }
+
+    if (!legacy.data?.is_open || !legacy.data.start_time || !legacy.data.end_time) {
+      return [];
+    }
+
+    return generateSlotsForWindows(
+      [{ start: legacy.data.start_time, end: legacy.data.end_time }],
+      date,
+      serviceDurationMinutes,
+      tenantId,
+    );
   }
 
-  if (!hours?.is_open || !hours.start_time || !hours.end_time) {
+  if (!hours?.is_open) {
     return [];
   }
 
+  const windows: { start: string; end: string }[] = [];
+  if (Array.isArray(hours.shifts) && hours.shifts.length > 0) {
+    for (const entry of hours.shifts) {
+      if (!entry || typeof entry !== "object") continue;
+      const record = entry as Record<string, unknown>;
+      const start =
+        typeof record.start === "string"
+          ? record.start
+          : typeof record.startTime === "string"
+            ? record.startTime
+            : null;
+      const end =
+        typeof record.end === "string"
+          ? record.end
+          : typeof record.endTime === "string"
+            ? record.endTime
+            : null;
+      if (start && end) windows.push({ start: start.slice(0, 5), end: end.slice(0, 5) });
+    }
+  }
+
+  if (windows.length === 0 && hours.start_time && hours.end_time) {
+    windows.push({
+      start: String(hours.start_time).slice(0, 5),
+      end: String(hours.end_time).slice(0, 5),
+    });
+  }
+
+  if (windows.length === 0) {
+    return [];
+  }
+
+  return generateSlotsForWindows(windows, date, serviceDurationMinutes, tenantId);
+}
+
+async function generateSlotsForWindows(
+  windows: { start: string; end: string }[],
+  date: string,
+  serviceDurationMinutes: number,
+  tenantId: string,
+): Promise<string[]> {
+  const supabase = createServiceRoleClient();
   const { startIso, endExclusiveIso } = getCairoDayQueryBounds(date);
 
   const { data: appointments, error: appointmentsError } = await supabase
@@ -102,13 +165,20 @@ export async function getAvailableSlots(
   const minStartMinutes =
     date === getCairoTodayKey() ? getCairoMinutesNow() : undefined;
 
-  return generateAvailableSlotTimes(
-    hours.start_time,
-    hours.end_time,
-    serviceDurationMinutes,
-    bookedRanges,
-    minStartMinutes,
-  );
+  const allSlots = new Set<string>();
+  for (const window of windows) {
+    for (const slot of generateAvailableSlotTimes(
+      window.start,
+      window.end,
+      serviceDurationMinutes,
+      bookedRanges,
+      minStartMinutes,
+    )) {
+      allSlots.add(slot);
+    }
+  }
+
+  return Array.from(allSlots).sort();
 }
 
 /** Check whether a slot is still free (used before insert). */
