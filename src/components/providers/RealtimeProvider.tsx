@@ -67,11 +67,24 @@ export function RealtimeProvider({ tenantId, children }: RealtimeProviderProps) 
           const timeLabel = formatAppointmentTime(appointment.appointmentDate, locale);
 
           pushNotification({
-            id: `${appointment.id}-${Date.now()}`,
-            appointmentId: appointment.id,
-            patientName: appointment.patientName,
-            serviceName: appointment.serviceName,
-            timeLabel,
+            id: `booking-${appointment.id}`,
+            kind: "booking",
+            title: t("toastTitle"),
+            body: t("toastDescription", {
+              patient: appointment.patientName,
+              service: appointment.serviceName,
+              time: timeLabel,
+            }),
+            urgent: false,
+            actionHref: `/dashboard/patients/${appointment.patientId}`,
+            actionLabelKey: "viewDetails",
+            meta: {
+              appointmentId: appointment.id,
+              patientId: appointment.patientId,
+              patientName: appointment.patientName,
+              serviceName: appointment.serviceName,
+              timeLabel,
+            },
           });
 
           toast(t("toastTitle"), {

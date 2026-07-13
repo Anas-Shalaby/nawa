@@ -9,6 +9,7 @@ import Image from "next/image";
 import {
   Banknote,
   BarChart3,
+  Bell,
   Bot,
   CalendarDays,
   ChevronLeft,
@@ -43,6 +44,11 @@ const NAV_SECTIONS: NavSection[] = [
         href: "/dashboard/upcoming",
         labelKey: "navUpcoming",
         icon: CalendarDays,
+      },
+      {
+        href: "/dashboard/notifications",
+        labelKey: "navNotifications",
+        icon: Bell,
       },
     ],
   },

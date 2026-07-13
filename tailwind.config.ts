@@ -30,6 +30,7 @@ const config: Config = {
           pending: "#6C5CE7",
           confirmed: "#00CEC9",
           checkedIn: "#74B9FF",
+          in_session: "#A29BFE",
           completed: "#55EFC4",
         },
         booking: {

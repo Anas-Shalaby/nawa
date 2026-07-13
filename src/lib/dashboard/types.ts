@@ -14,6 +14,8 @@ export interface Appointment {
   patientName: string;
   phoneNumber: string;
   noShowCount: number;
+  /** Outstanding patient balance in EGP when available from join. */
+  balanceDue?: number;
   serviceId: string;
   serviceName: string;
   durationMinutes: number;
@@ -38,6 +40,27 @@ export interface DashboardService {
   durationMinutes: number;
   priceEgp: number | null;
   preVisitInstructions: string | null;
+}
+
+export interface PaymentTickerItem {
+  id: string;
+  patientId: string;
+  patientName: string;
+  amountPaid: number;
+  paidAt: string;
+}
+
+export interface UnpaidCollectItem {
+  id: string;
+  name: string;
+  amountDue: number;
+}
+
+export interface ClinicRoomStatus {
+  id: string;
+  label: string;
+  busy: boolean;
+  detail: string;
 }
 
 export { isQueueVisible, isKanbanColumn, type QueueVisibleStatus } from "./queueStateMachine";

@@ -1,22 +1,27 @@
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { getCairoTodayDisplayIso } from "@/lib/datetime/cairo";
+import { getCairoTodayKey } from "@/lib/datetime/cairo";
 import { fetchTodayAppointments } from "@/lib/queries/dashboard";
 
 export default async function DashboardPage() {
-  const today = getCairoTodayDisplayIso();
-  const { appointments, clinicName, tenantId, miniStats, canViewRevenue, services } =
-    await fetchTodayAppointments();
+  const today = getCairoTodayKey();
+  const data = await fetchTodayAppointments();
 
   return (
     <div className="flex h-full w-full max-w-none flex-col overflow-hidden">
       <DashboardShell
-        clinicName={clinicName}
+        clinicName={data.clinicName}
+        doctorName={data.doctorName}
         date={today}
-        tenantId={tenantId}
-        initialAppointments={appointments}
-        initialMiniStats={miniStats}
-        canViewRevenue={canViewRevenue}
-        services={services}
+        tenantId={data.tenantId}
+        initialAppointments={data.appointments}
+        initialMiniStats={data.miniStats}
+        canViewRevenue={data.canViewRevenue}
+        services={data.services}
+        pendingTomorrowCount={data.pendingTomorrowCount}
+        todayPayments={data.todayPayments}
+        yesterdayUnpaid={data.yesterdayUnpaid}
+        rooms={data.rooms}
+        capacityPct={data.capacityPct}
       />
     </div>
   );

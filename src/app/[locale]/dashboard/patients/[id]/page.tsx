@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PatientDetailShell } from "@/components/ehr/PatientDetailShell";
+import { fetchDoctorProfile } from "@/lib/queries/doctorProfile";
 import { fetchPatientMedia } from "@/lib/queries/patientMedia";
 import { fetchPatientPayments } from "@/lib/queries/patientPayments";
 import { fetchPatientById, fetchPatientTenantId } from "@/lib/queries/patients";
@@ -27,14 +28,16 @@ export default async function PatientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [patient, tenantId, media, payments, services, visits] = await Promise.all([
-    fetchPatientById(id),
-    fetchPatientTenantId(),
-    fetchPatientMedia(id),
-    fetchPatientPayments(id),
-    fetchDashboardServices(),
-    fetchPatientVisitHistory(id),
-  ]);
+  const [patient, tenantId, media, payments, services, visits, profile] =
+    await Promise.all([
+      fetchPatientById(id),
+      fetchPatientTenantId(),
+      fetchPatientMedia(id),
+      fetchPatientPayments(id),
+      fetchDashboardServices(),
+      fetchPatientVisitHistory(id),
+      fetchDoctorProfile(),
+    ]);
 
   if (!patient) {
     notFound();
@@ -49,6 +52,9 @@ export default async function PatientDetailPage({
         initialVisits={visits}
         initialPayments={payments}
         services={services}
+        doctorName={profile.doctorName}
+        clinicName={profile.clinicName}
+        specialty={profile.specialty}
       />
     </div>
   );

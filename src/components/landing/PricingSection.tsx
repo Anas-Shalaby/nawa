@@ -73,6 +73,11 @@ function PricingCard({
             {t(`${planKey}.price`)}
           </p>
           <p className="mt-2 text-sm text-muted">{t(`${planKey}.setupFee`)}</p>
+          {planKey === "free" ? (
+            <p className="mt-3 inline-flex rounded-full border border-accent-success/30 bg-accent-success/10 px-3 py-1 text-xs font-semibold text-accent-success">
+              {t("noCreditCard")}
+            </p>
+          ) : null}
         </div>
 
         <p className="mb-6 text-sm leading-relaxed text-muted">{t(`${planKey}.description`)}</p>

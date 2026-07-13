@@ -2,8 +2,18 @@ import type { Appointment } from "@/lib/dashboard/types";
 import { normalizeStoredTimestamp } from "@/lib/datetime/cairo";
 
 type PatientJoin =
-  | { name: string; phone_number: string; no_show_count: number }
-  | { name: string; phone_number: string; no_show_count: number }[]
+  | {
+      name: string;
+      phone_number: string;
+      no_show_count: number;
+      total_balance_due?: number | null;
+    }
+  | {
+      name: string;
+      phone_number: string;
+      no_show_count: number;
+      total_balance_due?: number | null;
+    }[]
   | null;
 
 type ServiceJoin =
@@ -38,6 +48,7 @@ export function mapAppointmentRow(row: AppointmentJoinRow): Appointment {
     patientName: patient?.name ?? "Unknown",
     phoneNumber: patient?.phone_number ?? "",
     noShowCount: patient?.no_show_count ?? 0,
+    balanceDue: patient?.total_balance_due ?? 0,
     serviceId: row.service_id,
     serviceName: service?.name ?? "Service",
     durationMinutes: service?.duration_minutes ?? 30,
@@ -54,6 +65,6 @@ export const APPOINTMENT_SELECT = `
   service_id,
   appointment_date,
   status,
-  patients ( name, phone_number, no_show_count ),
+  patients ( name, phone_number, no_show_count, total_balance_due ),
   services ( name, duration_minutes, price_egp )
 `;

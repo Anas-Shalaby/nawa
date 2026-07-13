@@ -1,6 +1,9 @@
 import { LandingNav } from "./LandingNav";
 import { HeroSection } from "./HeroSection";
+import { ProblemAgitationSection } from "./ProblemAgitationSection";
+import { ROICalculatorSection } from "./ROICalculatorSection";
 import { BentoFeaturesSection } from "./BentoFeaturesSection";
+import { TrustSection } from "./TrustSection";
 import { ValuePropositionSection } from "./ValuePropositionSection";
 import { PricingSection } from "./PricingSection";
 import { LandingFooter } from "./LandingFooter";
@@ -14,9 +17,12 @@ export function LandingPage() {
         aria-hidden
       />
       <LandingNav />
-      <main className="relative">
+      <main className="relative" dir="rtl">
         <HeroSection />
+        <ProblemAgitationSection />
+        <ROICalculatorSection />
         <BentoFeaturesSection />
+        <TrustSection />
         <ValuePropositionSection />
         <PricingSection />
       </main>

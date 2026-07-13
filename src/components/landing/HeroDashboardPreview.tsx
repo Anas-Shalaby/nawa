@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -20,12 +20,15 @@ import {
 
 type HeroNav = "queue" | "upcoming" | "patients" | "services" | "analytics";
 type MainView = "queue" | "finance";
+type DemoStatus = "pending" | "inSession" | "confirmed" | "checkedIn" | "completed";
 
-const STATUS_COLORS = {
+const STATUS_COLORS: Record<DemoStatus, string> = {
+  pending: "#6C5CE7",
   inSession: "#A29BFE",
   confirmed: "#00CEC9",
   checkedIn: "#74B9FF",
-} as const;
+  completed: "#55EFC4",
+};
 
 const CHART_BARS = [42, 58, 51, 72, 64, 88, 76, 100];
 
@@ -45,7 +48,8 @@ function WindowChrome({ title }: { title: string }) {
 
 function StatusPill({ label, color }: { label: string; color: string }) {
   return (
-    <span
+    <motion.span
+      layout
       className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium"
       style={{
         borderColor: `${color}44`,
@@ -54,7 +58,7 @@ function StatusPill({ label, color }: { label: string; color: string }) {
       }}
     >
       {label}
-    </span>
+    </motion.span>
   );
 }
 
@@ -65,8 +69,22 @@ export function HeroDashboardPreview() {
 
   const [activeNav, setActiveNav] = useState<HeroNav>("queue");
   const [mainView, setMainView] = useState<MainView>("queue");
-  const [selectedPatientId, setSelectedPatientId] = useState("p1");
+  const [selectedPatientId, setSelectedPatientId] = useState("p2");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [demoCompleted, setDemoCompleted] = useState(false);
+
+  useEffect(() => {
+    const toCompleted = window.setTimeout(() => setDemoCompleted(true), 2200);
+    const loop = window.setInterval(() => {
+      setDemoCompleted(false);
+      window.setTimeout(() => setDemoCompleted(true), 1800);
+    }, 7000);
+
+    return () => {
+      window.clearTimeout(toCompleted);
+      window.clearInterval(loop);
+    };
+  }, []);
 
   const patients = useMemo(
     () => [
@@ -83,8 +101,8 @@ export function HeroDashboardPreview() {
         name: t("patient2"),
         time: "11:00",
         service: t("service2"),
-        status: t("statusConfirmed"),
-        statusKey: "confirmed" as const,
+        status: demoCompleted ? t("statusCompleted") : t("statusPending"),
+        statusKey: (demoCompleted ? "completed" : "pending") as DemoStatus,
       },
       {
         id: "p3",
@@ -95,7 +113,7 @@ export function HeroDashboardPreview() {
         statusKey: "checkedIn" as const,
       },
     ],
-    [t],
+    [t, demoCompleted],
   );
 
   const selected = patients.find((patient) => patient.id === selectedPatientId) ?? patients[0];
@@ -110,12 +128,22 @@ export function HeroDashboardPreview() {
 
   const miniStats = [
     { icon: Users, label: stats("total"), value: "12", color: "#74B9FF" },
-    { icon: Clock3, label: stats("waiting"), value: "4", color: "#FDCB6E" },
-    { icon: CheckCircle2, label: stats("completed"), value: "6", color: "#55EFC4" },
+    {
+      icon: Clock3,
+      label: stats("waiting"),
+      value: demoCompleted ? "3" : "4",
+      color: "#FDCB6E",
+    },
+    {
+      icon: CheckCircle2,
+      label: stats("completed"),
+      value: demoCompleted ? "7" : "6",
+      color: "#55EFC4",
+    },
     {
       icon: Banknote,
       label: stats("revenue"),
-      value: stats("revenueValue", { amount: "18,500" }),
+      value: stats("revenueValue", { amount: demoCompleted ? "19,200" : "18,500" }),
       color: "#A29BFE",
     },
   ];
@@ -314,6 +342,7 @@ export function HeroDashboardPreview() {
                         {patients.map((patient) => {
                           const isActive = patient.id === selectedPatientId;
                           const color = STATUS_COLORS[patient.statusKey];
+                          const isDemoRow = patient.id === "p2";
 
                           return (
                             <motion.button
@@ -323,10 +352,18 @@ export function HeroDashboardPreview() {
                               onMouseEnter={() => setSelectedPatientId(patient.id)}
                               whileHover={{ scale: 1.01 }}
                               whileTap={{ scale: 0.99 }}
+                              animate={
+                                isDemoRow && demoCompleted
+                                  ? {
+                                      borderColor: "rgba(85,239,196,0.5)",
+                                      backgroundColor: "rgba(85,239,196,0.12)",
+                                    }
+                                  : undefined
+                              }
                               transition={{ type: "spring", stiffness: 400, damping: 28 }}
                               className={[
                                 "w-full rounded-xl border px-3 py-2.5 text-start transition-shadow duration-200",
-                                isActive
+                                isActive && !(isDemoRow && demoCompleted)
                                   ? "border-accent/40 bg-accent/10 shadow-[0_0_20px_rgba(108,92,231,0.15)]"
                                   : "border-subtle/60 bg-base/50 hover:border-subtle hover:bg-surface/60",
                               ].join(" ")}

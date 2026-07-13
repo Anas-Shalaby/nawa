@@ -266,6 +266,7 @@
       "sectionSystem": "System",
       "navQueue": "Today's queue",
       "navUpcoming": "Upcoming",
+      "navNotifications": "Notification inbox",
       "navPatients": "Patients",
       "navServices": "Services",
       "navInventory": "Inventory",
@@ -279,65 +280,128 @@
       "closeMenu": "Close menu"
     },
     "notifications": {
-      "toastTitle": "New booking!",
+      "toastTitle": "New online booking",
       "toastDescription": "{patient} booked {service} at {time}",
       "centerTitle": "Notifications",
       "empty": "No notifications yet",
-      "markAllRead": "Mark all read",
-      "bellLabel": "Notification center"
+      "emptyCalm": "All good — no new alerts.",
+      "emptyUnread": "No unread notifications.",
+      "emptyUrgent": "No urgent alerts right now.",
+      "markAllRead": "Mark all as read",
+      "bellLabel": "Notification center",
+      "close": "Close",
+      "unreadBadge": "Unread",
+      "timeJustNow": "Just now",
+      "timeMinsAgo": "{mins} minutes ago",
+      "timeHoursAgo": "{hours} hours ago",
+      "timeDaysAgo": "{days} days ago",
+      "filters": {
+        "all": "All",
+        "unread": "Unread",
+        "urgent": "Urgent"
+      },
+      "actions": {
+        "viewDetails": "View details",
+        "updateStock": "Update stock",
+        "collect": "Collect",
+        "sendPaymentLink": "Send WhatsApp payment link",
+        "openPublicSlot": "Open slot for public booking",
+        "confirmRestock": "Confirm restock order"
+      },
+      "inventoryOutTitle": "Out of stock",
+      "inventoryLowTitle": "Low stock",
+      "inventoryOutBody": "{name} is out — update stock.",
+      "inventoryLowBody": "{name}: {quantity} left (min {min}).",
+      "openInbox": "Open notification inbox",
+      "inbox": {
+        "title": "Notification inbox",
+        "count": "{count} items",
+        "emptyList": "No notifications in this filter.",
+        "selectPrompt": "Select a notification to view details and actions",
+        "debtPatient": "Patient with balance due",
+        "amountDue": "Amount due",
+        "currency": "EGP",
+        "freedSlot": "Freed time slot",
+        "wasService": "Was booked for {service}",
+        "slotOpened": "Slot opened for booking",
+        "slotOpenedToast": "Slot opened for public booking",
+        "openAgenda": "Open agenda",
+        "stockLevels": "Stock levels",
+        "currentStock": "Current stock",
+        "minStock": "Minimum",
+        "restockError": "Could not confirm restock",
+        "restockSuccess": "Added {amount} to stock",
+        "restockDone": "Order confirmed",
+        "filters": {
+          "all": "All",
+          "financial": "Financial",
+          "system": "System",
+          "unread": "Unread"
+        },
+        "kinds": {
+          "booking": "Booking",
+          "inventory": "Inventory",
+          "financial": "Financial",
+          "urgent": "Urgent",
+          "system": "System",
+          "cancellation": "Cancellation"
+        }
+      }
     },
     "commandCenter": {
-      "title": "Daily Command Center",
+      "title": "Reception Mission Control",
       "currency": "EGP",
       "fallbackPatient": "Patient",
-      "kpis": {
-        "todayRevenue": {
-          "title": "Today's Revenue",
-          "delta": "vs yesterday"
+      "actionError": "Could not update appointment status",
+      "ops": {
+        "walkInTitle": "Add emergency walk-in",
+        "name": "Name",
+        "phone": "Mobile number",
+        "addToQueue": "Add to waiting",
+        "serviceRequired": "Choose a service first",
+        "walkInError": "Could not add walk-in",
+        "walkInSuccess": "Patient added to waiting room",
+        "urgentTitle": "Urgent tasks",
+        "longWait": "⏳ {name} waiting {mins} min — reassure or advance",
+        "collectYesterday": "💰 Collect {amount} EGP from {name} (left from yesterday)",
+        "callTomorrow": "📞 Call {count} patients to confirm tomorrow",
+        "noUrgent": "No urgent tasks right now"
+      },
+      "floor": {
+        "title": "Live floor",
+        "count": "{active} active · {total} today",
+        "dragHandle": "Drag card",
+        "mins": "{mins}m",
+        "zones": {
+          "outside": "Outside",
+          "waiting": "Waiting",
+          "doctor": "With doctor"
         },
-        "totalPatients": {
-          "title": "Total Patients",
-          "newLabel": "New",
-          "returningLabel": "Returning"
-        },
-        "waiting": {
-          "title": "Waiting Queue",
-          "avg": "Avg: {mins} mins"
-        },
-        "recoveredDebt": {
-          "title": "Recovered Debt",
-          "hint": "Recovered collections through smart follow-up"
+        "checklistTitle": "Quick daily checklist",
+        "checklist": {
+          "empty": "No patients on the floor right now.",
+          "cashDrawer": "Did you check the cash drawer?",
+          "callTomorrow": "Did you call tomorrow's patients? ({count})",
+          "unpaid": "Did you review yesterday's unpaid balances? ({count})"
         }
       },
-      "flowChart": {
-        "title": "Patient Flow & Revenue by Hour",
-        "subtitle": "Track today's peak clinic periods",
-        "badge": "Peak Active",
-        "patientsMetric": "Patients",
-        "hourLabel": "Hour"
-      },
-      "liveQueue": {
-        "title": "Live Action Queue",
-        "sendToDoctor": "Send to Doctor",
-        "empty": "No patients are waiting right now."
-      },
-      "topServices": {
-        "title": "Top Performing Services Today",
-        "servicesCount": "services",
-        "countLabel": "cases",
-        "empty": "No completed services yet."
-      },
-      "alerts": {
-        "title": "Smart AI Alerts",
-        "confirmation": "⚠️ {count} patients have not confirmed tomorrow's booking.",
-        "waiting": "💡 Patient ({name}) exceeded waiting time by {mins} minutes.",
-        "footer": "Total cases today: {total}"
+      "radar": {
+        "roomsTitle": "Rooms status",
+        "procedureRoom": "Procedure room",
+        "busyWith": "Busy — {service}",
+        "available": "Available — room empty",
+        "tickerTitle": "Live cash register",
+        "tickerHidden": "Payments follow your permissions",
+        "tickerEmpty": "No payments recorded yet today",
+        "tickerItem": "+ {amount} EGP — {name}",
+        "capacityTitle": "Today's clinic capacity",
+        "capacityLabel": "{pct}% full"
       },
       "status": {
-        "pending": "Pending",
+        "pending": "Expected",
         "confirmed": "Confirmed",
-        "checked_in": "Checked-in",
-        "in_session": "In Clinic",
+        "checked_in": "Waiting",
+        "in_session": "Inside",
         "completed": "Completed",
         "no_show": "No-show",
         "canceled": "Canceled"
@@ -647,19 +711,33 @@
     "tabFinancials": "Financials",
     "whatsappNow": "Message on WhatsApp",
     "bookAppointment": "Book new appointment",
+    "writePrescription": "Write prescription",
     "pillVisits": "Total visits: {count}",
     "pillBalance": "Outstanding balance: {amount} EGP",
     "pillLastVisit": "Last visit: {date}",
     "pillNoVisit": "No visits yet",
+    "statTotalVisits": "Total visits",
+    "statLastVisit": "Last visit",
+    "statBalance": "Outstanding balance",
     "doctorNotes": "Doctor's notes",
     "doctorNotesPlaceholder": "No doctor's notes yet.",
+    "pastPrescriptions": "Past prescriptions",
+    "prescriptionsEmpty": "No prescriptions recorded yet.",
+    "printPrescription": "Print prescription",
+    "prescriptionPrintTitle": "Medical prescription",
+    "printBlocked": "Allow pop-ups to print the prescription.",
+    "attachmentsTitle": "Attachments & medical images",
     "medicalImages": "Medical images",
     "appointmentsEmpty": "No appointment history for this patient yet.",
+    "reschedule": "Reschedule",
     "financialEmpty": "No invoices available for this patient.",
     "totalCost": "Total cost",
-    "totalPaid": "Paid",
-    "remainingBalance": "Remaining",
-    "invoiceTotal": "Total",
+    "totalPaid": "Total paid",
+    "remainingBalance": "Total remaining",
+    "addPayment": "Add payment",
+    "paymentRecorded": "Payment recorded successfully",
+    "ledgerDate": "Date",
+    "invoiceTotal": "Total cost",
     "invoicePaid": "Paid",
     "invoiceRemaining": "Remaining",
     "currency": "EGP",
@@ -826,9 +904,9 @@
     "hero": {
       "badge": "For dental, dermatology & mental health clinics",
       "headline": "Your clinic.. runs like Swiss clockwork.",
-      "subheadline": "The first cloud system built for dental, dermatology, and mental health clinics. Control your schedule, grow revenue, and reach patients intelligently.",
-      "ctaPrimary": "Get started",
-      "ctaSecondary": "Explore the system",
+      "subheadline": "Stop losing money to no-shows and forgotten balances. Nawa manages your schedule, billing, and inventory with intelligent automation.",
+      "ctaPrimary": "Start free for 6 months",
+      "ctaSecondary": "See how it works",
       "stat1Value": "40%",
       "stat1Label": "Fewer no-shows",
       "stat2Value": "Zero",
@@ -855,6 +933,8 @@
         "statusInSession": "In session",
         "statusConfirmed": "Confirmed",
         "statusCheckedIn": "Checked in",
+        "statusPending": "Pending",
+        "statusCompleted": "Completed",
         "savedRevenueLabel": "Recovered revenue",
         "savedRevenueValue": "+42,500 EGP",
         "savedRevenueDelta": "+28%",
@@ -869,13 +949,67 @@
         "mobileRevenueLabel": "Recovered revenue"
       }
     },
+    "pain": {
+      "eyebrow": "The painful reality",
+      "title": "How much is your clinic losing every month unnoticed?",
+      "closing": "Nawa was built specifically to end this chaos.",
+      "revenue": {
+        "title": "20% of revenue leaks away",
+        "body": "No-shows and forgotten follow-ups quietly steal a large share of your monthly income."
+      },
+      "debt": {
+        "title": "Forgotten balances",
+        "body": "Patients leave without paying in full — and nothing reminds you or collects for you."
+      },
+      "chaos": {
+        "title": "Angry waiting rooms",
+        "body": "Weak scheduling means hours of waiting, frustrated patients, and a reputation that erodes daily."
+      }
+    },
+    "roi": {
+      "eyebrow": "Do the math",
+      "title": "Nawa ROI calculator",
+      "subtitle": "Move the sliders and see how much revenue Nawa can recover for you every month.",
+      "inputsTitle": "Your clinic numbers",
+      "patientsLabel": "Average patients per day",
+      "ticketLabel": "Average ticket price",
+      "currency": "EGP",
+      "formulaHint": "We estimate recovering ~15% of revenue lost to no-shows and forgotten balances.",
+      "outputLabel": "Money Nawa can save monthly",
+      "outputHint": "A conservative estimate. Organized clinics often recover more with reminders and smart collections."
+    },
     "bento": {
       "eyebrow": "The Nawa arsenal",
-      "title": "Everything your clinic needs — one interface",
-      "subtitle": "Real mini UI replicas, no stock photos. See how the system works before you sign up.",
+      "title": "Tools that recover revenue — not just pretty screens",
+      "subtitle": "Three capabilities that hit the doctor's pain directly: debt, schedule conflicts, and invoicing.",
+      "debt": {
+        "title": "Debt Radar",
+        "body": "A red balance turns green after a WhatsApp reminder — collection happens before it is forgotten.",
+        "patient": "Patient",
+        "patientName": "Sara Mahmoud",
+        "due": "Due",
+        "paid": "Paid",
+        "currency": "EGP",
+        "hint": "Automatic WhatsApp reminder for remaining balance"
+      },
+      "time": {
+        "title": "Time Engine",
+        "body": "Detects conflicts and auto-corrects overlapping appointments before chaos snowballs.",
+        "slotA": "Whitening — Sara",
+        "slotB": "Consult — Ahmed",
+        "conflict": "Conflict detected…",
+        "fixed": "Auto-corrected ✓"
+      },
+      "invoice": {
+        "title": "Smart Invoicing",
+        "body": "A premium receipt ready to print and download — builds patient trust and clinic brand.",
+        "receiptTitle": "Nawa invoice",
+        "total": "Total",
+        "currency": "EGP"
+      },
       "roi": {
         "title": "Discipline & ROI engine",
-        "body": "Track recovered revenue from WhatsApp reminders and confirmations — see real returns on the financial dashboard.",
+        "body": "Track recovered revenue from WhatsApp reminders and confirmations.",
         "metricLabel": "Recovered revenue",
         "metricValue": "+42,500 EGP",
         "metricDelta": "+28%",
@@ -884,14 +1018,14 @@
       },
       "whatsapp": {
         "title": "Free relationship management",
-        "body": "Reach patients on WhatsApp with no CRM subscription. Ready-made templates for reminders, follow-ups, and collections.",
+        "body": "Reach patients on WhatsApp with no CRM subscription.",
         "msg1": "Reminder: your appointment tomorrow at 3:00 PM",
         "msg2": "Please confirm attendance with one tap",
         "zeroCost": "Zero cost — via wa.me"
       },
       "visual": {
         "title": "Visual transformation",
-        "body": "Visual EHR for dental, dermatology, and mental health — before/after, media gallery, and patient presentation mode.",
+        "body": "Visual EHR before/after.",
         "before": "Before",
         "after": "After",
         "point1": "Visual comparison for clinical cases",
@@ -899,7 +1033,7 @@
       },
       "queue": {
         "title": "Goodbye waiting chaos",
-        "body": "Master-detail control screen: vertical queue + patient detail panel. The secretary sees everything at a glance.",
+        "body": "Master-detail queue control screen.",
         "queueLabel": "Today's queue",
         "detailLabel": "Appointment details",
         "patient1": "Sara Mahmoud",
@@ -914,6 +1048,30 @@
         "detailBalanceValue": "1,200 EGP",
         "actionPrimary": "Complete session",
         "actionSecondary": "Schedule follow-up"
+      }
+    },
+    "trust": {
+      "eyebrow": "Doctor trust",
+      "title": "Doctors who trust Nawa",
+      "subtitle": "Stories from clinics that started organizing revenue and operations.",
+      "ratingLabel": "5-star rating",
+      "d1": {
+        "initials": "AM",
+        "name": "Dr. Ahmed Mansour",
+        "role": "Dental clinic — Cairo",
+        "quote": "The system saved me from hiring a full-time accountant."
+      },
+      "d2": {
+        "initials": "SN",
+        "name": "Dr. Sara Nabil",
+        "role": "Dermatology — Giza",
+        "quote": "Before Nawa, balances vanished. Now every debt has a clear reminder."
+      },
+      "d3": {
+        "initials": "KH",
+        "name": "Dr. Karim Hassan",
+        "role": "Mental health — Alexandria",
+        "quote": "No-shows dropped noticeably after WhatsApp confirmations."
       }
     },
     "value": {
@@ -937,6 +1095,7 @@
       "eyebrow": "Transparent pricing",
       "title": "An investment that pays for itself",
       "subtitle": "Start free for 6 months, or activate the full clinic plan with white-glove onboarding.",
+      "noCreditCard": "No credit card required",
       "free": {
         "badge": "New — Free",
         "name": "Free plan",
@@ -1034,5 +1193,33 @@
         "unknown": "Something went wrong. Please try again."
       }
     }
+  },
+  "prescription": {
+    "title": "e-Prescription builder",
+    "forPatient": "Patient: {name}",
+    "close": "Close",
+    "searchPlaceholder": "Search for medicine...",
+    "addCustom": "Add “{name}” as custom medicine",
+    "emptyList": "Search for a medicine or pick a quick template.",
+    "removeDrug": "Remove medicine",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "duration": "Duration",
+    "notes": "Notes",
+    "notesPlaceholder": "e.g. after meals",
+    "paperPatient": "Patient",
+    "paperAge": "Age",
+    "paperAgeUnknown": "—",
+    "paperDate": "Date",
+    "paperEmpty": "Medicines will appear here as you add them",
+    "signature": "Doctor signature",
+    "print": "Print prescription",
+    "whatsapp": "Send via WhatsApp",
+    "save": "Save to record",
+    "saving": "Saving…",
+    "emptyError": "Add at least one medicine",
+    "saveError": "Could not save prescription",
+    "saveSuccess": "Prescription saved to patient record",
+    "templateApplied": "Template applied"
   }
 }
