@@ -4,8 +4,8 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale, useTranslations } from "next-intl";
-import { motion } from "framer-motion";
-import { Loader2, MessageCircle } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2, MessageCircle, UserRound, UsersRound } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { bookAppointment } from "@/actions/bookAppointment";
 import { getAvailableSlots } from "@/actions/getAvailableSlots";
@@ -47,7 +47,7 @@ export function BookingFlow({ tenant, services }: BookingFlowProps) {
   const schema = useMemo(
     () =>
       createPatientBookingSchema((key) =>
-        tv(key as "nameMin" | "nameMax" | "whatsappRequired" | "whatsappInvalid"),
+        tv(key),
       ),
     [tv],
   );
@@ -55,11 +55,19 @@ export function BookingFlow({ tenant, services }: BookingFlowProps) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<PatientBookingFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", whatsapp: "" },
+    defaultValues: {
+      name: "",
+      whatsapp: "",
+      bookingType: "self",
+      dependentName: "",
+      relationshipType: "",
+    },
   });
+  const bookingType = watch("bookingType");
 
   function loadSlots(service: Service, date: string) {
     startSlotsTransition(async () => {
@@ -119,6 +127,14 @@ export function BookingFlow({ tenant, services }: BookingFlowProps) {
         slotTime: selectedSlot.time,
         name: values.name,
         whatsapp: values.whatsapp,
+        bookingType: values.bookingType ?? "self",
+        dependentName: values.dependentName,
+        relationshipType: values.relationshipType as
+          | "child"
+          | "spouse"
+          | "parent"
+          | "other"
+          | undefined,
       });
 
       if (result.errorCode === "SOFT_BANNED") {
@@ -192,18 +208,79 @@ export function BookingFlow({ tenant, services }: BookingFlowProps) {
             <SoftBanCard clinicName={tenant.name} whatsappNumber={tenant.whatsappNumber} />
           ) : (
             <div className="space-y-4">
+              <fieldset dir="rtl">
+                <legend className="mb-2 block text-sm font-semibold text-booking-text">
+                  {t("bookingForTitle")}
+                </legend>
+                <div className="grid grid-cols-2 gap-2" role="radiogroup">
+                  <label
+                    className={[
+                      "relative flex min-h-[92px] cursor-pointer flex-col rounded-2xl border p-3 transition focus-within:ring-2 focus-within:ring-booking-accent/40",
+                      bookingType === "self"
+                        ? "border-booking-accent bg-booking-accent-light shadow-sm"
+                        : "border-gray-200 bg-booking-surface hover:border-booking-accent/40",
+                    ].join(" ")}
+                  >
+                    <input
+                      type="radio"
+                      value="self"
+                      className="peer sr-only"
+                      {...register("bookingType")}
+                    />
+                    <span className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-booking-accent/10 text-booking-accent">
+                      <UserRound className="h-4 w-4" aria-hidden />
+                    </span>
+                    <span className="text-sm font-semibold text-booking-text">
+                      {t("bookingForSelf")}
+                    </span>
+                    <span className="mt-1 text-[11px] leading-4 text-booking-muted">
+                      {t("bookingForSelfHint")}
+                    </span>
+                  </label>
+
+                  <label
+                    className={[
+                      "relative flex min-h-[92px] cursor-pointer flex-col rounded-2xl border p-3 transition focus-within:ring-2 focus-within:ring-booking-accent/40",
+                      bookingType === "dependent"
+                        ? "border-booking-accent bg-booking-accent-light shadow-sm"
+                        : "border-gray-200 bg-booking-surface hover:border-booking-accent/40",
+                    ].join(" ")}
+                  >
+                    <input
+                      type="radio"
+                      value="dependent"
+                      className="peer sr-only"
+                      {...register("bookingType")}
+                    />
+                    <span className="mb-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-booking-accent/10 text-booking-accent">
+                      <UsersRound className="h-4 w-4" aria-hidden />
+                    </span>
+                    <span className="text-sm font-semibold text-booking-text">
+                      {t("bookingForDependent")}
+                    </span>
+                    <span className="mt-1 text-[11px] leading-4 text-booking-muted">
+                      {t("bookingForDependentHint")}
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
               <div>
                 <label
                   htmlFor="booking-name"
                   className="mb-1.5 block text-sm font-medium text-booking-text"
                 >
-                  {t("fullName")}
+                  {bookingType === "dependent" ? t("responsibleName") : t("fullName")}
                 </label>
                 <input
                   id="booking-name"
                   type="text"
                   autoComplete="name"
-                  placeholder={t("namePlaceholder")}
+                  placeholder={
+                    bookingType === "dependent"
+                      ? t("responsibleNamePlaceholder")
+                      : t("namePlaceholder")
+                  }
                   className={[
                     "w-full rounded-xl border bg-booking-surface px-4 py-3.5 text-base text-booking-text",
                     "placeholder:text-gray-400 focus:border-booking-accent focus:outline-none focus:ring-2 focus:ring-booking-accent/30",
@@ -215,6 +292,76 @@ export function BookingFlow({ tenant, services }: BookingFlowProps) {
                   <p className="mt-1.5 text-sm text-red-500">{errors.name.message}</p>
                 ) : null}
               </div>
+
+              <AnimatePresence initial={false}>
+                {bookingType === "dependent" ? (
+                  <motion.div
+                    key="dependent-fields"
+                    initial={{ opacity: 0, height: 0, y: -8 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0, y: -8 }}
+                    transition={{ duration: 0.22 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-4 rounded-2xl border border-booking-accent/20 bg-booking-accent-light/50 p-3">
+                      <div className="relative">
+                        <input
+                          id="booking-dependent-name"
+                          type="text"
+                          autoComplete="off"
+                          placeholder=" "
+                          className={[
+                            "peer w-full rounded-xl border bg-booking-surface px-4 pb-2 pt-6 text-base text-booking-text",
+                            "placeholder:text-transparent focus:border-booking-accent focus:outline-none focus:ring-2 focus:ring-booking-accent/30",
+                            errors.dependentName ? "border-red-300" : "border-gray-200",
+                          ].join(" ")}
+                          {...register("dependentName")}
+                        />
+                        <label
+                          htmlFor="booking-dependent-name"
+                          className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-booking-muted transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-booking-accent"
+                        >
+                          {t("dependentName")}
+                        </label>
+                        {errors.dependentName ? (
+                          <p className="mt-1.5 text-sm text-red-500">
+                            {errors.dependentName.message}
+                          </p>
+                        ) : null}
+                      </div>
+
+                      <div className="relative">
+                        <select
+                          id="booking-relationship"
+                          className={[
+                            "w-full appearance-none rounded-xl border bg-booking-surface px-4 pb-2 pt-6 text-base text-booking-text",
+                            "focus:border-booking-accent focus:outline-none focus:ring-2 focus:ring-booking-accent/30",
+                            errors.relationshipType ? "border-red-300" : "border-gray-200",
+                          ].join(" ")}
+                          {...register("relationshipType")}
+                        >
+                          <option value="">{t("relationshipPlaceholder")}</option>
+                          <option value="child">{t("relationships.child")}</option>
+                          <option value="spouse">{t("relationships.spouse")}</option>
+                          <option value="parent">{t("relationships.parent")}</option>
+                          <option value="other">{t("relationships.other")}</option>
+                        </select>
+                        <label
+                          htmlFor="booking-relationship"
+                          className="pointer-events-none absolute start-4 top-2 text-xs font-medium text-booking-muted"
+                        >
+                          {t("relationshipType")}
+                        </label>
+                        {errors.relationshipType ? (
+                          <p className="mt-1.5 text-sm text-red-500">
+                            {errors.relationshipType.message}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
 
               <div>
                 <label

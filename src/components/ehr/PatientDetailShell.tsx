@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { givePatientStrike } from "@/actions/managePatients";
 import type { Locale } from "@/i18n/routing";
 import type { PatientMediaRecord } from "@/lib/media/types";
-import type { PatientRecord } from "@/lib/queries/patients";
+import type { PatientFamily, PatientRecord } from "@/lib/queries/patients";
 import type { DashboardService } from "@/lib/dashboard/types";
 import type { PatientVisitRecord } from "@/lib/queries/patientVisits";
 import type { PatientPaymentRecord } from "@/lib/queries/patientPayments";
@@ -33,6 +33,7 @@ import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
 import { ScheduleSessionModal } from "@/components/dashboard/ScheduleSessionModal";
 import { RecordPaymentModal } from "@/components/patients/RecordPaymentModal";
 import { PrescriptionBuilder } from "@/components/clinical/PrescriptionBuilder";
+import { PatientFamilyWidget } from "@/components/patients/PatientFamilyWidget";
 import { PatientVisualEhr } from "./PatientVisualEhr";
 
 interface PatientDetailShellProps {
@@ -47,6 +48,7 @@ interface PatientDetailShellProps {
   specialty?: string;
   backHref?: string;
   compact?: boolean;
+  family?: PatientFamily;
 }
 
 type PatientDetailTab = "medical" | "appointments" | "financials";
@@ -150,6 +152,7 @@ export function PatientDetailShell({
   specialty,
   backHref = "/dashboard/patients",
   compact = false,
+  family,
 }: PatientDetailShellProps) {
   const t = useTranslations("ehr");
   const tPatients = useTranslations("patients");
@@ -334,8 +337,16 @@ export function PatientDetailShell({
           </div>
         </header>
 
+        {!compact && family ? (
+          <PatientFamilyWidget
+            patientId={patient.id}
+            parent={family.parent}
+            dependents={family.dependents}
+          />
+        ) : null}
+
         {!compact ? (
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="mb-4 mt-4 flex flex-wrap items-center justify-between gap-2">
             <Link
               href={backHref}
               className="inline-flex items-center gap-1.5 text-xs text-muted transition hover:text-accent"

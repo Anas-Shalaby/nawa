@@ -7,6 +7,9 @@ import {
   Camera,
   ImageIcon,
   Loader2,
+  LocateFixed,
+  MapPin,
+  Phone,
   Plus,
   Sparkles,
   UserRound,
@@ -196,8 +199,13 @@ function PhonePreview({
   credentials,
   avatarUrl,
   coverUrl,
+  clinicPhone,
+  clinicLocation,
+  clinicLatitude,
+  clinicLongitude,
   bookCta,
   previewLabel,
+  locationCta,
 }: {
   doctorName: string;
   specialty: string;
@@ -205,8 +213,13 @@ function PhonePreview({
   credentials: string[];
   avatarUrl: string | null;
   coverUrl: string | null;
+  clinicPhone: string;
+  clinicLocation: string;
+  clinicLatitude: number | null;
+  clinicLongitude: number | null;
   bookCta: string;
   previewLabel: string;
+  locationCta: string;
 }) {
   return (
     <div className="sticky top-8">
@@ -269,6 +282,33 @@ function PhonePreview({
                 {specialty || "استشاري جراحة الوجه والفكين"}
               </p>
 
+              {clinicPhone || clinicLocation ? (
+                <div className="mt-3 space-y-1.5 text-start text-[11px] text-slate-500">
+                  {clinicPhone ? (
+                    <p className="flex items-center gap-1.5" dir="ltr">
+                      <Phone className="h-3 w-3 shrink-0" aria-hidden />
+                      {clinicPhone}
+                    </p>
+                  ) : null}
+                  {clinicLocation || (clinicLatitude !== null && clinicLongitude !== null) ? (
+                    <a
+                      href={
+                        clinicLatitude !== null && clinicLongitude !== null
+                          ? `https://www.google.com/maps/search/?api=1&query=${clinicLatitude},${clinicLongitude}`
+                          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clinicLocation)}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-1.5 transition hover:text-accent"
+                      dir="rtl"
+                    >
+                      <MapPin className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
+                      <span>{clinicLocation || locationCta}</span>
+                    </a>
+                  ) : null}
+                </div>
+              ) : null}
+
               {credentials.length > 0 ? (
                 <div className="mt-4 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {credentials.map((tag) => (
@@ -318,11 +358,22 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
   const nameId = useId();
   const specialtyId = useId();
   const bioId = useId();
+  const phoneId = useId();
+  const locationId = useId();
   const credentialId = useId();
 
   const [doctorName, setDoctorName] = useState(profile.doctorName);
   const [specialty, setSpecialty] = useState(profile.specialty);
   const [bio, setBio] = useState(profile.bio);
+  const [clinicPhone, setClinicPhone] = useState(profile.clinicPhone);
+  const [clinicLocation, setClinicLocation] = useState(profile.clinicLocation);
+  const [clinicLatitude, setClinicLatitude] = useState<number | null>(
+    profile.clinicLatitude,
+  );
+  const [clinicLongitude, setClinicLongitude] = useState<number | null>(
+    profile.clinicLongitude,
+  );
+  const [isLocating, setIsLocating] = useState(false);
   const [credentials, setCredentials] = useState<string[]>(profile.credentials);
   const [credentialDraft, setCredentialDraft] = useState("");
   const [avatar, setAvatar] = useState<MediaDraft>({
@@ -379,12 +430,46 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
     setCredentials((current) => current.filter((item) => item !== tag));
   }
 
+  function captureClinicLocation() {
+    if (!navigator.geolocation) {
+      toast.error(t("locationUnsupported"));
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setClinicLatitude(Number(position.coords.latitude.toFixed(7)));
+        setClinicLongitude(Number(position.coords.longitude.toFixed(7)));
+        setIsLocating(false);
+        toast.success(t("locationCaptured"));
+      },
+      (error) => {
+        setIsLocating(false);
+        toast.error(
+          error.code === error.PERMISSION_DENIED
+            ? t("locationPermissionDenied")
+            : t("locationError"),
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12_000,
+        maximumAge: 60_000,
+      },
+    );
+  }
+
   function handleSave() {
     startTransition(async () => {
       const formData = new FormData();
       formData.set("doctorName", doctorName);
       formData.set("specialty", specialty);
       formData.set("bio", bio);
+      formData.set("clinicPhone", clinicPhone);
+      formData.set("clinicLocation", clinicLocation);
+      formData.set("clinicLatitude", clinicLatitude?.toString() ?? "");
+      formData.set("clinicLongitude", clinicLongitude?.toString() ?? "");
       formData.set("credentials", JSON.stringify(credentials));
       formData.set("existingAvatarUrl", profile.avatarUrl ?? "");
       formData.set("existingCoverUrl", profile.coverUrl ?? "");
@@ -490,6 +575,47 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
                 multiline
                 rows={5}
               />
+              <FloatingField
+                id={phoneId}
+                label={t("clinicPhoneLabel")}
+                value={clinicPhone}
+                onChange={setClinicPhone}
+              />
+              <FloatingField
+                id={locationId}
+                label={t("clinicLocationLabel")}
+                value={clinicLocation}
+                onChange={setClinicLocation}
+                multiline
+                rows={3}
+              />
+              <div className="rounded-xl border border-subtle bg-base/30 p-3 text-start">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-primary">
+                      {t("coordinatesLabel")}
+                    </p>
+                    <p className="mt-1 text-xs text-muted" dir="ltr">
+                      {clinicLatitude !== null && clinicLongitude !== null
+                        ? `${clinicLatitude}, ${clinicLongitude}`
+                        : t("coordinatesEmpty")}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={captureClinicLocation}
+                    disabled={isLocating}
+                    className="inline-flex items-center gap-2 rounded-xl border border-accent/25 bg-accent/10 px-3 py-2 text-xs font-semibold text-accent transition hover:bg-accent/20 disabled:opacity-50"
+                  >
+                    {isLocating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    ) : (
+                      <LocateFixed className="h-4 w-4" aria-hidden />
+                    )}
+                    {isLocating ? t("locating") : t("captureLocation")}
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="mt-6 text-start">
@@ -575,8 +701,13 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
             credentials={credentials}
             avatarUrl={avatar.previewUrl}
             coverUrl={cover.previewUrl}
+            clinicPhone={clinicPhone}
+            clinicLocation={clinicLocation}
+            clinicLatitude={clinicLatitude}
+            clinicLongitude={clinicLongitude}
             bookCta={t("bookCta")}
             previewLabel={t("previewLabel")}
+            locationCta={t("getDirections")}
           />
         </aside>
       </div>

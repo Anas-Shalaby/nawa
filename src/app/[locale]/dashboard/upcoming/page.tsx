@@ -1,4 +1,5 @@
-import { UpcomingAppointmentsShell } from "@/components/agenda/UpcomingAppointmentsShell";
+import { InteractiveAgendaCanvas } from "@/components/agenda/InteractiveAgendaCanvas";
+import { fetchWorkingHours } from "@/actions/workingHours";
 import { fetchUpcomingAgenda } from "@/lib/queries/agenda";
 import { fetchPatients } from "@/lib/queries/patients";
 import { fetchDashboardServices } from "@/lib/queries/services";
@@ -15,10 +16,11 @@ export async function generateMetadata({
 }
 
 export default async function UpcomingPage() {
-  const [appointments, services, patients] = await Promise.all([
+  const [appointments, services, patients, workingHours] = await Promise.all([
     fetchUpcomingAgenda(),
     fetchDashboardServices(),
     fetchPatients(),
+    fetchWorkingHours(),
   ]);
 
   const activePatients = patients
@@ -30,10 +32,11 @@ export default async function UpcomingPage() {
     }));
 
   return (
-    <UpcomingAppointmentsShell
+    <InteractiveAgendaCanvas
       appointments={appointments}
       services={services}
       patients={activePatients}
+      workingHours={workingHours}
     />
   );
 }

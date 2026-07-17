@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createServiceSchema } from "@/lib/services/schema";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
 export interface ServiceInput {
@@ -8,6 +9,9 @@ export interface ServiceInput {
   durationMinutes: number;
   priceEgp?: number | null;
   preVisitInstructions?: string | null;
+  isPackage?: boolean;
+  sessionsCount?: number;
+  colorCode?: string | null;
 }
 
 export interface ManageServiceResult {
@@ -21,28 +25,49 @@ type ValidatedServiceInput =
   | ManageServiceResult;
 
 function validateServiceInput(input: ServiceInput): ValidatedServiceInput {
-  const name = input.name.trim();
-  const preVisitInstructions = input.preVisitInstructions?.trim() || null;
-  const priceEgp =
-    input.priceEgp === null || input.priceEgp === undefined || Number.isNaN(input.priceEgp)
-      ? null
-      : Math.max(0, Math.floor(input.priceEgp));
+  const schema = createServiceSchema((key) => {
+    const messages = {
+      nameRequired: "Service name is required.",
+      durationRequired: "Duration must be greater than zero.",
+      priceInvalid: "Price cannot be negative.",
+      sessionsRequired: "Packages must include at least two sessions.",
+      colorInvalid: "Color must be a valid hex value.",
+    };
+    return messages[key];
+  });
+  const parsed = schema.safeParse({
+    name: input.name,
+    durationMinutes: input.durationMinutes,
+    priceEgp:
+      input.priceEgp === undefined || Number.isNaN(input.priceEgp)
+        ? null
+        : input.priceEgp,
+    preVisitInstructions: input.preVisitInstructions?.trim() || null,
+    isPackage: input.isPackage ?? false,
+    sessionsCount: input.isPackage ? (input.sessionsCount ?? 1) : 1,
+    colorCode: input.colorCode?.trim() || null,
+  });
 
-  if (name.length < 2) {
-    return { success: false, error: "Service name is required." };
-  }
-
-  if (input.durationMinutes <= 0) {
-    return { success: false, error: "Duration must be greater than zero." };
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.issues[0]?.message ?? "Invalid service.",
+    };
   }
 
   return {
     ok: true,
     value: {
-      name,
-      durationMinutes: input.durationMinutes,
-      priceEgp,
-      preVisitInstructions,
+      name: parsed.data.name,
+      durationMinutes: parsed.data.durationMinutes,
+      priceEgp:
+        parsed.data.priceEgp === null
+          ? null
+          : Math.floor(parsed.data.priceEgp),
+      preVisitInstructions: parsed.data.preVisitInstructions,
+      isPackage: parsed.data.isPackage,
+      sessionsCount: parsed.data.isPackage ? parsed.data.sessionsCount : 1,
+      colorCode: parsed.data.colorCode?.toUpperCase() ?? null,
     },
   };
 }
@@ -70,6 +95,9 @@ export async function addService(input: ServiceInput): Promise<ManageServiceResu
       duration_minutes: normalized.durationMinutes,
       price_egp: normalized.priceEgp,
       pre_visit_instructions: normalized.preVisitInstructions,
+      is_package: normalized.isPackage,
+      sessions_count: normalized.sessionsCount,
+      color_code: normalized.colorCode,
     });
 
     if (error) {
@@ -108,6 +136,9 @@ export async function updateService(
         duration_minutes: normalized.durationMinutes,
         price_egp: normalized.priceEgp,
         pre_visit_instructions: normalized.preVisitInstructions,
+        is_package: normalized.isPackage,
+        sessions_count: normalized.sessionsCount,
+        color_code: normalized.colorCode,
       })
       .eq("id", serviceId)
       .eq("tenant_id", tenantId);

@@ -4,7 +4,11 @@ import { PatientDetailShell } from "@/components/ehr/PatientDetailShell";
 import { fetchDoctorProfile } from "@/lib/queries/doctorProfile";
 import { fetchPatientMedia } from "@/lib/queries/patientMedia";
 import { fetchPatientPayments } from "@/lib/queries/patientPayments";
-import { fetchPatientById, fetchPatientTenantId } from "@/lib/queries/patients";
+import {
+  fetchPatientById,
+  fetchPatientFamily,
+  fetchPatientTenantId,
+} from "@/lib/queries/patients";
 import { fetchPatientVisitHistory } from "@/lib/queries/patientVisits";
 import { fetchDashboardServices } from "@/lib/queries/services";
 
@@ -28,7 +32,7 @@ export default async function PatientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [patient, tenantId, media, payments, services, visits, profile] =
+  const [patient, tenantId, media, payments, services, visits, profile, family] =
     await Promise.all([
       fetchPatientById(id),
       fetchPatientTenantId(),
@@ -37,6 +41,7 @@ export default async function PatientDetailPage({
       fetchDashboardServices(),
       fetchPatientVisitHistory(id),
       fetchDoctorProfile(),
+      fetchPatientFamily(id),
     ]);
 
   if (!patient) {
@@ -55,6 +60,7 @@ export default async function PatientDetailPage({
         doctorName={profile.doctorName}
         clinicName={profile.clinicName}
         specialty={profile.specialty}
+        family={family}
       />
     </div>
   );

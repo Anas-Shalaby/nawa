@@ -18,6 +18,7 @@ export interface Appointment {
   balanceDue?: number;
   serviceId: string;
   serviceName: string;
+  serviceColorCode?: string | null;
   durationMinutes: number;
   priceEgp: number | null;
   appointmentDate: string;
@@ -40,6 +41,9 @@ export interface DashboardService {
   durationMinutes: number;
   priceEgp: number | null;
   preVisitInstructions: string | null;
+  isPackage: boolean;
+  sessionsCount: number;
+  colorCode: string | null;
 }
 
 export interface PaymentTickerItem {

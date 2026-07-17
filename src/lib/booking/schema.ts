@@ -17,35 +17,73 @@ export function normalizeEgyptPhone(input: string): string {
 const egyptMobileRegex = /^1[0125]\d{8}$/;
 
 type ValidationTranslator = (
-  key: "nameMin" | "nameMax" | "whatsappRequired" | "whatsappInvalid",
+  key:
+    | "nameMin"
+    | "nameMax"
+    | "whatsappRequired"
+    | "whatsappInvalid"
+    | "dependentNameRequired"
+    | "relationshipRequired",
 ) => string;
 
 export function createPatientBookingSchema(t: ValidationTranslator) {
-  return z.object({
-    name: z
-      .string()
-      .trim()
-      .min(2, t("nameMin"))
-      .max(80, t("nameMax")),
-    whatsapp: z
-      .string()
-      .trim()
-      .min(1, t("whatsappRequired"))
-      .refine(
-        (val) => egyptMobileRegex.test(normalizeEgyptPhone(val)),
-        t("whatsappInvalid"),
-      ),
-  });
+  return z
+    .object({
+      name: z
+        .string()
+        .trim()
+        .min(2, t("nameMin"))
+        .max(80, t("nameMax")),
+      whatsapp: z
+        .string()
+        .trim()
+        .min(1, t("whatsappRequired"))
+        .refine(
+          (val) => egyptMobileRegex.test(normalizeEgyptPhone(val)),
+          t("whatsappInvalid"),
+        ),
+      bookingType: z.enum(["self", "dependent"]).default("self"),
+      dependentName: z.string().trim().optional(),
+      relationshipType: z.string().optional(),
+    })
+    .superRefine((values, context) => {
+      if (values.bookingType !== "dependent") return;
+
+      if (!values.dependentName || values.dependentName.length < 2) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["dependentName"],
+          message: t("dependentNameRequired"),
+        });
+      }
+
+      if (
+        !values.relationshipType ||
+        !["child", "spouse", "parent", "other"].includes(
+          values.relationshipType,
+        )
+      ) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["relationshipType"],
+          message: t("relationshipRequired"),
+        });
+      }
+    });
 }
 
-export type PatientBookingFormValues = z.infer<
+export type PatientBookingFormValues = z.input<
   ReturnType<typeof createPatientBookingSchema>
 >;
 
 export interface BookAppointmentInput {
   tenantSlug: string;
   serviceId: string;
+  date: string;
   slotTime: string;
   name: string;
   whatsapp: string;
+  bookingType: "self" | "dependent";
+  dependentName?: string;
+  relationshipType?: "child" | "spouse" | "parent" | "other";
 }

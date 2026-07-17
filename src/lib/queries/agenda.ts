@@ -13,6 +13,8 @@ export interface AgendaAppointment {
   phoneNumber: string;
   serviceId: string;
   serviceName: string;
+  serviceColorCode: string | null;
+  durationMinutes: number;
   servicePriceEgp: number | null;
   appointmentDate: string;
   doctorNotes: string | null;
@@ -26,8 +28,18 @@ type PatientJoin =
   | null;
 
 type ServiceJoin =
-  | { name: string; price_egp: number | null }
-  | { name: string; price_egp: number | null }[]
+  | {
+      name: string;
+      price_egp: number | null;
+      duration_minutes: number | null;
+      color_code: string | null;
+    }
+  | {
+      name: string;
+      price_egp: number | null;
+      duration_minutes: number | null;
+      color_code: string | null;
+    }[]
   | null;
 
 type AgendaRow = {
@@ -58,6 +70,8 @@ function mapAgendaRow(row: AgendaRow): AgendaAppointment {
     phoneNumber: patient?.phone_number ?? "",
     serviceId: row.service_id,
     serviceName: service?.name ?? "Service",
+    serviceColorCode: service?.color_code ?? null,
+    durationMinutes: service?.duration_minutes ?? 30,
     servicePriceEgp: service?.price_egp ?? null,
     appointmentDate: normalizeStoredTimestamp(row.appointment_date),
     doctorNotes: row.doctor_notes,
@@ -69,7 +83,7 @@ function mapAgendaRow(row: AgendaRow): AgendaAppointment {
 export async function fetchUpcomingAgenda(): Promise<AgendaAppointment[]> {
   const supabase = await createAuthenticatedClient();
   const tenantId = await resolveTenantId(supabase);
-  const { endExclusiveIso } = getCairoDayQueryBounds(getCairoTodayKey());
+  const { startIso } = getCairoDayQueryBounds(getCairoTodayKey());
 
   const { data, error } = await supabase
     .from("appointments")
@@ -83,11 +97,11 @@ export async function fetchUpcomingAgenda(): Promise<AgendaAppointment[]> {
       doctor_notes,
       is_re_examination,
       patients!inner ( name, phone_number ),
-      services!inner ( name, price_egp )
+      services!inner ( name, price_egp, duration_minutes, color_code )
     `,
     )
     .eq("tenant_id", tenantId)
-    .gte("appointment_date", endExclusiveIso)
+    .gte("appointment_date", startIso)
     .in("status", ["pending", "confirmed"])
     .order("appointment_date", { ascending: true });
 

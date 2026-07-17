@@ -23,6 +23,10 @@ export interface Database {
           credentials: string[] | unknown;
           avatar_url: string | null;
           cover_url: string | null;
+          clinic_phone: string | null;
+          clinic_location: string | null;
+          clinic_latitude: number | null;
+          clinic_longitude: number | null;
         };
         Insert: {
           name: string;
@@ -34,6 +38,10 @@ export interface Database {
           credentials?: string[] | unknown;
           avatar_url?: string | null;
           cover_url?: string | null;
+          clinic_phone?: string | null;
+          clinic_location?: string | null;
+          clinic_latitude?: number | null;
+          clinic_longitude?: number | null;
         };
         Update: {
           name?: string;
@@ -45,6 +53,10 @@ export interface Database {
           credentials?: string[] | unknown;
           avatar_url?: string | null;
           cover_url?: string | null;
+          clinic_phone?: string | null;
+          clinic_location?: string | null;
+          clinic_latitude?: number | null;
+          clinic_longitude?: number | null;
         };
       };
       services: {
@@ -55,6 +67,9 @@ export interface Database {
           duration_minutes: number;
           price_egp: number | null;
           pre_visit_instructions: string | null;
+          is_package: boolean;
+          sessions_count: number;
+          color_code: string | null;
           created_at: string;
         };
         Insert: {
@@ -63,12 +78,18 @@ export interface Database {
           duration_minutes?: number;
           price_egp?: number | null;
           pre_visit_instructions?: string | null;
+          is_package?: boolean;
+          sessions_count?: number;
+          color_code?: string | null;
         };
         Update: {
           name?: string;
           duration_minutes?: number;
           price_egp?: number | null;
           pre_visit_instructions?: string | null;
+          is_package?: boolean;
+          sessions_count?: number;
+          color_code?: string | null;
         };
       };
       patients: {
@@ -81,6 +102,8 @@ export interface Database {
           notes: string | null;
           is_archived: boolean;
           total_balance_due: number;
+          parent_id: string | null;
+          relationship_type: string | null;
           created_at: string;
         };
         Insert: {
@@ -90,6 +113,8 @@ export interface Database {
           notes?: string | null;
           is_archived?: boolean;
           total_balance_due?: number;
+          parent_id?: string | null;
+          relationship_type?: string | null;
         };
         Update: {
           name?: string;
@@ -97,6 +122,8 @@ export interface Database {
           notes?: string | null;
           is_archived?: boolean;
           total_balance_due?: number;
+          parent_id?: string | null;
+          relationship_type?: string | null;
         };
       };
       patient_payments: {

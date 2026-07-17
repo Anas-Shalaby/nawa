@@ -17,6 +17,9 @@ export interface BookAppointmentInput {
   slotTime: string;
   name: string;
   whatsapp: string;
+  bookingType: "self" | "dependent";
+  dependentName?: string;
+  relationshipType?: "child" | "spouse" | "parent" | "other";
 }
 
 export interface BookAppointmentResult {

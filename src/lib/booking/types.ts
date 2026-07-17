@@ -2,7 +2,11 @@ export interface Tenant {
   id: string;
   name: string;
   slug: string;
+  /** Public clinic/reception phone. */
   whatsappNumber: string;
+  location: string;
+  latitude: number | null;
+  longitude: number | null;
   type: "dental" | "dermatology";
   doctorName: string;
   specialty: string;
@@ -18,6 +22,9 @@ export interface Service {
   durationMinutes: number;
   priceEgp: number | null;
   preVisitInstructions: string | null;
+  isPackage: boolean;
+  sessionsCount: number;
+  colorCode: string | null;
 }
 
 export interface TimeSlot {

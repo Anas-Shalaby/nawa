@@ -18,6 +18,20 @@ export interface ManagePatientResult {
   newNoShowCount?: number;
 }
 
+export interface DependentInput {
+  parentId: string;
+  name: string;
+  relationshipType: string;
+}
+
+const DEPENDENT_RELATIONSHIPS = new Set([
+  "child",
+  "spouse",
+  "parent",
+  "sibling",
+  "other",
+]);
+
 function validatePatientInput(input: PatientInput): ManagePatientResult | PatientInput {
   const name = input.name.trim();
   const notes = input.notes?.trim() || null;
@@ -75,6 +89,79 @@ export async function createPatient(input: PatientInput): Promise<ManagePatientR
     return {
       success: false,
       error: error instanceof Error ? error.message : "Could not create patient.",
+    };
+  }
+}
+
+/**
+ * Adds a dependent under a master patient. The dependent inherits the master's
+ * phone number (household contact) and links back via parent_id.
+ */
+export async function createDependent(
+  input: DependentInput,
+): Promise<ManagePatientResult> {
+  const name = input.name.trim();
+  const relationshipType = input.relationshipType.trim();
+
+  if (name.length < 2) {
+    return { success: false, error: "Dependent name is required." };
+  }
+  if (!DEPENDENT_RELATIONSHIPS.has(relationshipType)) {
+    return { success: false, error: "Invalid relationship." };
+  }
+  if (!input.parentId) {
+    return { success: false, error: "Master patient is required." };
+  }
+
+  try {
+    const supabase = await createAuthenticatedClient();
+    const tenantId = await resolveTenantId(supabase);
+
+    // The master must exist in this tenant and itself be a master (no nesting).
+    const { data: master, error: masterError } = await supabase
+      .from("patients")
+      .select("id, phone_number, parent_id")
+      .eq("id", input.parentId)
+      .eq("tenant_id", tenantId)
+      .maybeSingle();
+
+    if (masterError) {
+      return { success: false, error: masterError.message };
+    }
+    if (!master) {
+      return { success: false, error: "Master patient not found." };
+    }
+    if (master.parent_id) {
+      return {
+        success: false,
+        error: "Dependents cannot own their own dependents.",
+      };
+    }
+
+    const { data, error } = await supabase
+      .from("patients")
+      .insert({
+        tenant_id: tenantId,
+        name,
+        // Share the master's contact number for the whole household.
+        phone_number: master.phone_number,
+        parent_id: master.id,
+        relationship_type: relationshipType,
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    revalidatePatientPaths(input.parentId);
+    return { success: true, patientId: data.id };
+  } catch (error) {
+    console.error("[createDependent]", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Could not add dependent.",
     };
   }
 }

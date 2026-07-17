@@ -10,6 +10,10 @@ export type DoctorProfile = {
   credentials: string[];
   avatarUrl: string | null;
   coverUrl: string | null;
+  clinicPhone: string;
+  clinicLocation: string;
+  clinicLatitude: number | null;
+  clinicLongitude: number | null;
 };
 
 function parseCredentials(value: unknown): string[] {
@@ -27,7 +31,7 @@ export async function fetchDoctorProfile(): Promise<DoctorProfile> {
   const withProfile = await supabase
     .from("tenants")
     .select(
-      "id, name, slug, doctor_name, specialty, bio, credentials, avatar_url, cover_url",
+      "id, name, slug, doctor_name, specialty, bio, credentials, avatar_url, cover_url, clinic_phone, clinic_location, clinic_latitude, clinic_longitude",
     )
     .eq("id", tenantId)
     .single();
@@ -44,6 +48,10 @@ export async function fetchDoctorProfile(): Promise<DoctorProfile> {
       credentials: parseCredentials(data.credentials),
       avatarUrl: data.avatar_url ?? null,
       coverUrl: data.cover_url ?? null,
+      clinicPhone: data.clinic_phone ?? "",
+      clinicLocation: data.clinic_location ?? "",
+      clinicLatitude: data.clinic_latitude ?? null,
+      clinicLongitude: data.clinic_longitude ?? null,
     };
   }
 
@@ -70,5 +78,9 @@ export async function fetchDoctorProfile(): Promise<DoctorProfile> {
     credentials: [],
     avatarUrl: null,
     coverUrl: null,
+    clinicPhone: "",
+    clinicLocation: "",
+    clinicLatitude: null,
+    clinicLongitude: null,
   };
 }

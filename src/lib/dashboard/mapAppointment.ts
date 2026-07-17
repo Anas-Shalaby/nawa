@@ -17,8 +17,18 @@ type PatientJoin =
   | null;
 
 type ServiceJoin =
-  | { name: string; duration_minutes: number; price_egp: number | null }
-  | { name: string; duration_minutes: number; price_egp: number | null }[]
+  | {
+      name: string;
+      duration_minutes: number;
+      price_egp: number | null;
+      color_code: string | null;
+    }
+  | {
+      name: string;
+      duration_minutes: number;
+      price_egp: number | null;
+      color_code: string | null;
+    }[]
   | null;
 
 export type AppointmentJoinRow = {
@@ -51,6 +61,7 @@ export function mapAppointmentRow(row: AppointmentJoinRow): Appointment {
     balanceDue: patient?.total_balance_due ?? 0,
     serviceId: row.service_id,
     serviceName: service?.name ?? "Service",
+    serviceColorCode: service?.color_code ?? null,
     durationMinutes: service?.duration_minutes ?? 30,
     priceEgp: service?.price_egp ?? null,
     appointmentDate: normalizeStoredTimestamp(row.appointment_date),
@@ -66,5 +77,5 @@ export const APPOINTMENT_SELECT = `
   appointment_date,
   status,
   patients ( name, phone_number, no_show_count, total_balance_due ),
-  services ( name, duration_minutes, price_egp )
+  services ( name, duration_minutes, price_egp, color_code )
 `;

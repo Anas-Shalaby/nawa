@@ -183,6 +183,10 @@ export function AgendaAppointmentModal({
         phoneNumber: selectedPatient?.phoneNumber ?? appointment?.phoneNumber ?? "",
         serviceId,
         serviceName: selectedService?.name ?? appointment?.serviceName ?? "",
+        serviceColorCode:
+          selectedService?.colorCode ?? appointment?.serviceColorCode ?? null,
+        durationMinutes:
+          selectedService?.durationMinutes ?? appointment?.durationMinutes ?? 30,
         servicePriceEgp: selectedService?.priceEgp ?? appointment?.servicePriceEgp ?? null,
         appointmentDate: futureDateIso,
         doctorNotes: payload.notes,

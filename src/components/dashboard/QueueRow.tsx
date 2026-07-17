@@ -88,7 +88,16 @@ export const QueueRow = forwardRef<HTMLLIElement, QueueRowProps>(function QueueR
               </span>
             ) : null}
           </div>
-          <p className="truncate text-base text-muted">{appointment.serviceName}</p>
+          <p className="inline-flex items-center gap-2 truncate text-base text-muted">
+            {appointment.serviceColorCode ? (
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: appointment.serviceColorCode }}
+                aria-hidden
+              />
+            ) : null}
+            <span className="truncate">{appointment.serviceName}</span>
+          </p>
         </div>
 
         <QueueStatusSelect

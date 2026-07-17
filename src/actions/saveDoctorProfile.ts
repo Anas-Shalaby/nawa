@@ -62,6 +62,10 @@ export async function saveDoctorProfile(
     const doctorName = String(formData.get("doctorName") ?? "").trim();
     const specialty = String(formData.get("specialty") ?? "").trim();
     const bio = String(formData.get("bio") ?? "").trim();
+    const clinicPhone = String(formData.get("clinicPhone") ?? "").trim();
+    const clinicLocation = String(formData.get("clinicLocation") ?? "").trim();
+    const latitudeRaw = String(formData.get("clinicLatitude") ?? "").trim();
+    const longitudeRaw = String(formData.get("clinicLongitude") ?? "").trim();
     const credentialsRaw = String(formData.get("credentials") ?? "[]");
 
     let credentials: string[] = [];
@@ -80,6 +84,28 @@ export async function saveDoctorProfile(
 
     if (!doctorName) {
       return { success: false, error: "Doctor name is required" };
+    }
+
+    if (clinicPhone && !/^[+\d][\d\s()-]{6,24}$/.test(clinicPhone)) {
+      return { success: false, error: "Enter a valid clinic phone number" };
+    }
+
+    const clinicLatitude = latitudeRaw ? Number(latitudeRaw) : null;
+    const clinicLongitude = longitudeRaw ? Number(longitudeRaw) : null;
+    const coordinatesValid =
+      clinicLatitude === null && clinicLongitude === null
+        ? true
+        : clinicLatitude !== null &&
+          clinicLongitude !== null &&
+          Number.isFinite(clinicLatitude) &&
+          Number.isFinite(clinicLongitude) &&
+          clinicLatitude >= -90 &&
+          clinicLatitude <= 90 &&
+          clinicLongitude >= -180 &&
+          clinicLongitude <= 180;
+
+    if (!coordinatesValid) {
+      return { success: false, error: "Invalid clinic coordinates" };
     }
 
     let avatarUrl = String(formData.get("existingAvatarUrl") ?? "").trim() || null;
@@ -113,6 +139,10 @@ export async function saveDoctorProfile(
         credentials,
         avatar_url: avatarUrl,
         cover_url: coverUrl,
+        clinic_phone: clinicPhone || null,
+        clinic_location: clinicLocation || null,
+        clinic_latitude: clinicLatitude,
+        clinic_longitude: clinicLongitude,
       })
       .eq("id", tenantId);
 
@@ -122,6 +152,7 @@ export async function saveDoctorProfile(
 
     revalidatePath("/dashboard/settings/profile");
     revalidatePath("/dashboard/settings");
+    revalidatePath("/[locale]/[slug]", "page");
 
     return { success: true, avatarUrl, coverUrl };
   } catch (error) {

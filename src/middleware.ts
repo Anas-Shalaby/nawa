@@ -1,27 +1,99 @@
+import { createServerClient } from "@supabase/ssr";
 import createIntlMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
-import { updateSession } from "./utils/supabase/middleware";
+import {
+  getSupabaseAnonKey,
+  getSupabaseUrl,
+} from "./utils/supabase/config";
 
 const intlMiddleware = createIntlMiddleware(routing);
+
+const DASHBOARD_ROUTE = /^\/(ar|en)\/dashboard(?:\/|$)/;
+const LOCALE_ROUTE = /^\/(ar|en)(?:\/|$)/;
+
+function addSecurityHeaders(response: NextResponse): NextResponse {
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  return response;
+}
+
+function copyCookies(from: NextResponse, to: NextResponse): void {
+  for (const cookie of from.cookies.getAll()) {
+    to.cookies.set(cookie);
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/super-admin")) {
-    const response = NextResponse.next();
-    return updateSession(request, response);
-  }
-
+  let response: NextResponse;
   if (pathname === "/") {
     const url = request.nextUrl.clone();
     url.pathname = "/ar";
-    const response = NextResponse.redirect(url);
-    return updateSession(request, response);
+    response = NextResponse.redirect(url);
+  } else if (pathname.startsWith("/super-admin")) {
+    response = NextResponse.next({ request });
+  } else {
+    response = intlMiddleware(request);
   }
 
-  const intlResponse = intlMiddleware(request);
-  return updateSession(request, intlResponse);
+  const supabase = createServerClient(
+    getSupabaseUrl(),
+    getSupabaseAnonKey(),
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          for (const { name, value } of cookiesToSet) {
+            request.cookies.set(name, value);
+          }
+
+          for (const { name, value, options } of cookiesToSet) {
+            response.cookies.set(name, value, options);
+          }
+        },
+      },
+    },
+  );
+
+  // getUser() validates the access token with Supabase Auth and refreshes
+  // expired sessions through the cookie adapter above. Never trust getSession()
+  // alone for a protected route.
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (DASHBOARD_ROUTE.test(pathname)) {
+    const locale = pathname.match(LOCALE_ROUTE)?.[1] ?? routing.defaultLocale;
+
+    if (authError || !user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = `/${locale}/login`;
+      loginUrl.search = "";
+
+      const redirect = NextResponse.redirect(loginUrl);
+      copyCookies(response, redirect);
+      return addSecurityHeaders(redirect);
+    }
+
+    const tenantId = user.app_metadata?.tenant_id;
+    if (typeof tenantId !== "string" || tenantId.length === 0) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = `/${locale}/login`;
+      loginUrl.search = "";
+      loginUrl.searchParams.set("error", "missing_tenant");
+
+      const redirect = NextResponse.redirect(loginUrl);
+      copyCookies(response, redirect);
+      return addSecurityHeaders(redirect);
+    }
+  }
+
+  return addSecurityHeaders(response);
 }
 
 export const config = {

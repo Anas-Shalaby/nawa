@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { BadgeCheck, ImageIcon, UserRound } from "lucide-react";
+import { BadgeCheck, ImageIcon, MapPin, Phone, UserRound } from "lucide-react";
 import type { Tenant } from "@/lib/booking/types";
 
 interface ClinicHeroProps {
@@ -10,6 +10,13 @@ interface ClinicHeroProps {
 
 export function ClinicHero({ tenant }: ClinicHeroProps) {
   const t = useTranslations("booking");
+  const hasCoordinates =
+    tenant.latitude !== null && tenant.longitude !== null;
+  const mapsUrl = hasCoordinates
+    ? `https://www.google.com/maps/search/?api=1&query=${tenant.latitude},${tenant.longitude}`
+    : tenant.location
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tenant.location)}`
+      : null;
 
   return (
     <header className="pb-6 text-center" dir="rtl">
@@ -62,6 +69,32 @@ export function ClinicHero({ tenant }: ClinicHeroProps) {
         ) : (
           <p className="mt-1 text-sm text-booking-muted">{tenant.name}</p>
         )}
+
+        {tenant.whatsappNumber || mapsUrl ? (
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            {tenant.whatsappNumber ? (
+              <a
+                href={`tel:${tenant.whatsappNumber.replace(/[^\d+]/g, "")}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-booking-surface px-3 py-1.5 text-xs text-booking-muted shadow-sm transition hover:text-booking-accent"
+                dir="ltr"
+              >
+                <Phone className="h-3.5 w-3.5" aria-hidden />
+                {tenant.whatsappNumber}
+              </a>
+            ) : null}
+            {mapsUrl ? (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-booking-surface px-3 py-1.5 text-xs text-booking-muted shadow-sm transition hover:text-booking-accent"
+              >
+                <MapPin className="h-3.5 w-3.5" aria-hidden />
+                {tenant.location || t("getDirections")}
+              </a>
+            ) : null}
+          </div>
+        ) : null}
 
         {tenant.credentials.length > 0 ? (
           <div className="mt-4 -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

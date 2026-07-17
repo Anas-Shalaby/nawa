@@ -11,9 +11,15 @@ import {
 import {
   generateAvailableSlotTimes,
   parseTimeToMinutes,
+  rangesOverlap,
   type BookedRange,
 } from "@/lib/scheduling/timeUtils";
 import { createServiceRoleClient } from "@/utils/supabase/auth";
+
+export interface SlotAvailability {
+  time: string;
+  available: boolean;
+}
 
 /**
  * Time Engine — returns available slot start times (HH:mm) for a tenant/date/duration.
@@ -24,6 +30,23 @@ export async function getAvailableSlots(
   date: string,
   serviceDurationMinutes: number,
 ): Promise<string[]> {
+  const options = await getSlotAvailability(
+    tenantId,
+    date,
+    serviceDurationMinutes,
+  );
+  return options.filter((option) => option.available).map((option) => option.time);
+}
+
+/**
+ * Returns the complete working-day grid, marking occupied/blocked starts as
+ * unavailable so staff can see why a time cannot be selected.
+ */
+export async function getSlotAvailability(
+  tenantId: string,
+  date: string,
+  serviceDurationMinutes: number,
+): Promise<SlotAvailability[]> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     throw new Error("Invalid date format. Expected YYYY-MM-DD.");
   }
@@ -59,7 +82,7 @@ export async function getAvailableSlots(
       return [];
     }
 
-    return generateSlotsForWindows(
+    return generateSlotOptionsForWindows(
       [{ start: legacy.data.start_time, end: legacy.data.end_time }],
       date,
       serviceDurationMinutes,
@@ -103,15 +126,20 @@ export async function getAvailableSlots(
     return [];
   }
 
-  return generateSlotsForWindows(windows, date, serviceDurationMinutes, tenantId);
+  return generateSlotOptionsForWindows(
+    windows,
+    date,
+    serviceDurationMinutes,
+    tenantId,
+  );
 }
 
-async function generateSlotsForWindows(
+async function generateSlotOptionsForWindows(
   windows: { start: string; end: string }[],
   date: string,
   serviceDurationMinutes: number,
   tenantId: string,
-): Promise<string[]> {
+): Promise<SlotAvailability[]> {
   const supabase = createServiceRoleClient();
   const { startIso, endExclusiveIso } = getCairoDayQueryBounds(date);
 
@@ -171,14 +199,28 @@ async function generateSlotsForWindows(
       window.start,
       window.end,
       serviceDurationMinutes,
-      bookedRanges,
+      [],
       minStartMinutes,
     )) {
       allSlots.add(slot);
     }
   }
 
-  return Array.from(allSlots).sort();
+  return Array.from(allSlots)
+    .sort()
+    .map((time) => {
+      const startMinutes = parseTimeToMinutes(time);
+      return {
+        time,
+        available: !bookedRanges.some((range) =>
+          rangesOverlap(
+            startMinutes,
+            startMinutes + serviceDurationMinutes,
+            range,
+          ),
+        ),
+      };
+    });
 }
 
 /** Check whether a slot is still free (used before insert). */

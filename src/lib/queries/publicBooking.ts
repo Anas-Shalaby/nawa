@@ -17,6 +17,10 @@ type TenantProfileRow = {
   credentials: unknown;
   avatar_url: string | null;
   cover_url: string | null;
+  clinic_phone: string | null;
+  clinic_location: string | null;
+  clinic_latitude: number | null;
+  clinic_longitude: number | null;
 };
 
 /**
@@ -29,7 +33,7 @@ export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | nu
   const withProfile = await supabase
     .from("tenants")
     .select(
-      "id, name, slug, is_active, doctor_name, specialty, bio, credentials, avatar_url, cover_url",
+      "id, name, slug, is_active, doctor_name, specialty, bio, credentials, avatar_url, cover_url, clinic_phone, clinic_location, clinic_latitude, clinic_longitude",
     )
     .eq("slug", slug)
     .eq("is_active", true)
@@ -64,6 +68,10 @@ export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | nu
       credentials: [],
       avatar_url: null,
       cover_url: null,
+      clinic_phone: null,
+      clinic_location: null,
+      clinic_latitude: null,
+      clinic_longitude: null,
     };
   }
 
@@ -89,7 +97,10 @@ export async function fetchTenantBySlugPublic(slug: string): Promise<Tenant | nu
     id: data.id,
     name: data.name,
     slug: data.slug,
-    whatsappNumber: getClinicWhatsAppFallback(),
+    whatsappNumber: data.clinic_phone?.trim() || getClinicWhatsAppFallback(),
+    location: data.clinic_location?.trim() || "",
+    latitude: data.clinic_latitude ?? null,
+    longitude: data.clinic_longitude ?? null,
     type: "dental",
     doctorName: data.doctor_name?.trim() || data.name,
     specialty: data.specialty?.trim() || "",

@@ -10,6 +10,9 @@ function toDashboardService(service: Service): DashboardService {
     durationMinutes: service.durationMinutes,
     priceEgp: service.priceEgp,
     preVisitInstructions: service.preVisitInstructions,
+    isPackage: service.isPackage,
+    sessionsCount: service.sessionsCount,
+    colorCode: service.colorCode,
   };
 }
 
