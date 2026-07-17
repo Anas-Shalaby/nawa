@@ -10,6 +10,7 @@ import {
   toStoredPhoneNumber,
 } from "@/lib/datetime/cairo";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
+import { trySetAppointmentArrivalSource } from "@/lib/dashboard/setAppointmentArrivalSource";
 
 const RELATIONSHIPS = new Set([
   "child",
@@ -377,6 +378,13 @@ export async function createInternalBooking(
       }
       throw new Error(appointmentError.message);
     }
+
+    await trySetAppointmentArrivalSource(
+      supabase,
+      tenantId,
+      appointment.id,
+      "internal",
+    );
 
     revalidatePath("/[locale]/dashboard", "page");
     revalidatePath("/[locale]/dashboard/upcoming", "page");

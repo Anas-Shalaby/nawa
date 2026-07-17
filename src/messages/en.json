@@ -422,6 +422,25 @@
       "currency": "EGP",
       "fallbackPatient": "Patient",
       "actionError": "Could not update appointment status",
+      "liveUpdate": "{name} moved to {status}",
+      "mobile": {
+        "ops": "Quick Ops",
+        "floor": "Live Floor",
+        "radar": "Radar"
+      },
+      "summary": {
+        "ariaLabel": "Today's operational summary",
+        "total": "Today",
+        "waiting": "Waiting",
+        "inSession": "In session",
+        "completed": "Done",
+        "remaining": "Outside",
+        "avgWait": "Avg wait",
+        "minutesShort": "{mins}m",
+        "doctors": "Doctors",
+        "doctorsRatio": "{available}/{total}",
+        "revenue": "Revenue"
+      },
       "ops": {
         "walkInTitle": "Add emergency walk-in",
         "name": "Name",
@@ -434,13 +453,28 @@
         "longWait": "⏳ {name} waiting {mins} min — reassure or advance",
         "collectYesterday": "💰 Collect {amount} EGP from {name} (left from yesterday)",
         "callTomorrow": "📞 Call {count} patients to confirm tomorrow",
-        "noUrgent": "No urgent tasks right now"
+        "noUrgent": "No urgent tasks right now",
+        "searchLabel": "Quick patient search",
+        "searchPlaceholder": "Name or phone…",
+        "commandsTitle": "Operations",
+        "cmdWalkIn": "Walk-in",
+        "cmdCallNext": "Call next",
+        "cmdPrint": "Print ticket",
+        "cmdEmergency": "Emergency",
+        "cmdEmergencyHint": "Open a patient card and mark priority from the floor.",
+        "callNextError": "No patient ready to call",
+        "callNextSuccess": "Patient called to doctor room",
+        "badgePayments": "Pending payments",
+        "badgeTomorrow": "Tomorrow confirmations",
+        "badgeNotifications": "Unread notifications"
       },
       "floor": {
         "title": "Live floor",
         "count": "{active} active · {total} today",
         "dragHandle": "Drag card",
         "mins": "{mins}m",
+        "zoneEmpty": "No patients in this zone",
+        "overflow": "+{count} more in queue",
         "zones": {
           "outside": "Outside",
           "waiting": "Waiting",
@@ -464,7 +498,69 @@
         "tickerEmpty": "No payments recorded yet today",
         "tickerItem": "+ {amount} EGP — {name}",
         "capacityTitle": "Today's clinic capacity",
-        "capacityLabel": "{pct}% full"
+        "capacityLabel": "{pct}% full",
+        "remainingLoad": "{mins} min remaining load",
+        "doctorTitle": "Doctor status",
+        "doctorRoom": "Room: {room}",
+        "doctorNoRoom": "No room assigned",
+        "doctorPatient": "With {name}",
+        "doctorIdle": "No active session",
+        "doctorQueue": "{count} waiting · avg {avg} min",
+        "cashTitle": "Cash & balances",
+        "collectedToday": "Collected today",
+        "outstanding": "Outstanding",
+        "availability": {
+          "available": "Available",
+          "busy": "Busy",
+          "break": "Break",
+          "offline": "Offline"
+        }
+      },
+      "attention": {
+        "title": "Attention center",
+        "empty": "Nothing needs attention",
+        "types": {
+          "long_wait": "Long wait",
+          "missing_payment": "Missing payment",
+          "confirmation": "Confirmation",
+          "insurance_approval": "Insurance",
+          "lab_result": "Lab result",
+          "refill_request": "Refill",
+          "late_doctor": "Late doctor"
+        }
+      },
+      "insights": {
+        "title": "Smart insights",
+        "empty": "Insights appear as the day progresses"
+      },
+      "card": {
+        "age": "{age}y",
+        "waitMins": "Waiting {mins}m",
+        "consultMins": "Session {mins}m",
+        "followUp": "Follow-up",
+        "call": "Call patient",
+        "profile": "Open profile",
+        "print": "Print ticket",
+        "gender": {
+          "male": "M",
+          "female": "F",
+          "other": "Other",
+          "unspecified": ""
+        },
+        "arrival": {
+          "online": "Online",
+          "walk_in": "Walk-in",
+          "phone": "Phone",
+          "internal": "Internal",
+          "unknown": ""
+        },
+        "payment": {
+          "paid": "Paid",
+          "partial": "Partial",
+          "unpaid": "Unpaid",
+          "waived": "Waived",
+          "unknown": ""
+        }
       },
       "status": {
         "pending": "Expected",
@@ -1037,240 +1133,398 @@
   },
   "landing": {
     "metadata": {
-      "title": "Nawa — Your clinic runs like clockwork",
-      "description": "The smartest cloud management system for dental, dermatology, and mental health clinics in Egypt — discipline engine, visual EHR, and free WhatsApp."
+      "title": "Nawa — Clinic operations that stay calm",
+      "description": "Nawa helps clinic owners organize scheduling, reception flow, patient records, payments, and ready-to-send WhatsApp follow-ups — without chaos."
     },
     "nav": {
       "brand": "Nawa",
-      "features": "Features",
-      "value": "Why Nawa",
+      "primary": "Primary",
+      "features": "Capabilities",
+      "tour": "How it works",
+      "value": "For doctors",
       "pricing": "Pricing",
       "cta": "Get started",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
       "themeLight": "Light mode",
-      "themeDark": "Dark mode"
+      "themeDark": "Dark mode",
+      "skip": "Skip to content"
     },
     "hero": {
-      "badge": "For dental, dermatology & mental health clinics",
-      "headline": "Your clinic.. runs like Swiss clockwork.",
-      "subheadline": "Stop losing money to no-shows and forgotten balances. Nawa manages your schedule, billing, and inventory with intelligent automation.",
+      "badge": "Built for clinic owners and doctors",
+      "headline": "Your clinic finally feels under control.",
+      "subheadline": "One calm system for schedule, reception, records, and payments — so you can focus on medicine, not operational noise.",
       "ctaPrimary": "Start free for 6 months",
-      "ctaSecondary": "See how it works",
-      "stat1Value": "40%",
-      "stat1Label": "Fewer no-shows",
-      "stat2Value": "Zero",
-      "stat2Label": "WhatsApp cost",
-      "stat3Value": "6 mo",
-      "stat3Label": "Guaranteed ROI",
-      "preview": {
-        "windowTitle": "Nawa Dashboard",
-        "clinicName": "Nawa Clinic — Dokki",
-        "queueSubtitle": "Monday, July 6, 2026",
-        "tabQueue": "Today's queue",
-        "tabFinance": "Financial stats",
-        "detailLabel": "Appointment details",
-        "detailService": "Service",
-        "detailTime": "Time",
-        "actionPrimary": "Complete session",
-        "actionSecondary": "Schedule follow-up",
-        "patient1": "Sara Mahmoud",
-        "patient2": "Ahmed Hassan",
-        "patient3": "Nour Ibrahim",
-        "service1": "Teeth whitening",
-        "service2": "Therapy session",
-        "service3": "Dermatology follow-up",
-        "statusInSession": "In session",
-        "statusConfirmed": "Confirmed",
-        "statusCheckedIn": "Checked in",
-        "statusPending": "Pending",
-        "statusCompleted": "Completed",
-        "savedRevenueLabel": "Recovered revenue",
-        "savedRevenueValue": "+42,500 EGP",
-        "savedRevenueDelta": "+28%",
-        "savedRevenueHint": "From WhatsApp reminders and confirmations",
-        "chartTitle": "Monthly revenue growth",
-        "chartStart": "Jan",
-        "chartEnd": "Jun",
-        "notificationLabel": "Notifications",
-        "notificationTitle": "New booking",
-        "notificationBody": "Ahmed Hassan booked a therapy session at 11:00 AM",
-        "mobileQueueLabel": "Active queue",
-        "mobileRevenueLabel": "Recovered revenue"
+      "ctaSecondary": "See the clinic journey",
+      "chip1": "No credit card",
+      "chip2": "Arabic + English",
+      "chip3": "Public booking included",
+      "showcase": {
+        "ariaLabel": "Interactive product preview of Nawa clinic operations",
+        "clinic": "Dokki Clinic",
+        "title": "Morning operations",
+        "live": "Live preview",
+        "schedule": "Today's schedule",
+        "queue": "Reception queue",
+        "doctor": "Doctor status",
+        "records": "Medical records",
+        "revenue": "Collections",
+        "whatsapp": "WhatsApp",
+        "timeline": "Day flow",
+        "slot1": "09:00 · Whitening",
+        "slot2": "10:30 · Consult",
+        "slot3": "12:00 · Follow-up",
+        "patient1": "Sara M.",
+        "patient2": "Ahmed H.",
+        "patient3": "Nour I.",
+        "waiting": "Waiting",
+        "outside": "Outside",
+        "doctorName": "Dr. Hana",
+        "doctorStatus": "Available",
+        "doctorPatient": "Next: consult at 10:30",
+        "recordNote": "Visit notes ready",
+        "prescription": "Prescription draft",
+        "revenueValue": "4,850 EGP",
+        "whatsappHint": "Ready-to-send reminder"
       }
     },
-    "pain": {
-      "eyebrow": "The painful reality",
-      "title": "How much is your clinic losing every month unnoticed?",
-      "closing": "Nawa was built specifically to end this chaos.",
-      "revenue": {
-        "title": "20% of revenue leaks away",
-        "body": "No-shows and forgotten follow-ups quietly steal a large share of your monthly income."
+    "chaos": {
+      "eyebrow": "Inside the clinic",
+      "title": "The day starts in chaos before the first patient arrives.",
+      "subtitle": "Phones, paper, and waiting rooms pull attention away from care. Reception absorbs the pressure. Revenue quietly slips.",
+      "phones": {
+        "title": "The phone never stops",
+        "body": "Bookings, confirmations, and late changes compete for the same overloaded desk."
       },
-      "debt": {
-        "title": "Forgotten balances",
-        "body": "Patients leave without paying in full — and nothing reminds you or collects for you."
+      "paper": {
+        "title": "Paper files slow everything",
+        "body": "Finding a history, balance, or follow-up becomes a hunt instead of a glance."
       },
-      "chaos": {
-        "title": "Angry waiting rooms",
-        "body": "Weak scheduling means hours of waiting, frustrated patients, and a reputation that erodes daily."
+      "waiting": {
+        "title": "Patients wait without clarity",
+        "body": "Nobody sees the live floor clearly — so frustration grows in the waiting room."
+      },
+      "exhaustion": {
+        "title": "The doctor carries the load",
+        "body": "Clinical work is interrupted by operational decisions that never needed a physician."
       }
     },
-    "roi": {
-      "eyebrow": "Do the math",
-      "title": "Nawa ROI calculator",
-      "subtitle": "Move the sliders and see how much revenue Nawa can recover for you every month.",
-      "inputsTitle": "Your clinic numbers",
-      "patientsLabel": "Average patients per day",
-      "ticketLabel": "Average ticket price",
-      "currency": "EGP",
-      "formulaHint": "We estimate recovering ~15% of revenue lost to no-shows and forgotten balances.",
-      "outputLabel": "Money Nawa can save monthly",
-      "outputHint": "A conservative estimate. Organized clinics often recover more with reminders and smart collections."
+    "outcomes": {
+      "eyebrow": "What the doctor gains",
+      "title": "Less management. More medicine.",
+      "subtitle": "Nawa is designed around the outcome doctors actually want: a clinic that runs without constant rescue.",
+      "reception": "Spend less time managing reception.",
+      "waiting": "Reduce patient waiting with a clearer live floor.",
+      "followups": "Never lose track of follow-up patients.",
+      "records": "Access every patient record instantly.",
+      "status": "Know today's clinic status in seconds.",
+      "efficiency": "Increase clinic efficiency without adding more admin work."
     },
-    "bento": {
-      "eyebrow": "The Nawa arsenal",
-      "title": "Tools that recover revenue — not just pretty screens",
-      "subtitle": "Three capabilities that hit the doctor's pain directly: debt, schedule conflicts, and invoicing.",
-      "debt": {
-        "title": "Debt Radar",
-        "body": "A red balance turns green after a WhatsApp reminder — collection happens before it is forgotten.",
-        "patient": "Patient",
-        "patientName": "Sara Mahmoud",
-        "due": "Due",
-        "paid": "Paid",
-        "currency": "EGP",
-        "hint": "Automatic WhatsApp reminder for remaining balance"
+    "beforeAfter": {
+      "eyebrow": "One day",
+      "title": "Before Nawa vs with Nawa",
+      "subtitle": "Same clinic. Same doctor. A completely different operational day.",
+      "beforeLabel": "Traditional clinic",
+      "beforeTitle": "Before",
+      "afterLabel": "Using Nawa",
+      "afterTitle": "After",
+      "before": {
+        "phones": "Phone ringing through every consultation gap",
+        "paper": "Paper files stacked across reception",
+        "crowd": "Crowded waiting room with no clear order",
+        "missed": "Missed appointments and forgotten follow-ups",
+        "confused": "Confused receptionist juggling tools and memory"
       },
-      "time": {
-        "title": "Time Engine",
-        "body": "Detects conflicts and auto-corrects overlapping appointments before chaos snowballs.",
-        "slotA": "Whitening — Sara",
-        "slotB": "Consult — Ahmed",
-        "conflict": "Conflict detected…",
-        "fixed": "Auto-corrected ✓"
-      },
-      "invoice": {
-        "title": "Smart Invoicing",
-        "body": "A premium receipt ready to print and download — builds patient trust and clinic brand.",
-        "receiptTitle": "Nawa invoice",
-        "total": "Total",
-        "currency": "EGP"
-      },
-      "roi": {
-        "title": "Discipline & ROI engine",
-        "body": "Track recovered revenue from WhatsApp reminders and confirmations.",
-        "metricLabel": "Recovered revenue",
-        "metricValue": "+42,500 EGP",
-        "metricDelta": "+28%",
-        "chartStart": "Jan",
-        "chartEnd": "Jun"
-      },
-      "whatsapp": {
-        "title": "Free relationship management",
-        "body": "Reach patients on WhatsApp with no CRM subscription.",
-        "msg1": "Reminder: your appointment tomorrow at 3:00 PM",
-        "msg2": "Please confirm attendance with one tap",
-        "zeroCost": "Zero cost — via wa.me"
-      },
-      "visual": {
-        "title": "Visual transformation",
-        "body": "Visual EHR before/after.",
-        "before": "Before",
-        "after": "After",
-        "point1": "Visual comparison for clinical cases",
-        "point2": "Patient privacy in presentation mode"
+      "after": {
+        "schedule": "Organized schedule with clear next steps",
+        "reminders": "Ready-to-send WhatsApp reminders from one place",
+        "records": "Digital records available during the visit",
+        "flow": "Smooth patient flow from arrival to payment",
+        "focus": "Doctor focused on treatment, not logistics"
+      }
+    },
+    "features": {
+      "eyebrow": "Capabilities",
+      "title": "Every capability starts with a clinic problem.",
+      "subtitle": "Not feature lists. Problem, solution, and the result the doctor feels.",
+      "problemLabel": "Problem",
+      "solutionLabel": "Nawa",
+      "resultLabel": "Result",
+      "booking": {
+        "title": "Public booking",
+        "problem": "Patients book through chaotic phone calls.",
+        "solution": "A clinic-specific booking page with real availability.",
+        "result": "Reception starts the day with a cleaner schedule.",
+        "illustration": "Patient selects service, date, and slot online."
       },
       "queue": {
-        "title": "Goodbye waiting chaos",
-        "body": "Master-detail queue control screen.",
-        "queueLabel": "Today's queue",
-        "detailLabel": "Appointment details",
-        "patient1": "Sara Mahmoud",
-        "patient2": "Ahmed Hassan",
-        "patient3": "Nour Ibrahim",
-        "statusInSession": "In session",
-        "statusConfirmed": "Confirmed",
-        "statusCheckedIn": "Checked in",
-        "detailService": "Service",
-        "detailServiceValue": "Teeth whitening",
-        "detailBalance": "Balance due",
-        "detailBalanceValue": "1,200 EGP",
-        "actionPrimary": "Complete session",
-        "actionSecondary": "Schedule follow-up"
+        "title": "Live reception floor",
+        "problem": "Nobody knows who is waiting, who is inside, or what comes next.",
+        "solution": "Outside, waiting, and doctor zones with status control.",
+        "result": "Reception moves patients with confidence.",
+        "illustration": "Queue cards move across the live floor."
+      },
+      "records": {
+        "title": "Patient records",
+        "problem": "History is fragmented across notes, phones, and folders.",
+        "solution": "Patient profiles, visits, family links, and prescriptions in one place.",
+        "result": "The doctor opens a complete story in seconds.",
+        "illustration": "Visit history and notes open beside the appointment."
+      },
+      "payments": {
+        "title": "Balances and receipts",
+        "problem": "Outstanding balances disappear after the visit.",
+        "solution": "Track dues, record payments, and print receipts.",
+        "result": "Collections stay visible instead of forgotten.",
+        "illustration": "Balance due and paid amount on one card."
+      },
+      "whatsapp": {
+        "title": "Ready-to-send WhatsApp",
+        "problem": "Follow-up messages take too long to write under pressure.",
+        "solution": "Prefill appointment, balance, and recall messages.",
+        "result": "Staff send clearer reminders faster — without a CRM fee.",
+        "illustration": "One tap opens a ready WhatsApp message."
+      },
+      "visual": {
+        "title": "Visual clinical context",
+        "problem": "Before/after progress is hard to present clearly.",
+        "solution": "Visual EHR media with private presentation tools.",
+        "result": "Consultations feel clearer and more professional.",
+        "illustration": "Before/after comparison in presentation mode."
       }
     },
-    "trust": {
-      "eyebrow": "Doctor trust",
-      "title": "Doctors who trust Nawa",
-      "subtitle": "Stories from clinics that started organizing revenue and operations.",
-      "ratingLabel": "5-star rating",
-      "d1": {
-        "initials": "AM",
-        "name": "Dr. Ahmed Mansour",
-        "role": "Dental clinic — Cairo",
-        "quote": "The system saved me from hiring a full-time accountant."
+    "insights": {
+      "eyebrow": "Doctor morning view",
+      "title": "What the doctor sees before the day begins.",
+      "subtitle": "A calm operational briefing — not another noisy dashboard.",
+      "previewNote": "Preview mock values for storytelling. Not live clinic data.",
+      "ariaLabel": "Animated mock morning insights for a clinic",
+      "appointments": {
+        "label": "Today's appointments",
+        "value": "18",
+        "hint": "Confirmed and expected"
       },
-      "d2": {
-        "initials": "SN",
-        "name": "Dr. Sara Nabil",
-        "role": "Dermatology — Giza",
-        "quote": "Before Nawa, balances vanished. Now every debt has a clear reminder."
+      "revenue": {
+        "label": "Expected collections",
+        "value": "9,400",
+        "hint": "EGP from scheduled services"
       },
-      "d3": {
-        "initials": "KH",
-        "name": "Dr. Karim Hassan",
-        "role": "Mental health — Alexandria",
-        "quote": "No-shows dropped noticeably after WhatsApp confirmations."
+      "waiting": {
+        "label": "Patients waiting",
+        "value": "4",
+        "hint": "Currently in waiting zone"
+      },
+      "followups": {
+        "label": "Follow-ups due",
+        "value": "6",
+        "hint": "Need scheduling attention"
+      },
+      "cancelled": {
+        "label": "Cancelled today",
+        "value": "1",
+        "hint": "Slot may be reusable"
+      },
+      "returning": {
+        "label": "Returning patients",
+        "value": "11",
+        "hint": "Known histories on file"
+      },
+      "avgWait": {
+        "label": "Average wait",
+        "value": "12m",
+        "hint": "Live floor estimate"
+      },
+      "unread": {
+        "label": "Unread messages",
+        "value": "3",
+        "hint": "Staff inbox items"
+      },
+      "procedures": {
+        "label": "Upcoming procedures",
+        "value": "5",
+        "hint": "Later this afternoon"
       }
     },
-    "value": {
-      "eyebrow": "Why Nawa?",
-      "title": "A connected care loop — from appointment to collection",
-      "subtitle": "Nawa doesn't stop at booking. It follows up after sessions, manages balances, and surfaces the upcoming agenda.",
-      "careLoop": {
-        "title": "Continuous care loop",
-        "body": "Schedule follow-ups and re-exams in one click. The secretary plans the next session without leaving the queue screen."
+    "tour": {
+      "eyebrow": "Visual product tour",
+      "title": "From booking to follow-up — one connected clinic day.",
+      "subtitle": "Scroll through the workflow your team already lives. Nawa makes each step visible.",
+      "prev": "Previous step",
+      "next": "Next step",
+      "scrollerLabel": "Clinic workflow steps",
+      "step": "Step {n}",
+      "book": {
+        "title": "Patient books online",
+        "body": "The patient chooses a service and available slot on your public booking page."
       },
-      "installments": {
-        "title": "Balances & collections",
-        "body": "Record patient payments, track outstanding balances, and tie collections to the appointment record — all in one place."
+      "receive": {
+        "title": "Reception receives booking",
+        "body": "The appointment appears in the clinic schedule without rewriting it by hand."
       },
-      "agenda": {
-        "title": "Upcoming agenda",
-        "body": "View upcoming appointments and follow-ups on one page. No surprises, no missed slots."
+      "arrive": {
+        "title": "Patient arrives",
+        "body": "Reception moves the patient into the live floor and keeps status clear."
+      },
+      "consult": {
+        "title": "Doctor consultation",
+        "body": "The doctor opens the visit with context ready — not scattered across tools."
+      },
+      "prescribe": {
+        "title": "Prescription",
+        "body": "Write and store the prescription with the patient record."
+      },
+      "pay": {
+        "title": "Payment",
+        "body": "Record what was paid, what remains, and issue a receipt."
+      },
+      "followup": {
+        "title": "Follow-up",
+        "body": "Plan the next visit and send a ready-to-send WhatsApp reminder when needed."
+      }
+    },
+    "proof": {
+      "eyebrow": "Product proof",
+      "title": "Built around how clinics actually operate.",
+      "subtitle": "No invented customer counts. Just the operational depth Nawa already ships.",
+      "lifecycle": {
+        "suffix": "",
+        "label": "Appointment states",
+        "detail": "From pending to completed, including no-show and cancel flows."
+      },
+      "locales": {
+        "suffix": "",
+        "label": "Languages",
+        "detail": "Arabic and English for staff and patient-facing booking."
+      },
+      "plans": {
+        "suffix": " mo",
+        "label": "Free trial window",
+        "detail": "Start with a full six-month free plan and no credit card."
+      },
+      "modules": {
+        "suffix": "+",
+        "label": "Operational surfaces",
+        "detail": "Booking, queue, agenda, patients, finance, inventory, and more."
       }
     },
     "pricing": {
-      "eyebrow": "Transparent pricing",
-      "title": "An investment that pays for itself",
-      "subtitle": "Start free for 6 months, or activate the full clinic plan with white-glove onboarding.",
+      "eyebrow": "Pricing",
+      "title": "Start free. Scale when the clinic is ready.",
+      "subtitle": "Same core clinic capabilities on both plans. Choose onboarding support when you want guided setup.",
       "noCreditCard": "No credit card required",
+      "recommended": "Recommended",
       "free": {
-        "badge": "New — Free",
+        "badge": "Best to start",
         "name": "Free plan",
         "duration": "6 months",
         "price": "0 EGP",
         "setupFee": "No setup fee",
-        "description": "Try the full Nawa experience at no cost — perfect for getting started fast.",
+        "description": "Launch your clinic workspace and run the full day-to-day flow without paying upfront.",
         "cta": "Start free"
       },
       "paid": {
-        "badge": "Full plan",
+        "badge": "Guided setup",
         "name": "Clinic plan",
         "duration": "6 months",
         "price": "3,000 EGP",
         "setupFee": "+ 500 EGP setup (one-time)",
-        "description": "White-glove onboarding for your clinic with a clear semi-annual subscription.",
-        "cta": "Choose full plan"
+        "description": "Same clinic capabilities with white-glove onboarding for teams that want help getting live fast.",
+        "cta": "Choose clinic plan"
       },
-      "benefit1": "Private PWA booking link",
-      "benefit2": "Master-detail queue screen",
-      "benefit3": "Visual EHR + before/after",
-      "benefit4": "Free WhatsApp — no CRM",
-      "benefit5": "Arabic-first support"
+      "benefit1": "Clinic-specific public booking page",
+      "benefit2": "Live reception queue and agenda",
+      "benefit3": "Patient records, visits, and visual EHR",
+      "benefit4": "Ready-to-send WhatsApp reminders",
+      "benefit5": "Arabic-first + English support",
+      "comparison": {
+        "title": "Plan comparison",
+        "subtitle": "Commercial terms differ. Core clinic capabilities are shared.",
+        "feature": "Item",
+        "free": "Free plan",
+        "paid": "Clinic plan",
+        "note": "Both plans include the shipped clinic operations suite. Paid adds guided onboarding support.",
+        "duration": {
+          "label": "Duration",
+          "free": "6 months",
+          "paid": "6 months"
+        },
+        "price": {
+          "label": "Price",
+          "free": "0 EGP",
+          "paid": "3,000 EGP"
+        },
+        "setup": {
+          "label": "Setup",
+          "free": "None",
+          "paid": "500 EGP one-time"
+        },
+        "booking": {
+          "label": "Public booking",
+          "free": "Included",
+          "paid": "Included"
+        },
+        "queue": {
+          "label": "Live queue + agenda",
+          "free": "Included",
+          "paid": "Included"
+        },
+        "records": {
+          "label": "Patient records + EHR",
+          "free": "Included",
+          "paid": "Included"
+        },
+        "whatsapp": {
+          "label": "Ready-to-send WhatsApp",
+          "free": "Included",
+          "paid": "Included"
+        },
+        "support": {
+          "label": "Onboarding",
+          "free": "Self-serve",
+          "paid": "White-glove setup"
+        }
+      }
+    },
+    "faq": {
+      "title": "Pricing FAQ",
+      "subtitle": "Clear answers before you create your clinic workspace.",
+      "whatIncluded": {
+        "question": "What does Nawa manage today?",
+        "answer": "Scheduling, public booking, live reception flow, patient records, follow-ups, payments, receipts, inventory alerts, visual EHR, and ready-to-send WhatsApp messages."
+      },
+      "setup": {
+        "question": "How fast can we start?",
+        "answer": "Create your clinic workspace, add services, and share your booking link. The free plan needs no credit card."
+      },
+      "locales": {
+        "question": "Is Nawa available in Arabic and English?",
+        "answer": "Yes. Staff and public booking experiences support Arabic and English."
+      },
+      "booking": {
+        "question": "Do patients need an app?",
+        "answer": "No. Patients book through your clinic-specific web page."
+      },
+      "whatsapp": {
+        "question": "Does Nawa send WhatsApp automatically?",
+        "answer": "No. Nawa prepares ready-to-send WhatsApp messages. Staff review and send them from WhatsApp."
+      },
+      "afterPlan": {
+        "question": "What happens after I choose a plan?",
+        "answer": "You register, create the clinic workspace, and land in the dashboard ready to configure services and start the day."
+      }
+    },
+    "finalCta": {
+      "headline": "Your clinic deserves a system that works as hard as you do.",
+      "subheadline": "Start free for six months. Bring order to reception, schedule, and follow-up — without adding more noise.",
+      "cta": "Start free for 6 months"
     },
     "footer": {
       "brand": "Nawa — نواة",
-      "tagline": "Clinic appointment management in Egypt"
+      "tagline": "Clinic operations for doctors who want calm days",
+      "navLabel": "Footer",
+      "features": "Capabilities",
+      "pricing": "Pricing",
+      "start": "Start free"
     }
   },
   "auth": {

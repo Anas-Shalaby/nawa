@@ -36,11 +36,38 @@ export async function updateAppointmentStatus(
       return { success: false, error: fetchError?.message ?? "Appointment not found." };
     }
 
-    const { error: updateError } = await supabase
-      .from("appointments")
-      .update({ status: newStatus })
-      .eq("id", appointmentId)
-      .eq("tenant_id", tenantId);
+    const updatePayload: Record<string, unknown> = { status: newStatus };
+    const nowIso = new Date().toISOString();
+
+    if (newStatus === "checked_in") {
+      updatePayload.checked_in_at = nowIso;
+    }
+    if (newStatus === "in_session") {
+      updatePayload.session_started_at = nowIso;
+      if (appointment.status !== "checked_in") {
+        updatePayload.checked_in_at = nowIso;
+      }
+    }
+    if (newStatus === "completed") {
+      updatePayload.completed_at = nowIso;
+    }
+
+    let updateError = (
+      await supabase
+        .from("appointments")
+        .update(updatePayload)
+        .eq("id", appointmentId)
+        .eq("tenant_id", tenantId)
+    ).error;
+
+    if (updateError?.message?.includes("checked_in_at")) {
+      const fallback = await supabase
+        .from("appointments")
+        .update({ status: newStatus })
+        .eq("id", appointmentId)
+        .eq("tenant_id", tenantId);
+      updateError = fallback.error;
+    }
 
     if (updateError) {
       return { success: false, error: updateError.message };

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
+import { trySetAppointmentArrivalSource } from "@/lib/dashboard/setAppointmentArrivalSource";
 
 export interface AgendaAppointmentInput {
   patientId: string;
@@ -147,6 +148,8 @@ export async function createAgendaAppointment(
     if (error || !data) {
       return { success: false, error: error?.message ?? "Could not create appointment." };
     }
+
+    await trySetAppointmentArrivalSource(supabase, tenantId, data.id, "internal");
 
     revalidateAgendaPaths();
     return { success: true, appointmentId: data.id };

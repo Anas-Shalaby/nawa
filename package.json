@@ -8,6 +8,8 @@
     "start": "next start",
     "start:passenger": "node server.js",
     "lint": "next lint",
+    "test:mission-control": "node scripts/test-mission-control-selectors.mjs",
+    "test:landing": "node scripts/test-landing-redesign.mjs",
     "seed:dev-user": "node --env-file=.env scripts/seed-dev-user.mjs"
   },
   "engines": {

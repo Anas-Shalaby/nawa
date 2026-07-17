@@ -14,6 +14,7 @@ import {
 import { normalizeEgyptPhone } from "@/lib/booking/schema";
 import { createServiceRoleClient } from "@/utils/supabase/auth";
 import { signBookingTicket } from "@/lib/booking/ticketToken";
+import { trySetAppointmentArrivalSource } from "@/lib/dashboard/setAppointmentArrivalSource";
 
 const DEPENDENT_RELATIONSHIPS = new Set([
   "child",
@@ -302,6 +303,8 @@ export async function bookAppointment(
     if (typeof appointmentId !== "string") {
       throw new Error("Atomic booking returned an invalid appointment id.");
     }
+
+    await trySetAppointmentArrivalSource(supabase, tenantId, appointmentId, "online");
 
     return {
       success: true,

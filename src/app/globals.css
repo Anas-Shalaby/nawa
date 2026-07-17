@@ -124,6 +124,18 @@
   }
 }
 
+.landing-scroll-margin {
+  scroll-margin-top: 6rem;
+}
+
+.landing-focus-ring {
+  outline: none;
+}
+
+.landing-focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px rgb(var(--color-base-rgb)), 0 0 0 4px rgba(108, 92, 231, 0.45);
+}
+
 @media print {
   body * {
     visibility: hidden !important;

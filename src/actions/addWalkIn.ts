@@ -83,15 +83,19 @@ export async function addWalkIn(input: AddWalkInInput): Promise<AddWalkInResult>
       patientId = newPatient.id;
     }
 
-    const { data: appointment, error: appointmentError } = await supabase
+    const insertPayload: Record<string, unknown> = {
+      tenant_id: tenantId,
+      patient_id: patientId,
+      service_id: input.serviceId,
+      appointment_date: appointmentDate,
+      status: "checked_in",
+      arrival_source: "walk_in",
+      checked_in_at: new Date().toISOString(),
+    };
+
+    let appointmentResult = await supabase
       .from("appointments")
-      .insert({
-        tenant_id: tenantId,
-        patient_id: patientId,
-        service_id: input.serviceId,
-        appointment_date: appointmentDate,
-        status: "checked_in",
-      })
+      .insert(insertPayload)
       .select(
         `
         id,
@@ -100,11 +104,38 @@ export async function addWalkIn(input: AddWalkInInput): Promise<AddWalkInResult>
         service_id,
         appointment_date,
         status,
-        patients ( name, phone_number, no_show_count ),
-        services ( name, duration_minutes, price_egp )
+        patients ( name, phone_number, no_show_count, total_balance_due ),
+        services ( name, duration_minutes, price_egp, color_code )
       `,
       )
       .single();
+
+    if (appointmentResult.error?.message?.includes("arrival_source")) {
+      appointmentResult = await supabase
+        .from("appointments")
+        .insert({
+          tenant_id: tenantId,
+          patient_id: patientId,
+          service_id: input.serviceId,
+          appointment_date: appointmentDate,
+          status: "checked_in",
+        })
+        .select(
+          `
+          id,
+          tenant_id,
+          patient_id,
+          service_id,
+          appointment_date,
+          status,
+          patients ( name, phone_number, no_show_count, total_balance_due ),
+          services ( name, duration_minutes, price_egp, color_code )
+        `,
+        )
+        .single();
+    }
+
+    const { data: appointment, error: appointmentError } = appointmentResult;
 
     if (appointmentError || !appointment) {
       return { success: false, error: appointmentError?.message ?? "Walk-in failed." };

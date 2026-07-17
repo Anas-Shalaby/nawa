@@ -18,9 +18,10 @@ export function LandingThemeToggle() {
       aria-label={label}
       title={label}
       className={[
-        "flex h-10 w-10 items-center justify-center rounded-xl border border-subtle/70 bg-surface/90",
+        "inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-subtle/70 bg-surface/90",
         "text-primary shadow-sm backdrop-blur-md transition",
         "hover:border-accent/30 hover:bg-elevated/90",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40",
       ].join(" ")}
     >
       {mounted ? (
