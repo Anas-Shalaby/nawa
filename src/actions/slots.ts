@@ -8,6 +8,7 @@ import {
   getCairoTodayKey,
   normalizeStoredTimestamp,
 } from "@/lib/datetime/cairo";
+import { SLOT_BLOCKING_STATUSES } from "@/lib/scheduling/slotBlocking";
 import {
   generateAvailableSlotTimes,
   parseTimeToMinutes,
@@ -149,7 +150,7 @@ async function generateSlotOptionsForWindows(
     .eq("tenant_id", tenantId)
     .gte("appointment_date", startIso)
     .lt("appointment_date", endExclusiveIso)
-    .not("status", "eq", "canceled");
+    .in("status", [...SLOT_BLOCKING_STATUSES]);
 
   if (appointmentsError) {
     throw new Error(`Failed to load appointments: ${appointmentsError.message}`);

@@ -191,7 +191,7 @@ export function AgendaAppointmentModal({
         appointmentDate: futureDateIso,
         doctorNotes: payload.notes,
         isReExamination,
-        status: appointment?.status ?? "confirmed",
+        status: appointment?.status ?? "pending",
       };
 
       onSaved(savedAppointment);

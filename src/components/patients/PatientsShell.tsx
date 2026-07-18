@@ -2,29 +2,19 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  Archive,
-  ArchiveRestore,
-  Loader2,
-  Pencil,
-  Phone,
-  Plus,
-  ShieldCheck,
-  Search,
-  Trash2,
-  UserRound,
-  Users,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { Phone, Plus, Search, UserRound, Users } from "lucide-react";
+import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import {
   archivePatient,
   clearPatientWarning,
-  deletePatient,
   restorePatient,
 } from "@/actions/managePatients";
 import { matchesPatientSearch } from "@/lib/patients/search";
 import type { PatientRecord } from "@/lib/queries/patients";
+import { PatientActionsMenu } from "./PatientActionsMenu";
+import { PatientDeleteModal } from "./PatientDeleteModal";
 import { PatientFormModal, type PatientFormValues } from "./PatientFormModal";
 
 type PatientFilter = "active" | "warning" | "archived";
@@ -51,7 +41,9 @@ export function PatientsShell({
   const [editingPatient, setEditingPatient] = useState<PatientRecord | null>(
     null,
   );
-  const [deletingPatient, setDeletingPatient] = useState<PatientRecord | null>(null);
+  const [deletingPatient, setDeletingPatient] = useState<PatientRecord | null>(
+    null,
+  );
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -139,29 +131,7 @@ export function PatientsShell({
               : item,
           ),
         );
-      }
-
-      setPendingId(null);
-    });
-  }
-
-  function requestDeletePatient(patient: PatientRecord) {
-    setDeletingPatient(patient);
-  }
-
-  function handleDeletePatient(patient: PatientRecord) {
-
-    const snapshot = patients;
-    setPendingId(patient.id);
-    setPatients((current) =>
-      current.filter((item) => item.id !== patient.id),
-    );
-
-    startTransition(async () => {
-      const result = await deletePatient(patient.id);
-
-      if (!result.success) {
-        setPatients(snapshot);
+        toast.error(t("actionError"), { description: result.error });
       }
 
       setPendingId(null);
@@ -189,10 +159,16 @@ export function PatientsShell({
               : item,
           ),
         );
+        toast.error(t("actionError"), { description: result.error });
       }
 
       setPendingId(null);
     });
+  }
+
+  function handleDeleted(patientId: string) {
+    setPatients((current) => current.filter((item) => item.id !== patientId));
+    setDeletingPatient(null);
   }
 
   const filters: { id: PatientFilter; label: string }[] = [
@@ -262,7 +238,7 @@ export function PatientsShell({
           <p className="text-sm text-muted">{t("empty")}</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-subtle bg-surface">
+        <div className="rounded-2xl border border-subtle bg-surface">
           <div className="hidden grid-cols-[1.4fr_1fr_0.8fr_auto] gap-4 border-b border-subtle px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted md:grid">
             <span>{t("colName")}</span>
             <span>{t("colPhone")}</span>
@@ -323,63 +299,15 @@ export function PatientsShell({
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 md:justify-end">
-                  {!patient.isArchived && patient.noShowCount > 0 && (
-                    <button
-                      type="button"
-                      disabled={pendingId === patient.id}
-                      onClick={() => handleClearWarning(patient)}
-                      className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary disabled:opacity-50"
-                      aria-label={t("clearWarning")}
-                    >
-                      {pendingId === patient.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <ShieldCheck className="h-4 w-4" />
-                      )}
-                    </button>
-                  )}
-                  {!patient.isArchived && (
-                    <button
-                      type="button"
-                      onClick={() => openEdit(patient)}
-                      className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary"
-                      aria-label={t("edit")}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    disabled={pendingId === patient.id}
-                    onClick={() => handleArchiveToggle(patient)}
-                    className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary disabled:opacity-50"
-                    aria-label={
-                      patient.isArchived ? t("restore") : t("archive")
-                    }
-                  >
-                    {pendingId === patient.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : patient.isArchived ? (
-                      <ArchiveRestore className="h-4 w-4" />
-                    ) : (
-                      <Archive className="h-4 w-4" />
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled={pendingId === patient.id}
-                    onClick={() => requestDeletePatient(patient)}
-                    className="rounded-lg border border-subtle p-2 text-muted transition hover:border-accent-danger/40 hover:bg-accent-danger/10 hover:text-accent-danger disabled:opacity-50"
-                    aria-label={t("delete")}
-                  >
-                    {pendingId === patient.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </button>
+                <div className="flex items-center md:justify-end">
+                  <PatientActionsMenu
+                    patient={patient}
+                    pending={pendingId === patient.id}
+                    onEdit={() => openEdit(patient)}
+                    onClearWarning={() => handleClearWarning(patient)}
+                    onArchiveToggle={() => handleArchiveToggle(patient)}
+                    onDelete={() => setDeletingPatient(patient)}
+                  />
                 </div>
               </motion.li>
             ))}
@@ -398,50 +326,12 @@ export function PatientsShell({
         onSaved={handleSaved}
       />
 
-      <AnimatePresence>
-        {deletingPatient && (
-          <>
-            <motion.button
-              type="button"
-              aria-label={t("form.close")}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setDeletingPatient(null)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-            />
-            <motion.div
-              role="dialog"
-              aria-modal="true"
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.98 }}
-              className="fixed inset-x-4 top-[22%] z-[60] mx-auto w-full max-w-md rounded-2xl border border-subtle bg-surface p-5"
-            >
-              <h3 className="text-base font-semibold text-primary">{t("delete")}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {t("deleteConfirm", { name: deletingPatient.name })}
-              </p>
-              <div className="mt-4 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setDeletingPatient(null)}
-                  className="flex-1 rounded-xl border border-subtle px-4 py-2 text-sm font-medium text-muted transition hover:bg-elevated hover:text-primary"
-                >
-                  {t("form.cancel")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDeletePatient(deletingPatient)}
-                  className="flex-1 rounded-xl bg-accent-danger px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-danger/90"
-                >
-                  {t("delete")}
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <PatientDeleteModal
+        open={Boolean(deletingPatient)}
+        patient={deletingPatient}
+        onClose={() => setDeletingPatient(null)}
+        onDeleted={handleDeleted}
+      />
     </div>
   );
 }

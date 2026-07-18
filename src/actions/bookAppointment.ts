@@ -6,6 +6,7 @@ import {
   type BookAppointmentResult,
 } from "@/actions/bookAppointment.types";
 import { isSlotAvailable } from "@/actions/slots";
+import { SLOT_BLOCKING_STATUSES } from "@/lib/scheduling/slotBlocking";
 import {
   buildCairoAppointmentIso,
   getCairoDateKeyFromIso,
@@ -175,7 +176,7 @@ export async function bookAppointment(
       .select("id")
       .eq("tenant_id", tenantId)
       .eq("appointment_date", appointmentDate)
-      .not("status", "in", "(no_show,completed,canceled)")
+      .in("status", [...SLOT_BLOCKING_STATUSES])
       .maybeSingle();
 
     if (conflictError) {

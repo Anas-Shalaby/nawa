@@ -1,6 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import type { AppointmentStatus } from "@/lib/dashboard/types";
+import { isSlotBlockingStatus } from "@/lib/scheduling/slotBlocking";
+import { hasSlotConflict } from "@/lib/scheduling/slotConflict";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
 export interface UpdateStatusResult {
@@ -14,8 +17,16 @@ export interface MarkNoShowResult {
   error?: string;
 }
 
+function revalidateAppointmentPaths() {
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/upcoming", "page");
+  revalidatePath("/[locale]/dashboard/agenda", "page");
+  revalidatePath("/[locale]/dashboard/patients", "page");
+}
+
 /**
  * Updates appointment status. When status is `no_show`, increments patient strike count.
+ * Confirmed appointments reserve a slot; pending appointments do not.
  */
 export async function updateAppointmentStatus(
   appointmentId: string,
@@ -27,13 +38,29 @@ export async function updateAppointmentStatus(
 
     const { data: appointment, error: fetchError } = await supabase
       .from("appointments")
-      .select("id, patient_id, status")
+      .select("id, patient_id, status, appointment_date")
       .eq("id", appointmentId)
       .eq("tenant_id", tenantId)
       .single();
 
     if (fetchError || !appointment) {
       return { success: false, error: fetchError?.message ?? "Appointment not found." };
+    }
+
+    const wasBlocking = isSlotBlockingStatus(appointment.status);
+    const willBlock = isSlotBlockingStatus(newStatus);
+
+    if (willBlock && !wasBlocking) {
+      const conflict = await hasSlotConflict(
+        supabase,
+        tenantId,
+        appointment.appointment_date,
+        appointmentId,
+      );
+
+      if (conflict) {
+        return { success: false, error: "This time slot is already booked." };
+      }
     }
 
     const updatePayload: Record<string, unknown> = { status: newStatus };
@@ -96,6 +123,7 @@ export async function updateAppointmentStatus(
       }
     }
 
+    revalidateAppointmentPaths();
     return { success: true };
   } catch (error) {
     console.error("[updateAppointmentStatus]", error);

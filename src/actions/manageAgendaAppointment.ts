@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { isSlotBlockingStatus } from "@/lib/scheduling/slotBlocking";
+import { hasSlotConflict } from "@/lib/scheduling/slotConflict";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 import { trySetAppointmentArrivalSource } from "@/lib/dashboard/setAppointmentArrivalSource";
 
@@ -42,35 +44,29 @@ async function assertFutureDate(appointmentDateIso: string): Promise<string | nu
   return null;
 }
 
-async function assertNoConflict(
+async function assertNoSlotConflict(
   tenantId: string,
   appointmentDateIso: string,
   excludeAppointmentId?: string,
 ): Promise<string | null> {
   const supabase = await createAuthenticatedClient();
 
-  let query = supabase
-    .from("appointments")
-    .select("id")
-    .eq("tenant_id", tenantId)
-    .eq("appointment_date", appointmentDateIso)
-    .not("status", "in", "(no_show,completed,canceled)");
+  try {
+    const conflict = await hasSlotConflict(
+      supabase,
+      tenantId,
+      appointmentDateIso,
+      excludeAppointmentId,
+    );
 
-  if (excludeAppointmentId) {
-    query = query.neq("id", excludeAppointmentId);
+    if (conflict) {
+      return "This time slot is already booked.";
+    }
+
+    return null;
+  } catch (error) {
+    return error instanceof Error ? error.message : "Could not verify slot availability.";
   }
-
-  const { data, error } = await query.maybeSingle();
-
-  if (error) {
-    return error.message;
-  }
-
-  if (data) {
-    return "This time slot is already booked.";
-  }
-
-  return null;
 }
 
 async function validateReferences(
@@ -125,12 +121,6 @@ export async function createAgendaAppointment(
     );
     if (referenceError) return { success: false, error: referenceError };
 
-    const conflictError = await assertNoConflict(
-      tenantId,
-      input.appointmentDateIso,
-    );
-    if (conflictError) return { success: false, error: conflictError };
-
     const { data, error } = await supabase
       .from("appointments")
       .insert({
@@ -138,7 +128,7 @@ export async function createAgendaAppointment(
         patient_id: input.patientId,
         service_id: input.serviceId,
         appointment_date: input.appointmentDateIso,
-        status: "confirmed",
+        status: "pending",
         doctor_notes: trimmedNotes,
         is_re_examination: input.isReExamination,
       })
@@ -196,12 +186,14 @@ export async function updateAgendaAppointment(
     );
     if (referenceError) return { success: false, error: referenceError };
 
-    const conflictError = await assertNoConflict(
-      tenantId,
-      input.appointmentDateIso,
-      appointmentId,
-    );
-    if (conflictError) return { success: false, error: conflictError };
+    if (isSlotBlockingStatus(appointment.status)) {
+      const conflictError = await assertNoSlotConflict(
+        tenantId,
+        input.appointmentDateIso,
+        appointmentId,
+      );
+      if (conflictError) return { success: false, error: conflictError };
+    }
 
     const { error: updateError } = await supabase
       .from("appointments")

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { hasSlotConflict } from "@/lib/scheduling/slotConflict";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
 export interface ScheduleFollowUpResult {
@@ -55,6 +56,16 @@ export async function scheduleFollowUp(
     }
 
     const trimmedNotes = notes?.trim() || null;
+
+    const conflict = await hasSlotConflict(
+      supabase,
+      tenantId,
+      futureDateIso,
+    );
+
+    if (conflict) {
+      return { success: false, error: "This time slot is already booked." };
+    }
 
     const { data, error } = await supabase
       .from("appointments")

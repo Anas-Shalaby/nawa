@@ -4,15 +4,18 @@ import { useTranslations } from "next-intl";
 import { ChevronDown, Loader2 } from "lucide-react";
 import type { AppointmentStatus } from "@/lib/dashboard/types";
 import {
+  AGENDA_SELECTABLE_STATUSES,
   QUEUE_SELECTABLE_STATUSES,
   getQueueStatusColor,
 } from "@/lib/dashboard/queueStateMachine";
+import type { QueueVisibleStatus } from "@/lib/dashboard/queueStateMachine";
 
 interface QueueStatusSelectProps {
   value: AppointmentStatus;
   disabled?: boolean;
   isUpdating?: boolean;
   compact?: boolean;
+  allowedStatuses?: readonly QueueVisibleStatus[];
   onChange: (status: AppointmentStatus) => void;
 }
 
@@ -21,11 +24,13 @@ export function QueueStatusSelect({
   disabled = false,
   isUpdating = false,
   compact = false,
+  allowedStatuses,
   onChange,
 }: QueueStatusSelectProps) {
   const t = useTranslations("dashboard.detail.status");
   const tQueue = useTranslations("dashboard.queue");
   const statusColor = getQueueStatusColor(value);
+  const selectableStatuses = allowedStatuses ?? QUEUE_SELECTABLE_STATUSES;
 
   return (
     <div
@@ -59,12 +64,14 @@ export function QueueStatusSelect({
               backgroundImage: "none",
             }}
           >
-            {QUEUE_SELECTABLE_STATUSES.map((status) => (
+            {selectableStatuses.map((status) => (
               <option key={status} value={status}>
                 {t(status)}
               </option>
             ))}
-            <option value="no_show">{tQueue("noShowOption")}</option>
+            {!allowedStatuses && (
+              <option value="no_show">{tQueue("noShowOption")}</option>
+            )}
           </select>
           <ChevronDown
             className={[

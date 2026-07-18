@@ -16,7 +16,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cancelAgendaAppointment } from "@/actions/manageAgendaAppointment";
+import { updateAppointmentStatus } from "@/actions/updateAppointmentStatus";
+import { QueueStatusSelect } from "@/components/dashboard/QueueStatusSelect";
 import type { Locale } from "@/i18n/routing";
+import { AGENDA_SELECTABLE_STATUSES } from "@/lib/dashboard/queueStateMachine";
+import type { AppointmentStatus } from "@/lib/dashboard/types";
 import {
   formatAgendaSectionLabel,
   formatAgendaTime,
@@ -54,6 +58,8 @@ export function AgendaShell({
   const [editingAppointment, setEditingAppointment] = useState<AgendaAppointment | null>(
     null,
   );
+  const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     setAppointments(initialAppointments);
@@ -103,6 +109,38 @@ export function AgendaShell({
     toast.success(t("cancelSuccess"));
   }
 
+  function handleStatusChange(appointmentId: string, status: AppointmentStatus) {
+    const previous = appointments.find((item) => item.id === appointmentId);
+    if (!previous || previous.status === status) return;
+
+    setUpdatingStatusId(appointmentId);
+    setAppointments((current) =>
+      current.map((item) => (item.id === appointmentId ? { ...item, status } : item)),
+    );
+
+    startTransition(async () => {
+      const result = await updateAppointmentStatus(appointmentId, status);
+
+      if (!result.success) {
+        setAppointments((current) =>
+          current.map((item) =>
+            item.id === appointmentId ? { ...item, status: previous.status } : item,
+          ),
+        );
+        toast.error(t("error"), { description: result.error });
+        setUpdatingStatusId(null);
+        return;
+      }
+
+      if (status === "canceled" || status === "no_show") {
+        setAppointments((current) => current.filter((item) => item.id !== appointmentId));
+      }
+
+      toast.success(t("statusUpdateSuccess"));
+      setUpdatingStatusId(null);
+    });
+  }
+
   return (
     <div className="w-full space-y-6">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -111,6 +149,7 @@ export function AgendaShell({
           <p className="mt-1 text-sm text-muted">
             {t("subtitle", { count: appointments.length })}
           </p>
+          <p className="mt-1 text-xs text-muted">{t("pendingSlotHint")}</p>
         </div>
 
         <button
@@ -162,8 +201,10 @@ export function AgendaShell({
                     appointment={appointment}
                     locale={locale}
                     index={index}
+                    isUpdatingStatus={updatingStatusId === appointment.id}
                     onEdit={openEdit}
                     onCancelled={handleCancelled}
+                    onStatusChange={handleStatusChange}
                   />
                 ))}
               </ul>
@@ -192,14 +233,18 @@ function AgendaRow({
   appointment,
   locale,
   index,
+  isUpdatingStatus,
   onEdit,
   onCancelled,
+  onStatusChange,
 }: {
   appointment: AgendaAppointment;
   locale: Locale;
   index: number;
+  isUpdatingStatus: boolean;
   onEdit: (appointment: AgendaAppointment) => void;
   onCancelled: (appointmentId: string) => void;
+  onStatusChange: (appointmentId: string, status: AppointmentStatus) => void;
 }) {
   const t = useTranslations("agenda");
   const [confirmCancel, setConfirmCancel] = useState(false);
@@ -296,18 +341,26 @@ function AgendaRow({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center lg:flex-col lg:items-stretch xl:flex-row">
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#20BD5A]"
-        >
-          <MessageCircle className="h-4 w-4" aria-hidden />
-          {t("whatsappReminder")}
-        </a>
+      <div className="flex flex-col gap-3 sm:min-w-[220px]">
+        <QueueStatusSelect
+          value={appointment.status}
+          allowedStatuses={AGENDA_SELECTABLE_STATUSES}
+          isUpdating={isUpdatingStatus}
+          onChange={(status) => onStatusChange(appointment.id, status)}
+        />
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#20BD5A]"
+          >
+            <MessageCircle className="h-4 w-4" aria-hidden />
+            {t("whatsappReminder")}
+          </a>
+
+          <div className="flex gap-2">
           <button
             type="button"
             onClick={() => onEdit(appointment)}
@@ -336,6 +389,7 @@ function AgendaRow({
             )}
             {confirmCancel ? t("confirmCancel") : t("cancelAction")}
           </button>
+        </div>
         </div>
       </div>
     </motion.li>

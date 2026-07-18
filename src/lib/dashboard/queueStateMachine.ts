@@ -59,6 +59,12 @@ export const QUEUE_SELECTABLE_STATUSES: readonly QueueVisibleStatus[] = [
   "completed",
 ] as const;
 
+/** Statuses for upcoming agenda — before the visit day. */
+export const AGENDA_SELECTABLE_STATUSES: readonly QueueVisibleStatus[] = [
+  "pending",
+  "confirmed",
+] as const;
+
 /** @deprecated Use isQueueVisible — kept for gradual migration */
 export function isKanbanColumn(status: AppointmentStatus): status is QueueVisibleStatus {
   return isQueueVisible(status);

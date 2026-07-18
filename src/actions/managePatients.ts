@@ -16,6 +16,7 @@ export interface ManagePatientResult {
   patientId?: string;
   error?: string;
   newNoShowCount?: number;
+  errorCode?: "HAS_APPOINTMENTS" | "UNKNOWN";
 }
 
 export interface DependentInput {
@@ -259,32 +260,59 @@ export async function restorePatient(patientId: string): Promise<ManagePatientRe
 
 export async function deletePatient(patientId: string): Promise<ManagePatientResult> {
   if (!patientId) {
-    return { success: false, error: "Patient id is required." };
+    return { success: false, error: "Patient id is required.", errorCode: "UNKNOWN" };
   }
 
   try {
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
-    const { data, error } = await supabase
+    const { data: patient, error: patientError } = await supabase
       .from("patients")
-      .delete()
+      .select("id")
       .eq("id", patientId)
       .eq("tenant_id", tenantId)
-      .select("id");
+      .maybeSingle();
 
-    if (error) {
+    if (patientError || !patient) {
       return {
         success: false,
-        error:
-          error.code === "23503"
-            ? "This patient has related records and cannot be deleted. Archive them instead."
-            : error.message,
+        error: patientError?.message ?? "Patient not found.",
+        errorCode: "UNKNOWN",
       };
     }
 
-    if (!data || data.length === 0) {
-      return { success: false, error: "Patient not found." };
+    // Appointments reference patients with ON DELETE RESTRICT — remove them first.
+    const { error: appointmentsError } = await supabase
+      .from("appointments")
+      .delete()
+      .eq("patient_id", patientId)
+      .eq("tenant_id", tenantId);
+
+    if (appointmentsError) {
+      return {
+        success: false,
+        error: appointmentsError.message,
+        errorCode: "HAS_APPOINTMENTS",
+      };
+    }
+
+    const { error } = await supabase
+      .from("patients")
+      .delete()
+      .eq("id", patientId)
+      .eq("tenant_id", tenantId);
+
+    if (error) {
+      const blocked =
+        error.code === "23503" || error.message.includes("violates foreign key");
+      return {
+        success: false,
+        error: blocked
+          ? "Patient has related records and cannot be deleted."
+          : error.message,
+        errorCode: blocked ? "HAS_APPOINTMENTS" : "UNKNOWN",
+      };
     }
 
     revalidatePatientPaths();
@@ -294,6 +322,7 @@ export async function deletePatient(patientId: string): Promise<ManagePatientRes
     return {
       success: false,
       error: error instanceof Error ? error.message : "Could not delete patient.",
+      errorCode: "UNKNOWN",
     };
   }
 }

@@ -716,6 +716,20 @@
       "saving": "جاري الحفظ…",
       "close": "إغلاق",
       "error": "تعذّر حفظ بيانات المريض."
+    },
+    "actionsMenu": "قائمة الإجراءات",
+    "actionError": "تعذّر إكمال الإجراء",
+    "deleteModal": {
+      "title": "حذف المريض",
+      "subtitle": "هل تريد حذف «{name}»؟",
+      "body": "سيتم حذف المريض وجميع مواعيده المرتبطة نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+      "cancel": "إلغاء",
+      "confirm": "نعم، احذف",
+      "deleting": "جاري الحذف…",
+      "close": "إغلاق",
+      "error": "تعذّر حذف المريض.",
+      "hasAppointments": "تعذّر حذف المريض بسبب سجلات مرتبطة. جرّب الأرشفة بدل الحذف.",
+      "success": "تم حذف المريض بنجاح"
     }
   },
   "financials": {
@@ -870,7 +884,7 @@
     "patientLabel": "المريض",
     "selectPatient": "اختر المريض",
     "patientRequired": "اختر مريضاً",
-    "createAction": "تأكيد الحجز",
+    "createAction": "حفظ الموعد",
     "saveAction": "حفظ التعديل",
     "saving": "جاري الحفظ…",
     "editAction": "تعديل",
@@ -917,7 +931,9 @@
       "reschedule": "إعادة جدولة",
       "cancel": "إلغاء الموعد",
       "appointmentsCount": "{count} موعد في العرض الحالي"
-    }
+    },
+    "pendingSlotHint": "الوقت لا يُحجز على جدول الطبيب إلا بعد تأكيد الموعد.",
+    "statusUpdateSuccess": "تم تحديث حالة الموعد"
   },
   "recalls": {
     "metaTitle": "استدعاء المرضى — نواة",
