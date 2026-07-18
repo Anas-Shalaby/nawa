@@ -12,6 +12,7 @@ import {
   XAxis,
 } from "recharts";
 import { toast } from "sonner";
+import { Can } from "@/components/auth/Can";
 import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
 import {
   InvoicePrint,
@@ -395,20 +396,22 @@ export function FinancialsShell({
                     {ledgerTab === "income" ? "+" : "-"}
                     {formatMoney(tx.priceEgp, locale)} {t("currency")}
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => handleDownloadReceipt(tx)}
-                    disabled={downloadingId === tx.id}
-                    className="rounded-lg p-1.5 text-muted transition hover:bg-elevated hover:text-primary disabled:opacity-50"
-                    aria-label={t("downloadReceipt")}
-                    title={t("downloadReceipt")}
-                  >
-                    {downloadingId === tx.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Download className="h-4 w-4" />
-                    )}
-                  </button>
+                  <Can permission="finance.view">
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadReceipt(tx)}
+                      disabled={downloadingId === tx.id}
+                      className="rounded-lg p-1.5 text-muted transition hover:bg-elevated hover:text-primary disabled:opacity-50"
+                      aria-label={t("downloadReceipt")}
+                      title={t("downloadReceipt")}
+                    >
+                      {downloadingId === tx.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Download className="h-4 w-4" />
+                      )}
+                    </button>
+                  </Can>
                 </div>
               </motion.div>
             ))

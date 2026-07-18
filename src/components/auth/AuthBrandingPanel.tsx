@@ -15,7 +15,7 @@ export function AuthBrandingPanel() {
       ].join(" ")}
     >
       <div
-        className="absolute inset-0 bg-gradient-to-br from-accent/25 via-base to-[#0c1222]"
+        className="absolute inset-0 bg-gradient-to-br from-accent/20 via-base to-elevated"
         aria-hidden
       />
       <div
@@ -72,8 +72,8 @@ export function AuthBrandingPanel() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.55, delay: 0.28 }}
         className={[
-          "relative max-w-sm rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl",
-          "shadow-[0_24px_64px_rgba(0,0,0,0.35)]",
+          "relative max-w-sm rounded-2xl border border-subtle/80 bg-surface/70 p-5 backdrop-blur-xl",
+          "shadow-[0_24px_64px_rgba(0,0,0,0.12)]",
         ].join(" ")}
       >
         <div className="mb-3 flex items-center gap-2">

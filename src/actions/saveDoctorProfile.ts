@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
@@ -56,6 +57,9 @@ export async function saveDoctorProfile(
   formData: FormData,
 ): Promise<SaveDoctorProfileResult> {
   try {
+    const denied = await requirePermission("clinic.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -150,7 +154,9 @@ export async function saveDoctorProfile(
       return { success: false, error: error.message };
     }
 
-    revalidatePath("/dashboard/settings/profile");
+    revalidatePath("/[locale]/dashboard/settings/clinic", "page");
+    revalidatePath("/[locale]/dashboard/profile", "page");
+    revalidatePath("/[locale]/dashboard/settings/profile", "page");
     revalidatePath("/dashboard/settings");
     revalidatePath("/[locale]/[slug]", "page");
 

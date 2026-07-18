@@ -106,10 +106,10 @@ export function RegisterForm({ plans, initialPlanId }: RegisterFormProps) {
       transition={{ duration: 0.45, delay: 0.08 }}
     >
       <div className="mb-8 text-start">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-primary md:text-3xl">
           {t("title")}
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-slate-400">{t("subtitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t("subtitle")}</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -122,7 +122,7 @@ export function RegisterForm({ plans, initialPlanId }: RegisterFormProps) {
             error={planError ?? undefined}
           />
         ) : (
-          <p className="rounded-xl border border-red-900/40 bg-red-950/20 px-4 py-3 text-sm text-red-300">
+          <p className="rounded-xl border border-accent-danger/30 bg-accent-danger/10 px-4 py-3 text-sm text-accent-danger">
             {t("errors.plansUnavailable")}
           </p>
         )}
@@ -160,7 +160,7 @@ export function RegisterForm({ plans, initialPlanId }: RegisterFormProps) {
         />
 
         {serverError ? (
-          <p className="text-sm text-red-400/90" role="alert">
+          <p className="text-sm text-accent-danger" role="alert">
             {serverError}
           </p>
         ) : null}
@@ -185,9 +185,9 @@ export function RegisterForm({ plans, initialPlanId }: RegisterFormProps) {
         </button>
       </form>
 
-      <p className="mt-8 text-center text-sm text-slate-500">
+      <p className="mt-8 text-center text-sm text-muted">
         {t("hasAccount")}{" "}
-        <Link href="/login" className="font-medium text-slate-300 transition hover:text-white">
+        <Link href="/login" className="font-medium text-primary transition hover:text-accent">
           {t("loginLink")}
         </Link>
       </p>

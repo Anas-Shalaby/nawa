@@ -7,7 +7,7 @@ import {
   mapAppointmentRow,
   type AppointmentJoinRow,
 } from "@/lib/dashboard/mapAppointment";
-import { resolveStaffPermissions } from "@/lib/auth/staffPermissions";
+import { assertPermission, requirePermission } from "@/lib/auth/staffPermissions";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 import { updateAppointmentStatus } from "@/actions/updateAppointmentStatus";
 
@@ -35,9 +35,7 @@ async function loadAppointment(
 
 async function assertCanManageQueue(): Promise<string | null> {
   const supabase = await createAuthenticatedClient();
-  const { canManageQueue } = await resolveStaffPermissions(supabase);
-  if (!canManageQueue) return "You do not have permission to manage the queue.";
-  return null;
+  return assertPermission(supabase, "queue.manage");
 }
 
 export async function callNextPatient(): Promise<MissionControlActionResult> {
@@ -191,11 +189,10 @@ export async function updateDoctorStatus(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createAuthenticatedClient();
+    const denied = await assertPermission(supabase, "team.ops");
+    if (denied) return { success: false, error: denied };
+
     const tenantId = await resolveTenantId(supabase);
-    const { canManageClinic } = await resolveStaffPermissions(supabase);
-    if (!canManageClinic) {
-      return { success: false, error: "You do not have permission to update doctor status." };
-    }
 
     const { error } = await supabase
       .from("staff_profiles")
@@ -257,6 +254,9 @@ export async function moveAppointmentToZone(
 export async function searchPatientsQuick(
   query: string,
 ): Promise<{ id: string; name: string; phoneNumber: string }[]> {
+  const denied = await requirePermission("patients.view");
+  if (denied) return [];
+
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
 

@@ -24,7 +24,7 @@ export function DashboardHeader({ clinicName, date }: DashboardHeaderProps) {
 
   return (
     <header className="text-start">
-      <p className="text-xs font-medium uppercase tracking-widest text-accent/80">Nawa</p>
+      <p className="text-xs font-medium uppercase tracking-widest text-accent/80">Nawah</p>
       <h1 className="mt-1 text-xl font-semibold text-primary sm:text-2xl">{clinicName}</h1>
       <div className="mt-2 flex flex-wrap items-center gap-3">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">

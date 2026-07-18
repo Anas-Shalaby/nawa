@@ -1,6 +1,7 @@
 import { InventoryShell } from "@/components/inventory/InventoryShell";
 import { fetchInventoryOverview } from "@/lib/queries/inventory";
 import { getTranslations } from "next-intl/server";
+import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 
 export async function generateMetadata({
   params,
@@ -13,6 +14,9 @@ export async function generateMetadata({
 }
 
 export default async function InventoryPage() {
+  const gate = await requirePagePermission("/dashboard/inventory");
+  if (!gate.allowed) return gate.ui;
+
   const overview = await fetchInventoryOverview();
   return <InventoryShell overview={overview} />;
 }

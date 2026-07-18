@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import {
   buildAppointmentDateIso,
   getWalkInSlotTime,
@@ -24,6 +25,9 @@ export interface AddWalkInResult {
 
 export async function addWalkIn(input: AddWalkInInput): Promise<AddWalkInResult> {
   try {
+    const denied = await requirePermission("walkin.create");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
     const normalizedPhone = normalizeEgyptPhone(input.whatsapp);

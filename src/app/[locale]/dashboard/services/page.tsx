@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { ServicesShell } from "@/components/services/ServicesShell";
 import { fetchTenantServices } from "@/lib/queries/services";
+import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 
 export async function generateMetadata({
   params,
@@ -16,6 +17,9 @@ export async function generateMetadata({
 }
 
 export default async function ServicesPage() {
+  const gate = await requirePagePermission("/dashboard/services");
+  if (!gate.allowed) return gate.ui;
+
   const services = await fetchTenantServices();
 
   return <ServicesShell initialServices={services} />;

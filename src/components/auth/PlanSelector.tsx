@@ -24,8 +24,8 @@ export function PlanSelector({ plans, locale, value, onChange, error }: PlanSele
   return (
     <div>
       <div className="mb-3 text-start">
-        <p className="text-sm font-medium text-slate-300">{t("title")}</p>
-        <p className="mt-1 text-xs text-slate-500">{t("subtitle")}</p>
+        <p className="text-sm font-medium text-primary">{t("title")}</p>
+        <p className="mt-1 text-xs text-muted">{t("subtitle")}</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -44,7 +44,7 @@ export function PlanSelector({ plans, locale, value, onChange, error }: PlanSele
                 "relative rounded-2xl border p-4 text-start transition-shadow",
                 selected
                   ? "border-accent/50 bg-accent/10 shadow-[0_0_24px_rgba(108,92,231,0.18)]"
-                  : "border-slate-800 bg-slate-900/50 hover:border-slate-700 hover:bg-slate-900/80",
+                  : "border-subtle bg-surface/60 hover:border-subtle hover:bg-elevated/80",
               ].join(" ")}
             >
               {isFree ? (
@@ -56,9 +56,9 @@ export function PlanSelector({ plans, locale, value, onChange, error }: PlanSele
 
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-100">{getPlanLabel(plan, locale)}</p>
+                  <p className="text-sm font-semibold text-primary">{getPlanLabel(plan, locale)}</p>
                   {getPlanDescription(plan, locale) ? (
-                    <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                    <p className="mt-1 text-xs leading-relaxed text-muted">
                       {getPlanDescription(plan, locale)}
                     </p>
                   ) : null}
@@ -68,7 +68,7 @@ export function PlanSelector({ plans, locale, value, onChange, error }: PlanSele
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
                     selected
                       ? "border-accent bg-accent text-white"
-                      : "border-slate-700 bg-transparent text-transparent",
+                      : "border-subtle bg-transparent text-transparent",
                   ].join(" ")}
                   aria-hidden
                 >
@@ -77,11 +77,11 @@ export function PlanSelector({ plans, locale, value, onChange, error }: PlanSele
               </div>
 
               <div className="mt-4 space-y-1">
-                <p className="text-lg font-semibold tracking-tight text-slate-50">
+                <p className="text-lg font-semibold tracking-tight text-primary">
                   {formatPlanPrice(plan, locale)}
                 </p>
                 {plan.setupFeeEgp > 0 ? (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted">
                     {t("setupFee", {
                       amount: plan.setupFeeEgp.toLocaleString(locale === "ar" ? "ar-EG" : "en-US"),
                     })}
@@ -96,7 +96,7 @@ export function PlanSelector({ plans, locale, value, onChange, error }: PlanSele
       </div>
 
       {error ? (
-        <p className="mt-2 text-xs text-red-400/90" role="alert">
+        <p className="mt-2 text-xs text-accent-danger" role="alert">
           {error}
         </p>
       ) : null}

@@ -18,7 +18,7 @@
   "booking": {
     "bookAppointment": "احجز موعدك",
     "bookWith": "احجز مع",
-    "whatsappConfirm": "اختر وقتًا وسنؤكد عبر الواتساب",
+    "whatsappConfirm": "اختر وقتًا وسنؤكّد عبر واتساب",
     "availableTimes": "الأوقات المتاحة",
     "dropHere": "اسحب المواعيد هنا",
     "fullName": "الاسم الكامل",
@@ -27,7 +27,7 @@
     "whatsappHint": "رقم مصري — مثال 01012345678 أو +20 101 234 5678",
     "whatsappPlaceholder": "01XXXXXXXXX",
     "confirmBooking": "تأكيد الحجز",
-    "bookingProgress": "جاري الحجز…",
+    "bookingProgress": "جارٍ الحجز…",
     "changeTime": "تغيير الوقت",
     "selected": "المحدد",
     "continue": "متابعة",
@@ -51,7 +51,7 @@
     "preVisit2": "أحضر بطاقة الهوية أو جواز السفر",
     "preVisit3": "أخبرنا إذا كنت تتناول أي أدوية",
     "cancelAppointment": "إلغاء الموعد",
-    "cancelling": "جاري الإلغاء…",
+    "cancelling": "جارٍ الإلغاء…",
     "cancelError": "تعذر إلغاء الموعد. يرجى الاتصال بالعيادة.",
     "cancelledTitle": "تم إلغاء الموعد",
     "cancelledBody": "تم تحرير موعد {time}. يمكنك الحجز مرة أخرى في أي وقت.",
@@ -63,7 +63,7 @@
     "bookingDetails": "بيانات الحجز",
     "bookingDetailsHint": "أدخل بياناتك لتأكيد الموعد",
     "bookingForTitle": "لمن هذا الحجز؟",
-    "bookingForSelf": "لي شخصياً",
+    "bookingForSelf": "لنفسي",
     "bookingForSelfHint": "أنا المريض الذي سيزور العيادة",
     "bookingForDependent": "لشخص آخر / فرد من العائلة",
     "bookingForDependentHint": "سأستخدم رقمي للتواصل نيابةً عن المريض",
@@ -81,11 +81,11 @@
     },
     "notesOptional": "ملاحظات (اختياري)",
     "notesPlaceholder": "أي تفاصيل تود إبلاغ العيادة بها…",
-    "poweredByBefore": "Powered by",
+    "poweredByBefore": "مدعوم من",
     "verified": "موثّق",
     "serviceDuration": "{minutes} دقيقة",
     "changeService": "تغيير الخدمة",
-    "loadingSlots": "جاري تحميل الأوقات…",
+    "loadingSlots": "جارٍ تحميل الأوقات…",
     "chooseDate": "اختر التاريخ",
     "today": "اليوم",
     "noSlotsDay": "عفواً، لا توجد مواعيد متاحة في هذا اليوم.",
@@ -104,9 +104,9 @@
       "time": "الوقت",
       "service": "الخدمة",
       "scanToVerify": "امسح للتحقق من الحجز",
-      "directions": "الاتجاهات (جوجل مابس)",
+      "directions": "الاتجاهات عبر خرائط Google",
       "cancelBooking": "إلغاء الحجز",
-      "cancelling": "جاري الإلغاء…",
+      "cancelling": "جارٍ الإلغاء…",
       "cancelError": "تعذر إلغاء الحجز. يرجى التواصل مع العيادة.",
       "cancelledTitle": "تم إلغاء الحجز",
       "cancelledBody": "تم تحرير موعد {time}. يمكنك الحجز مرة أخرى في أي وقت."
@@ -123,7 +123,7 @@
       "completed": "مكتمل"
     },
     "noShow": "لم يحضر",
-    "markingNoShow": "جاري التسجيل…",
+    "markingNoShow": "جارٍ التسجيل…",
     "strikes": "{count} مخالفة",
     "strikesPlural": "{count} مخالفات",
     "minutesShort": "د",
@@ -171,7 +171,7 @@
       "chartWarningHint": "مرضى لديهم غياب واحد ويحتاجون متابعة قبل الحجز التالي"
     },
     "queue": {
-      "title": "مرضي اليوم",
+      "title": "مرضى اليوم",
       "listLabel": "قائمة مواعيد اليوم",
       "count": "{count} موعد",
       "searchPlaceholder": "ابحث باسم المريض…",
@@ -182,19 +182,19 @@
       "statusCompleted": "مكتمل",
       "actions": {
         "confirm": "تأكيد",
-        "checkIn": "وصل العيادة",
-        "startSession": "أدخله للكشف",
+        "checkIn": "وصل إلى العيادة",
+        "startSession": "إدخاله إلى الكشف",
         "complete": "إنهاء"
       }
     },
     "detail": {
-      "empty": "حدد مريضاً لعرض التفاصيل",
+      "empty": "حدد مريضًا لعرض التفاصيل",
       "contact": "بيانات التواصل",
       "whatsapp": "واتساب",
       "service": "الخدمة",
       "duration": "{minutes} دقيقة",
       "price": "{amount} جنيه",
-      "disciplineHint": "Discipline Engine — تسجيل عدم الحضور",
+      "disciplineHint": "محرك الانضباط — تسجيل عدم الحضور",
       "status": {
         "pending": "جديد",
         "confirmed": "تم التأكيد",
@@ -202,7 +202,7 @@
         "in_session": "في الكشف",
         "completed": "مكتمل",
         "no_show": "عدم الحضور",
-        "canceled": "تم الالغاء"
+        "canceled": "ملغى"
       }
     },
     "walkIn": {
@@ -214,7 +214,7 @@
       "phoneLabel": "رقم الواتساب",
       "serviceNote": "الخدمة: {service}",
       "submit": "إضافة للطابور",
-      "submitting": "جاري الإضافة…",
+      "submitting": "جارٍ الإضافة…",
       "cancel": "إلغاء",
       "close": "إغلاق",
       "error": "تعذرت إضافة الحضور المباشر."
@@ -230,7 +230,7 @@
       "reasonLabel": "السبب (اختياري)",
       "reasonPlaceholder": "مثال: استراحة غداء، طوارئ",
       "submit": "إغلاق الوقت",
-      "submitting": "جاري الإغلاق…",
+      "submitting": "جارٍ الإغلاق…",
       "cancel": "إلغاء",
       "close": "إغلاق",
       "error": "تعذّر إغلاق هذا الوقت.",
@@ -281,7 +281,7 @@
       "patientSection": "بيانات المريض",
       "phoneLabel": "رقم هاتف المريض",
       "phonePlaceholder": "01xxxxxxxxx",
-      "searching": "جاري البحث…",
+      "searching": "جارٍ البحث…",
       "registered": "مريض مسجل",
       "newPatient": "مريض جديد — أدخل الاسم لإنشاء ملفه",
       "nameLabel": "اسم المريض",
@@ -297,16 +297,16 @@
       "serviceLabel": "الخدمة",
       "servicePlaceholder": "اختر الخدمة",
       "dateSection": "التاريخ والوقت",
-      "loadingSlots": "جاري تحميل المواعيد…",
+      "loadingSlots": "جارٍ تحميل المواعيد…",
       "noSlots": "لا توجد مواعيد متاحة في هذا اليوم",
       "available": "متاح",
       "unavailable": "غير متاح",
       "confirm": "تأكيد الحجز",
-      "confirming": "جاري تأكيد الحجز…",
+      "confirming": "جارٍ تأكيد الحجز…",
       "cancel": "إلغاء",
       "success": "تم تأكيد الحجز بنجاح 🎉",
       "error": "تعذّر تأكيد الحجز",
-      "slotTaken": "تم حجز هذا الموعد للتو. اختر موعداً آخر.",
+      "slotTaken": "تم حجز هذا الموعد للتو. اختر موعدًا آخر.",
       "relationships": {
         "child": "ابن / ابنة",
         "spouse": "زوج / زوجة",
@@ -318,7 +318,7 @@
         "phoneRequired": "رقم الهاتف مطلوب",
         "phoneInvalid": "أدخل رقم هاتف مصري صحيح",
         "nameRequired": "اسم المريض مطلوب",
-        "nameMax": "الاسم طويل جداً",
+        "nameMax": "الاسم طويل جدًا",
         "dependentNameRequired": "اسم التابع مطلوب",
         "relationshipRequired": "صلة القرابة مطلوبة",
         "serviceRequired": "اختر الخدمة",
@@ -333,20 +333,50 @@
       "sectionClinic": "إدارة العيادة",
       "sectionFinance": "المالية والنمو",
       "sectionSystem": "النظام",
-      "navQueue": "مرضي اليوم",
+      "navQueue": "مرضى اليوم",
       "navUpcoming": "المواعيد القادمة",
       "navNotifications": "صندوق الإشعارات",
       "navPatients": "المرضى",
       "navServices": "الخدمات",
       "navInventory": "إدارة المخزون",
-      "navStaff": "فريق العمل",
+      "navStaff": "عمليات الفريق",
       "navFinancials": "الحسابات",
       "navAnalytics": "الإحصائيات",
       "navMarketing": "حملات التسويق",
       "navAiAssistant": "المساعد الذكي",
       "navSettings": "الإعدادات",
       "collapse": "طي القائمة",
-      "closeMenu": "إغلاق القائمة"
+      "closeMenu": "إغلاق القائمة",
+      "navProfile": "الملف الشخصي",
+      "navAccount": "حسابي",
+      "logout": "تسجيل الخروج",
+      "themeLight": "الوضع الفاتح",
+      "themeDark": "الوضع الداكن"
+    },
+    "avatarMenu": {
+      "open": "قائمة الحساب",
+      "personalOnly": "حسابك الشخصي",
+      "myAccount": "حسابي",
+      "clinicSettings": "إعدادات العيادة",
+      "logout": "تسجيل الخروج"
+    },
+    "clinicSwitcher": {
+      "label": "تبديل العيادة",
+      "switchTo": "عياداتك",
+      "close": "إغلاق قائمة العيادات",
+      "error": "تعذر تبديل العيادة.",
+      "roles": {
+        "owner": "مالك",
+        "admin": "مشرف",
+        "doctor": "طبيب",
+        "receptionist": "استقبال",
+        "nurse": "تمريض",
+        "assistant": "مساعد",
+        "lab": "معمل",
+        "manager": "مدير",
+        "cashier": "كاشير",
+        "intern": "متدرب"
+      }
     },
     "notifications": {
       "toastTitle": "حجز جديد عبر الإنترنت",
@@ -379,14 +409,14 @@
       },
       "inventoryOutTitle": "نفاد المخزون",
       "inventoryLowTitle": "مخزون منخفض",
-      "inventoryOutBody": "{name} خلص من العيادة — حدّثي الرصيد.",
+      "inventoryOutBody": "{name} نفد من العيادة — حدّث الرصيد.",
       "inventoryLowBody": "{name}: متبقي {quantity} (الحد الأدنى {min}).",
       "openInbox": "فتح صندوق الإشعارات",
       "inbox": {
         "title": "صندوق الإشعارات",
         "count": "{count} عنصر",
         "emptyList": "لا توجد إشعارات في هذا الفلتر.",
-        "selectPrompt": "حدد إشعاراً لعرض التفاصيل والإجراءات",
+        "selectPrompt": "حدد إشعارًا لعرض التفاصيل والإجراءات",
         "debtPatient": "مريض بمستحقات",
         "amountDue": "المبلغ المطلوب",
         "currency": "ج.م",
@@ -444,16 +474,16 @@
       "ops": {
         "walkInTitle": "إضافة مريض طارئ",
         "name": "الاسم",
-        "phone": "رقم الموبايل",
+        "phone": "رقم الجوال",
         "addToQueue": "إدخال للانتظار",
-        "serviceRequired": "اختاري خدمة أولاً",
+        "serviceRequired": "اختر خدمة أولاً",
         "walkInError": "تعذّر إدخال المريض",
         "walkInSuccess": "تم إدخال المريض لصالة الانتظار",
         "urgentTitle": "مهام عاجلة",
-        "longWait": "⏳ {name} منتظر منذ {mins} دقيقة — طمّنيه أو قدّميه",
-        "collectYesterday": "💰 حصّلي {amount} ج.م من {name} (متبقي من أمس)",
-        "callTomorrow": "📞 اتصلي بـ {count} مرضى لتأكيد حجز غداً",
-        "noUrgent": "ما فيش مهام عاجلة دلوقتي",
+        "longWait": "⏳ {name} في الانتظار منذ {mins} دقيقة — طمئنه أو قدّمه للطابور",
+        "collectYesterday": "💰 حصّل {amount} ج.م من {name} (متبقي من أمس)",
+        "callTomorrow": "📞 اتصل بـ {count} مرضى لتأكيد حجز الغد",
+        "noUrgent": "لا توجد مهام عاجلة الآن",
         "searchLabel": "بحث سريع عن مريض",
         "searchPlaceholder": "الاسم أو الهاتف…",
         "commandsTitle": "العمليات",
@@ -461,7 +491,7 @@
         "cmdCallNext": "استدعاء التالي",
         "cmdPrint": "طباعة تذكرة",
         "cmdEmergency": "طوارئ",
-        "cmdEmergencyHint": "افتحي بطاقة المريض وحددي الأولوية من الساحة.",
+        "cmdEmergencyHint": "افتح بطاقة المريض وحدّد الأولوية من الساحة.",
         "callNextError": "لا يوجد مريض جاهز للاستدعاء",
         "callNextSuccess": "تم استدعاء المريض لغرفة الطبيب",
         "badgePayments": "مدفوعات معلّقة",
@@ -471,7 +501,7 @@
       "floor": {
         "title": "الساحة الحية",
         "count": "{active} نشط · {total} اليوم",
-        "dragHandle": "اسحبي البطاقة",
+        "dragHandle": "اسحب البطاقة",
         "mins": "{mins} د",
         "zoneEmpty": "لا يوجد مرضى في هذه المنطقة",
         "overflow": "+{count} إضافي في الطابور",
@@ -482,10 +512,10 @@
         },
         "checklistTitle": "قائمة يومية سريعة",
         "checklist": {
-          "empty": "لا يوجد مرضى حالياً على الساحة.",
-          "cashDrawer": "هل قمتِ بمراجعة درج النقدية؟",
-          "callTomorrow": "هل اتصلتِ بمرضى الغد؟ ({count})",
-          "unpaid": "هل راجعتِ تحصيلات أمس المعلّقة؟ ({count})"
+          "empty": "لا يوجد مرضى حاليًا على الساحة.",
+          "cashDrawer": "هل تمت مراجعة درج النقدية؟",
+          "callTomorrow": "هل تم الاتصال بمرضى الغد؟ ({count})",
+          "unpaid": "هل روجعت تحصيلات أمس المعلّقة؟ ({count})"
         }
       },
       "radar": {
@@ -495,7 +525,7 @@
         "available": "متاح — الغرفة فارغة",
         "tickerTitle": "شريط الخزنة الحي",
         "tickerHidden": "التحصيلات تظهر حسب صلاحياتك",
-        "tickerEmpty": "ما فيش تحصيلات مسجّلة النهاردة بعد",
+        "tickerEmpty": "لا توجد تحصيلات مسجّلة اليوم بعد",
         "tickerItem": "+ {amount} ج.م — {name}",
         "capacityTitle": "إشغال العيادة اليوم",
         "capacityLabel": "{pct}% ممتلئة",
@@ -548,7 +578,7 @@
           "unspecified": ""
         },
         "arrival": {
-          "online": "أونلاين",
+          "online": "عبر الإنترنت",
           "walk_in": "حضور مباشر",
           "phone": "هاتف",
           "internal": "داخلي",
@@ -600,7 +630,7 @@
       "body": "لا يمكن التراجع عن هذا الإجراء. إذا كانت الخدمة مرتبطة بمواعيد سابقة أو قادمة، لن يتم الحذف.",
       "cancel": "إلغاء",
       "confirm": "نعم، احذف",
-      "deleting": "جاري الحذف…",
+      "deleting": "جارٍ الحذف…",
       "close": "إغلاق",
       "error": "تعذّر حذف الخدمة.",
       "hasAppointments": "لا يمكن حذف هذه الخدمة لأنها مرتبطة بمواعيد. يمكنك تعديل اسمها أو إخفاؤها من الحجز بدل الحذف."
@@ -623,15 +653,15 @@
       "instructionsPlaceholder": "مثال: يرجى الحضور قبل 10 دقائق",
       "cancel": "إلغاء",
       "save": "حفظ الخدمة",
-      "saving": "جاري الحفظ…",
+      "saving": "جارٍ الحفظ…",
       "close": "إغلاق",
       "error": "تعذّر حفظ الخدمة.",
       "validation": {
         "nameRequired": "اسم الخدمة مطلوب",
         "durationRequired": "مدة الجلسة مطلوبة",
-        "priceInvalid": "السعر لا يمكن أن يكون سالباً",
+        "priceInvalid": "السعر لا يمكن أن يكون سالبًا",
         "sessionsRequired": "يجب أن تحتوي الباقة على جلستين على الأقل",
-        "colorInvalid": "اختر لوناً صالحاً"
+        "colorInvalid": "اختر لونًا صالحًا"
       }
     }
   },
@@ -658,7 +688,7 @@
     "edit": "تعديل",
     "clearWarning": "إزالة التحذير",
     "giveStrike": "إعطاء مخالفة",
-    "givingStrike": "جاري التسجيل…",
+    "givingStrike": "جارٍ التسجيل…",
     "strikeConfirmTitle": "إعطاء مخالفة",
     "strikeConfirmBody": "إضافة مخالفة لسجل {name}؟ سيُزاد عداد المخالفات بمقدار واحد.",
     "strikeConfirm": "نعم، أعطِ مخالفة",
@@ -678,7 +708,7 @@
       "relationshipLabel": "صلة القرابة",
       "relationshipPlaceholder": "اختر صلة القرابة",
       "save": "حفظ التابع",
-      "saving": "جاري الحفظ…",
+      "saving": "جارٍ الحفظ…",
       "cancel": "إلغاء",
       "createdSuccess": "تمت إضافة التابع بنجاح",
       "createError": "تعذّر إضافة التابع",
@@ -713,7 +743,7 @@
       "notesPlaceholder": "ملاحظات داخلية للسكرتيرة…",
       "cancel": "إلغاء",
       "save": "حفظ",
-      "saving": "جاري الحفظ…",
+      "saving": "جارٍ الحفظ…",
       "close": "إغلاق",
       "error": "تعذّر حفظ بيانات المريض."
     },
@@ -722,10 +752,10 @@
     "deleteModal": {
       "title": "حذف المريض",
       "subtitle": "هل تريد حذف «{name}»؟",
-      "body": "سيتم حذف المريض وجميع مواعيده المرتبطة نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+      "body": "سيتم حذف المريض وجميع مواعيده المرتبطة نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
       "cancel": "إلغاء",
       "confirm": "نعم، احذف",
-      "deleting": "جاري الحذف…",
+      "deleting": "جارٍ الحذف…",
       "close": "إغلاق",
       "error": "تعذّر حذف المريض.",
       "hasAppointments": "تعذّر حذف المريض بسبب سجلات مرتبطة. جرّب الأرشفة بدل الحذف.",
@@ -780,7 +810,7 @@
     "currency": "ج.م",
     "print": "طباعة",
     "downloadPdf": "تحميل PDF",
-    "footerBefore": "تم الإصدار تقنياً بواسطة نظام",
+    "footerBefore": "تم الإصدار تقنيًا بواسطة نظام",
     "brandName": "نواة",
     "footerAfter": "للإدارة الطبية",
     "defaultDoctor": "الطبيب المعالج",
@@ -826,7 +856,7 @@
     "formHint": "حدّد الحد الأدنى بدقة لتجنّب نفاد الخامات الثمينة",
     "close": "إغلاق",
     "save": "حفظ الصنف",
-    "saving": "جاري الحفظ…",
+    "saving": "جارٍ الحفظ…",
     "saved": "تم حفظ الصنف",
     "saveError": "تعذّر حفظ الصنف",
     "restockTitle": "إضافة رصيد",
@@ -842,6 +872,233 @@
       "minThreshold": "حد التنبيه الأدنى",
       "unitCost": "تكلفة الوحدة (ج.م)",
       "restockAmount": "الكمية المضافة"
+    }
+  },
+  "teamOps": {
+    "metaTitle": "عمليات الفريق — نواة",
+    "title": "عمليات الفريق",
+    "subtitle": "من يعمل الآن، ومن متاح، ومن مثقل، ومن يكشف على المرضى — في لحظة واحدة.",
+    "overview": {
+      "label": "نظرة تشغيلية",
+      "totalStaff": "إجمالي الفريق",
+      "doctorsOnDuty": "أطباء في الخدمة",
+      "receptionActive": "استقبال نشط",
+      "availableNow": "متاح الآن",
+      "busyNow": "مشغول الآن",
+      "onLeave": "في إجازة",
+      "offline": "غير متصل",
+      "averageWorkload": "متوسط الحمل"
+    },
+    "filters": {
+      "search": "بحث في الفريق",
+      "searchPlaceholder": "ابحث بالاسم أو الدور أو القسم…",
+      "role": "تصفية حسب الدور",
+      "status": "تصفية حسب الحالة",
+      "allRoles": "كل الأدوار",
+      "allStatuses": "كل الحالات"
+    },
+    "roles": {
+      "owner": "المالك",
+      "admin": "مدير",
+      "doctor": "طبيب",
+      "receptionist": "استقبال",
+      "nurse": "تمريض",
+      "assistant": "مساعد",
+      "lab": "مختبر",
+      "manager": "مدير تشغيلي",
+      "cashier": "كاشير",
+      "intern": "متدرب"
+    },
+    "status": {
+      "available": "متاح",
+      "in_session": "في الكشف",
+      "busy": "مشغول",
+      "break": "استراحة",
+      "offline": "غير متصل",
+      "on_leave": "في إجازة"
+    },
+    "workload": {
+      "label": "حمل العمل اليوم",
+      "heat": "{heat} · {pct}%",
+      "minutes": "{booked} / {capacity} دقيقة محجوزة",
+      "levels": {
+        "low": "منخفض",
+        "medium": "متوسط",
+        "high": "مرتفع",
+        "critical": "حرج"
+      }
+    },
+    "card": {
+      "appointments": "اليوم",
+      "waiting": "انتظار",
+      "avgMins": "متوسط د",
+      "currentPatient": "مع {name}",
+      "noPatient": "لا يوجد مريض في الكشف",
+      "rating": "رضا {rating}/5",
+      "suspended": "موقوف"
+    },
+    "actions": {
+      "invite": "إضافة عضو",
+      "profile": "الملف",
+      "call": "اتصال",
+      "message": "رسالة",
+      "schedule": "جدول اليوم",
+      "setStatus": "الحالة",
+      "assign": "تعيين",
+      "transfer": "نقل",
+      "noPhone": "لا يوجد رقم هاتف على هذا الملف بعد"
+    },
+    "assign": {
+      "title": "تعيين مريض",
+      "subtitle": "اختر مريضاً لـ {name}",
+      "empty": "لا يوجد مرضى قابلون للتعيين الآن.",
+      "assign": "تعيين",
+      "unassigned": "غير معيّن",
+      "currentlyWith": "مع {name}",
+      "close": "إغلاق",
+      "success": "تم تعيين {name}",
+      "error": "تعذّر تعيين المريض"
+    },
+    "transfer": {
+      "title": "نقل مريض من الانتظار",
+      "subtitle": "انقل مريضاً منتظراً من {name}",
+      "pickPatient": "المرضى المنتظرون",
+      "pickDestination": "النقل إلى",
+      "emptyWaiting": "لا يوجد مرضى في انتظار هذا العضو.",
+      "emptyDestinations": "لا يوجد أطباء متاحون لاستقبال النقل.",
+      "destMeta": "{waiting} انتظار · {heat}% حمل",
+      "transfer": "نقل",
+      "close": "إغلاق",
+      "success": "تم نقل {patient} إلى {doctor}",
+      "error": "تعذّر نقل المريض"
+    },
+    "schedule": {
+      "title": "الجدول الزمني لليوم",
+      "empty": "لا توجد مواعيد مجدولة اليوم.",
+      "status": {
+        "pending": "جديد",
+        "confirmed": "مؤكد",
+        "checked_in": "وصل",
+        "in_session": "في الكشف",
+        "completed": "مكتمل",
+        "no_show": "لم يحضر",
+        "canceled": "ملغى"
+      }
+    },
+    "activity": {
+      "title": "النشاط الحي",
+      "subtitle": "ما يفعله فريق العيادة الآن",
+      "empty": "لا يوجد نشاط حي اليوم بعد.",
+      "verbs": {
+        "session_started": "{actor} بدأ كشفاً مع {subject}",
+        "checked_in": "تم تسجيل وصول {subject}",
+        "confirmed": "تم تأكيد موعد {subject}",
+        "completed": "{actor} أنهى زيارة مع {subject}",
+        "status_available": "{actor} أصبح متاحاً",
+        "status_busy": "{actor} مشغول",
+        "status_break": "{actor} في استراحة",
+        "status_offline": "{actor} غير متصل"
+      }
+    },
+    "insights": {
+      "title": "رؤى تشغيلية",
+      "kinds": {
+        "most_appointments": "أكثر مواعيد اليوم",
+        "fastest_consult": "أسرع متوسط كشف",
+        "most_available": "أكثر طبيب توفراً",
+        "longest_queue": "أطول طابور انتظار",
+        "highest_workload": "أعلى حمل عمل",
+        "balanced_suggestion": "اقتراح موازنة"
+      },
+      "values": {
+        "most_appointments": "{value} مواعيد",
+        "fastest_consult": "متوسط {value} دقيقة",
+        "most_available": "{value} في الانتظار",
+        "longest_queue": "{value} في الانتظار",
+        "highest_workload": "{value} من السعة",
+        "balanced_suggestion": ""
+      },
+      "balancedBody": "انقل الحمل من {from} نحو {to}"
+    },
+    "invite": {
+      "title": "إضافة عضو للفريق",
+      "subtitle": "أضف إلى قائمة التشغيل الحية — مع خيار إنشاء حساب دخول يمكن استخدامه اليوم.",
+      "nameLabel": "الاسم الظاهر",
+      "namePlaceholder": "د. سارة أحمد",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "name@clinic.com",
+      "withLogin": "إنشاء صلاحية دخول",
+      "withLoginHint": "ينشئ حساباً بكلمة مرور مؤقتة يمكنك مشاركتها الآن.",
+      "roleLabel": "الدور",
+      "departmentLabel": "القسم (اختياري)",
+      "departmentPlaceholder": "عام · عظام · استقبال",
+      "cancel": "إلغاء",
+      "submit": "إضافة للقائمة",
+      "submitInvite": "إضافة وإنشاء دخول",
+      "submitting": "جارٍ الإضافة…",
+      "close": "إغلاق",
+      "success": "تمت إضافة العضو",
+      "successWithLogin": "تمت الإضافة — شارك كلمة المرور المؤقتة أدناه",
+      "error": "تعذّر إضافة العضو",
+      "credsTitle": "بيانات الدخول للمشاركة",
+      "credsSubtitle": "انسخ كلمة المرور المؤقتة وأرسلها بأمان. يُفضّل تغييرها بعد أول دخول.",
+      "tempPasswordLabel": "كلمة المرور المؤقتة",
+      "shareHint": "تُعرض كلمة المرور هذه مرة واحدة. احفظها قبل الإغلاق.",
+      "copy": "نسخ",
+      "copied": "تم النسخ",
+      "copyFailed": "تعذّر النسخ",
+      "done": "تم"
+    },
+    "profile": {
+      "close": "إغلاق",
+      "access": "الوصول",
+      "noEmail": "لا يوجد بريد مسجّل",
+      "linked": "حساب دخول مرتبط",
+      "rosterOnly": "في القائمة فقط — بلا دخول بعد",
+      "suspendedBadge": "موقوف",
+      "roleLabel": "الدور والصلاحيات",
+      "saveRole": "حفظ",
+      "roleSaved": "تم تحديث الدور",
+      "roleError": "تعذّر تحديث الدور",
+      "security": "الأمان",
+      "resetPassword": "إعادة تعيين كلمة المرور",
+      "resetSuccess": "تم تحديث كلمة المرور — انسخها أدناه قبل الإغلاق",
+      "resetError": "تعذّر إعادة تعيين كلمة المرور",
+      "selfPasswordHint": "لتغيير كلمة مرورك أنت، استخدم صفحة حسابي. إعادة التعيين من هنا كانت تُسجّل خروجك.",
+      "goToAccountPassword": "فتح حسابي",
+      "passwordFormHint": "اكتب كلمة المرور بنفسك أو اقترح واحدة ثم احفظ. اللوحة تبقى مفتوحة حتى تنسخها.",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "suggestPassword": "اقتراح",
+      "savePassword": "حفظ كلمة المرور",
+      "cancelPassword": "إلغاء",
+      "passwordTooShort": "كلمة المرور يجب ألا تقل عن 6 أحرف",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين",
+      "suspend": "إيقاف الوصول",
+      "unsuspend": "استعادة الوصول",
+      "suspended": "تم إيقاف الوصول",
+      "unsuspended": "تمت استعادة الوصول",
+      "suspendError": "تعذّر تحديث الوصول",
+      "tempCredsTitle": "كلمة المرور جاهزة للمشاركة",
+      "tempCredsKeepOpen": "انسخها الآن — الدرج يبقى مفتوحًا حتى تغلقه بنفسك.",
+      "recoveryHint": "نسخ رابط الاستعادة",
+      "copy": "نسخ",
+      "copied": "تم النسخ",
+      "copyFailed": "تعذّر النسخ",
+      "statusLine": "{status} · {appointments} اليوم · {waiting} انتظار"
+    },
+    "empty": {
+      "title": "ابنِ فريق عيادتك",
+      "body": "أضف أول طبيب واستقبال لترى الحالة الحية وحمل العمل وجدول اليوم في مكان واحد.",
+      "cta": "إضافة أول عضو",
+      "filteredTitle": "لا توجد نتائج",
+      "filteredBody": "جرّب مسح الفلاتر أو البحث باسم آخر."
+    },
+    "toasts": {
+      "statusUpdated": "تم تحديث الحالة"
+    },
+    "errors": {
+      "statusUpdate": "تعذّر تحديث الحالة"
     }
   },
   "comingSoon": {
@@ -883,10 +1140,10 @@
     "editTitle": "تعديل الموعد",
     "patientLabel": "المريض",
     "selectPatient": "اختر المريض",
-    "patientRequired": "اختر مريضاً",
+    "patientRequired": "اختر مريضًا",
     "createAction": "حفظ الموعد",
     "saveAction": "حفظ التعديل",
-    "saving": "جاري الحفظ…",
+    "saving": "جارٍ الحفظ…",
     "editAction": "تعديل",
     "cancelAction": "إلغاء",
     "confirmCancel": "تأكيد الإلغاء",
@@ -921,7 +1178,7 @@
       "today": "اليوم",
       "datePicker": "اختر التاريخ",
       "nextAvailable": "⚡ أقرب موعد متاح",
-      "nextAvailableSearching": "جاري البحث…",
+      "nextAvailableSearching": "جارٍ البحث…",
       "nextAvailableFound": "أقرب موعد: {date} الساعة {time}",
       "nextAvailableEmpty": "لا يوجد موعد متاح خلال الأسابيع القادمة",
       "nextAvailableError": "تعذّر البحث عن أقرب موعد",
@@ -939,7 +1196,7 @@
     "metaTitle": "استدعاء المرضى — نواة",
     "title": "محرك الاستدعاء",
     "subtitle": "مرضى لم يزوروا العيادة منذ أكثر من {months} أشهر — لوحة توليد العملاء للسكرتيرة.",
-    "empty": "لا يوجد مرضى مستهدفون حالياً. جميع المرضى النشطين زاروا مؤخراً.",
+    "empty": "لا يوجد مرضى مستهدفون حاليًا. جميع المرضى النشطين زاروا مؤخراً.",
     "lastVisit": "آخر زيارة: {date} — منذ {months} شهر"
   },
   "whatsapp": {
@@ -958,7 +1215,7 @@
     "tabFinancials": "الحسابات",
     "whatsappNow": "مراسلة واتساب",
     "bookAppointment": "حجز موعد جديد",
-    "writePrescription": "كتابة روشتة",
+    "writePrescription": "كتابة وصفة طبية",
     "pillVisits": "إجمالي الزيارات: {count}",
     "pillBalance": "الرصيد المستحق: {amount} جنيه",
     "pillLastVisit": "آخر زيارة: {date}",
@@ -968,11 +1225,11 @@
     "statBalance": "الرصيد المستحق",
     "doctorNotes": "ملاحظات الطبيب",
     "doctorNotesPlaceholder": "لا توجد ملاحظات للطبيب حتى الآن.",
-    "pastPrescriptions": "الروشتات السابقة",
-    "prescriptionsEmpty": "لا توجد روشتات مسجّلة بعد.",
-    "printPrescription": "طباعة الروشتة",
-    "prescriptionPrintTitle": "روشتة طبية",
-    "printBlocked": "اسمحي للنوافذ المنبثقة لطباعة الروشتة.",
+    "pastPrescriptions": "الوصفات طبية السابقة",
+    "prescriptionsEmpty": "لا توجد وصفات طبية مسجّلة بعد.",
+    "printPrescription": "طباعة الوصفة الطبية",
+    "prescriptionPrintTitle": "وصفة طبية طبية",
+    "printBlocked": "اسمحي للنوافذ المنبثقة لطباعة الوصفة الطبية.",
     "attachmentsTitle": "المرفقات والصور الطبية",
     "medicalImages": "الصور الطبية",
     "appointmentsEmpty": "لا يوجد سجل مواعيد للمريض حتى الآن.",
@@ -1043,10 +1300,17 @@
     }
   },
   "settings": {
-    "title": "إعدادات العيادة",
+    "title": "الإعدادات",
+    "entityLabel": "مساحة العيادة",
     "backToDashboard": "العودة للوحة التحكم",
+    "sectionClinic": "العيادة",
+    "sectionAccount": "حسابي",
+    "clinicIdentityTitle": "هوية العيادة وصفحة الحجز",
+    "clinicIdentityHint": "ما يراه المرضى — الهوية البصرية وبطاقة الطبيب وبيانات التواصل",
+    "accountTitle": "حسابي",
+    "accountHint": "كلمة المرور والمظهر والأمان الشخصي",
     "bookingLinkTitle": "رابط الحجز الخاص بك",
-    "bookingLinkHint": "شارك هذا الرابط مع المرضى عبر الواتساب",
+    "bookingLinkHint": "شارك هذا الرابط مع المرضى عبر واتساب",
     "copyLink": "نسخ رابط الحجز",
     "copied": "تم النسخ!",
     "copyFallback": "انسخ رابط الحجز:",
@@ -1061,13 +1325,51 @@
     "duration": "{minutes} دقيقة",
     "availabilityLinkTitle": "أوقات العمل",
     "availabilityLinkHint": "شفتات يومية، عطلات، ونسخ الجدول بسرعة",
-    "profileLinkTitle": "الهوية الرقمية للطبيب",
-    "profileLinkHint": "الصورة والاسم والتخصص كما يراها المريض في صفحة الحجز"
+    "profileLinkTitle": "هوية العيادة",
+    "profileLinkHint": "الصورة والاسم والتخصص كما يراها المريض في صفحة الحجز",
+    "rolesTitle": "الأدوار والصلاحيات",
+    "rolesHint": "خصص ما يمكن لكل دور في الفريق الوصول إليه",
+    "sectionTeam": "الفريق"
+  },
+  "accountSettings": {
+    "metaTitle": "حسابي — نواة",
+    "entityLabel": "أنت",
+    "title": "حسابي",
+    "subtitle": "أمانك وتفضيلاتك الشخصية — وليست هوية العيادة.",
+    "backToSettings": "العودة للإعدادات",
+    "appearanceTitle": "المظهر",
+    "appearanceSubtitle": "سمة لوحة التحكم الخاصة بك فقط",
+    "themeLabel": "السمة اللونية",
+    "passwordTitle": "كلمة مرور الدخول",
+    "passwordSubtitle": "غيّر كلمة مرور تسجيل الدخول إلى نواة",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور الجديدة",
+    "passwordSave": "تحديث كلمة المرور",
+    "passwordSaving": "جارٍ التحديث…",
+    "passwordChanged": "تم تحديث كلمة المرور",
+    "passwordError": "تعذّر تحديث كلمة المرور",
+    "passwordTooShort": "كلمة المرور يجب ألا تقل عن 6 أحرف",
+    "passwordMismatch": "كلمتا المرور الجديدتان غير متطابقتين",
+    "logout": "تسجيل الخروج",
+    "subtitleNamed": "أنت مسجّل كـ {name} — أمانك وتفضيلاتك الشخصية، وليست هوية العيادة.",
+    "identityTitle": "معلوماتك",
+    "identityHint": "هويتك كعضو فريق في العيادة النشطة.",
+    "clinicLabel": "العيادة النشطة",
+    "roleLabel": "دورك",
+    "emailLabel": "بريد الدخول",
+    "phoneLabel": "الهاتف",
+    "departmentLabel": "القسم",
+    "notSet": "غير محدد",
+    "statusActive": "نشط",
+    "statusSuspended": "موقوف",
+    "statusInvited": "مدعو"
   },
   "profileSettings": {
-    "metaTitle": "الهوية الرقمية — نواة",
-    "title": "الهوية الرقمية للطبيب",
-    "subtitle": "هذه البيانات ستظهر لمرضاك في صفحة الحجز",
+    "metaTitle": "هوية العيادة — نواة",
+    "entityLabel": "العيادة",
+    "title": "هوية العيادة",
+    "subtitle": "ظاهرة للمرضى في صفحة الحجز العامة — وليست حسابك الشخصي.",
     "backToSettings": "العودة للإعدادات",
     "avatarLabel": "صورة الطبيب",
     "avatarHint": "اسحب الصورة هنا أو اضغط للرفع",
@@ -1077,14 +1379,14 @@
     "nameLabel": "الاسم",
     "specialtyLabel": "التخصص الدقيق",
     "bioLabel": "نبذة مهنية",
-    "clinicPhoneLabel": "رقم تليفون العيادة / السكرتارية",
+    "clinicPhoneLabel": "رقم هاتف العيادة / الاستقبال",
     "clinicLocationLabel": "عنوان أو موقع العيادة",
     "coordinatesLabel": "إحداثيات العيادة",
     "coordinatesEmpty": "لم يتم تحديد الموقع بعد",
     "captureLocation": "تحديد موقعي تلقائيًا",
-    "locating": "جاري تحديد الموقع…",
+    "locating": "جارٍ تحديد الموقع…",
     "locationCaptured": "تم تحديد موقع العيادة",
-    "locationPermissionDenied": "اسمح للموقع بالوصول إلى موقعك ثم حاول مرة أخرى",
+    "locationPermissionDenied": "اسمح بالوصول إلى موقعك ثم حاول مرة أخرى",
     "locationUnsupported": "المتصفح لا يدعم تحديد الموقع",
     "locationError": "تعذّر تحديد الموقع، حاول مرة أخرى",
     "getDirections": "الوصول للعيادة",
@@ -1096,9 +1398,11 @@
     "previewLabel": "معاينة المريض",
     "bookCta": "احجز موعدك الآن",
     "save": "حفظ التغييرات",
-    "saving": "جاري الحفظ…",
-    "saved": "تم حفظ الهوية الرقمية",
-    "saveError": "تعذّر حفظ الهوية الرقمية"
+    "saving": "جارٍ الحفظ…",
+    "saved": "تم حفظ هوية العيادة",
+    "saveError": "تعذّر حفظ هوية العيادة",
+    "editWorkingHours": "تعديل أوقات العمل",
+    "formEyebrow": "الهوية العامة لصفحة حجز هذه العيادة"
   },
   "availability": {
     "metaTitle": "أوقات العمل — نواة",
@@ -1107,6 +1411,8 @@
     "canvasTitle": "أوقات عمل العيادة",
     "canvasSubtitle": "حدد أوقات استقبال المرضى. يمكنك إضافة أكثر من فترة عمل (شفت) في اليوم الواحد.",
     "backToSettings": "العودة للإعدادات",
+    "backToClinic": "العودة إلى هوية العيادة",
+    "backToProfile": "العودة إلى هوية العيادة",
     "toggleOpen": "مفتوح",
     "openLabel": "يقبل الحجوزات",
     "closedLabel": "مغلق",
@@ -1120,7 +1426,7 @@
     "copiedSaturday": "تم نسخ أوقات السبت لباقي الأيام",
     "save": "حفظ الجدول",
     "saveSettings": "حفظ الإعدادات",
-    "saving": "جاري الحفظ…",
+    "saving": "جارٍ الحفظ…",
     "saved": "تم حفظ الجدول.",
     "saveError": "تعذّر حفظ الجدول.",
     "days": {
@@ -1169,7 +1475,7 @@
     "hero": {
       "badge": "مصممة لأصحاب العيادات والأطباء",
       "headline": "عيادتك أخيرًا تحت السيطرة.",
-      "subheadline": "المواعيد والاستقبال والملفات والمدفوعات في نظام هادئ واحد — حتى تمارس الطب لا إطفاء الحرائق.",
+      "subheadline": "المواعيد والاستقبال والملفات والمدفوعات في نظام هادئ واحد — حتى تمارس الطب لا إدارة الأزمات.",
       "ctaPrimary": "ابدأ مجانًا لمدة 6 أشهر",
       "ctaSecondary": "شاهد تدفق يوم العيادة",
       "chip1": "بدون بطاقة ائتمان",
@@ -1199,7 +1505,7 @@
         "doctorStatus": "متاحة",
         "doctorPatient": "التالي: كشف 10:30",
         "recordNote": "ملاحظات الزيارة جاهزة",
-        "prescription": "مسودة روشتة",
+        "prescription": "مسودة وصفة طبية",
         "revenueValue": "4,850 ج.م",
         "whatsappHint": "تذكير جاهز لزيارة سارة 10:30",
         "followups": "المتابعات",
@@ -1312,12 +1618,12 @@
       "records": {
         "title": "افتح قصة المريض كاملة خلال ثوانٍ.",
         "problem": "التاريخ مبعثر بين ملاحظات وهواتف ومجلدات.",
-        "solution": "ملفات وزيارات وروابط عائلية وروشتات في مكان واحد.",
+        "solution": "ملفات وزيارات وروابط عائلية ووصفات طبية في مكان واحد.",
         "result": "الكشف يبدأ بسياق لا ببحث.",
         "illustration": "ملف المريض",
         "mock": {
           "visit": "آخر زيارة · منذ 12 يومًا",
-          "rx": "روشتة نشطة في الملف",
+          "rx": "وصفة طبية نشطة في الملف",
           "files": "4 ملفات سريرية مرفقة"
         }
       },
@@ -1336,7 +1642,7 @@
         "title": "أرسل تذكيرات أوضح دون إعادة كتابة كل رسالة.",
         "problem": "رسائل المتابعة تستهلك وقتًا تحت الضغط.",
         "solution": "جهّز رسائل الموعد والرصيد والاستدعاء مسبقًا.",
-        "result": "الفريق يتواصل أسرع — دون تكلفة CRM.",
+        "result": "الفريق يتواصل أسرع — دون تكلفة نظام علاقات العملاء.",
         "illustration": "مسودات واتساب",
         "mock": {
           "msg1": "تذكير موعد · جاهز",
@@ -1346,9 +1652,9 @@
       "visual": {
         "title": "اعرض التقدم بوضوح سريري.",
         "problem": "قبل/بعد يصعب عرضه بوضوح.",
-        "solution": "وسائط EHR بصرية مع أدوات عرض خاصة.",
+        "solution": "وسائط السجل الطبي البصري مع أدوات عرض خاصة.",
         "result": "الكشف يشعر بأوضح وأكثر احترافية.",
-        "illustration": "EHR البصري",
+        "illustration": "السجل الطبي البصري",
         "mock": {
           "before": "قبل · صورة أساسية",
           "after": "بعد · تقدم العلاج"
@@ -1421,7 +1727,7 @@
       "scrollerLabel": "خطوات سير عمل العيادة",
       "step": "خطوة {n}",
       "book": {
-        "title": "المريض يحجز أونلاين",
+        "title": "المريض يحجز عبر الإنترنت",
         "body": "يختار الخدمة والوقت المتاح من صفحة الحجز العامة لعيادتك."
       },
       "receive": {
@@ -1437,8 +1743,8 @@
         "body": "تُفتح الزيارة والسياق جاهز — التاريخ والملاحظات والخطة في مكان واحد."
       },
       "prescribe": {
-        "title": "الروشتة",
-        "body": "اكتب الروشتة واحفظها مع ملف المريض."
+        "title": "الوصفة الطبية",
+        "body": "اكتب الوصفة الطبية واحفظها مع ملف المريض."
       },
       "pay": {
         "title": "الدفع",
@@ -1461,7 +1767,7 @@
         "consult1": "افتح الخط الزمني للمريض",
         "consult2": "راجع الزيارات السابقة",
         "consult3": "أضف ملاحظات اليوم",
-        "prescribe1": "ابنِ الروشتة",
+        "prescribe1": "ابنِ الوصفة الطبية",
         "prescribe2": "احفظها في الملف",
         "prescribe3": "شاركها عند الحاجة",
         "pay1": "سجّل مبلغ الدفع",
@@ -1646,7 +1952,7 @@
       "cta": "ابدأ مجانًا لمدة 6 أشهر"
     },
     "footer": {
-      "brand": "نواة — Nawa",
+      "brand": "نواة — Nawah",
       "tagline": "تشغيل عيادات للأطباء الذين يريدون أيامًا هادئة",
       "navLabel": "تذييل الصفحة",
       "features": "القدرات",
@@ -1677,7 +1983,7 @@
     "records": {
       "eyebrow": "الملفات الطبية",
       "title": "قصة المريض كاملة — بلا مطاردة ورق.",
-      "subtitle": "الخط الزمني والتحاليل والأشعة والملفات والصور والروشتات في سطح سريري أنيق واحد.",
+      "subtitle": "الخط الزمني والتحاليل والأشعة والملفات والصور والوصفات طبية في سطح سريري أنيق واحد.",
       "patientLabel": "المريض",
       "patientName": "سارة محمود",
       "patientMeta": "34 · عائدة · خطة تبييض",
@@ -1687,7 +1993,7 @@
         "imaging": "الأشعة",
         "files": "الملفات",
         "media": "الصور",
-        "rx": "الروشتات"
+        "rx": "الوصفات طبية"
       },
       "sidebar": {
         "planLabel": "خطة العلاج",
@@ -1749,11 +2055,11 @@
           "item3Meta": "عرض سريري خاص"
         },
         "rx": {
-          "title": "الروشتات",
+          "title": "الوصفات طبية",
           "body": "مسودة وحفظ وتاريخ أدوية مع الملف.",
           "item1Title": "مسودة نشطة",
           "item1Meta": "جاهزة للإنهاء",
-          "item2Title": "روشتة سابقة",
+          "item2Title": "وصفة طبية سابقة",
           "item2Meta": "في الملف",
           "item3Title": "مشاركة الصيدلية",
           "item3Meta": "مسار واتساب اختياري"
@@ -1837,7 +2143,7 @@
       "emailPlaceholder": "doctor@clinic.com",
       "passwordPlaceholder": "أدخل كلمة المرور",
       "submit": "تسجيل الدخول",
-      "submitting": "جاري الدخول…",
+      "submitting": "جارٍ تسجيل الدخول…",
       "noAccount": "ليس لديك حساب؟",
       "registerLink": "أنشئ مساحة عيادتك",
       "errors": {
@@ -1859,7 +2165,7 @@
       "emailPlaceholder": "doctor@clinic.com",
       "passwordPlaceholder": "٦ أحرف على الأقل",
       "submit": "إنشاء الحساب",
-      "submitting": "جاري الإنشاء…",
+      "submitting": "جارٍ الإنشاء…",
       "hasAccount": "لديك حساب بالفعل؟",
       "loginLink": "تسجيل الدخول",
       "plans": {
@@ -1883,7 +2189,7 @@
     }
   },
   "prescription": {
-    "title": "منشئ الروشتة الإلكترونية",
+    "title": "منشئ الوصفة الطبية الإلكترونية",
     "forPatient": "للمريض: {name}",
     "close": "إغلاق",
     "searchPlaceholder": "ابحث عن دواء...",
@@ -1901,13 +2207,144 @@
     "paperDate": "التاريخ",
     "paperEmpty": "ستظهر الأدوية هنا فور إضافتها",
     "signature": "توقيع الطبيب",
-    "print": "طباعة الروشتة",
+    "print": "طباعة الوصفة الطبية",
     "whatsapp": "إرسال واتساب",
     "save": "حفظ في السجل",
-    "saving": "جاري الحفظ…",
+    "saving": "جارٍ الحفظ…",
     "emptyError": "أضف دواءً واحدًا على الأقل",
-    "saveError": "تعذّر حفظ الروشتة",
-    "saveSuccess": "تم حفظ الروشتة في سجل المريض",
+    "saveError": "تعذّر حفظ الوصفة الطبية",
+    "saveSuccess": "تم حفظ الوصفة الطبية في سجل المريض",
     "templateApplied": "تم تطبيق القالب"
+  },
+  "accessDenied": {
+    "title": "ليس لديك صلاحية",
+    "description": "لا تملك صلاحية فتح هذه الصفحة. اطلب من مالك العيادة أو المسؤول منحك الوصول.",
+    "backHome": "العودة للوحة التحكم",
+    "requestAccess": "طلب صلاحية",
+    "requestSubject": "طلب صلاحية — عيادة نواة",
+    "requestBody": "مرحبًا،\n\nأحتاج صلاحية لصفحة في لوحة تحكم العيادة لا أستطيع فتحها (403).\n\nيرجى منحي الدور أو الصلاحية المناسبة.\n\nشكرًا."
+  },
+  "rolesSettings": {
+    "metaTitle": "الأدوار والصلاحيات — نواة",
+    "title": "الأدوار والصلاحيات",
+    "subtitle": "تحكم بما يمكن لكل دور رؤيته وفعله في هذه العيادة.",
+    "entityLabel": "التحكم بالوصول",
+    "rolesTitle": "الأدوار",
+    "matrixTitle": "مصفوفة الصلاحيات",
+    "searchPlaceholder": "ابحث عن صلاحية…",
+    "selectAll": "تحديد الكل في الوحدة",
+    "clearModule": "مسح الوحدة",
+    "resetDefaults": "إعادة للافتراضي",
+    "duplicate": "نسخ الدور",
+    "createCustom": "إنشاء دور مخصص",
+    "deleteCustom": "حذف الدور المخصص",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ…",
+    "saved": "تم حفظ الصلاحيات",
+    "saveError": "تعذر حفظ الصلاحيات.",
+    "systemBadge": "نظام",
+    "customBadge": "مخصص",
+    "basedOn": "مبني على {role}",
+    "newRoleName": "اسم الدور الجديد",
+    "newRoleKey": "مفتاح الدور (اختياري)",
+    "confirmDelete": "حذف هذا الدور المخصص؟ الأعضاء المرتبطون به سيعودون لدور الاستقبال.",
+    "noPermission": "لا يمكنك إدارة الأدوار.",
+    "modules": {
+      "dashboard": "لوحة التحكم والطابور",
+      "patients": "المرضى",
+      "appointments": "المواعيد",
+      "ehr": "السجلات الطبية",
+      "finance": "المالية",
+      "inventory": "المخزون",
+      "services": "الخدمات",
+      "team": "الفريق",
+      "clinic": "العيادة",
+      "settings": "الإعدادات",
+      "reports": "التقارير",
+      "automation": "الأتمتة",
+      "ai": "المساعد الذكي",
+      "booking": "رابط الحجز"
+    },
+    "permissions": {
+      "dashboard": {
+        "view": "عرض لوحة التحكم"
+      },
+      "queue": {
+        "manage": "إدارة حالة الطابور"
+      },
+      "walkin": {
+        "create": "إضافة زيارات بدون موعد"
+      },
+      "patients": {
+        "view": "عرض المرضى",
+        "create": "إضافة مرضى",
+        "update": "تحديث بيانات المرضى",
+        "archive": "أرشفة المرضى",
+        "delete": "حذف المرضى"
+      },
+      "appointments": {
+        "view": "عرض المواعيد",
+        "manage": "إدارة المواعيد"
+      },
+      "ehr": {
+        "view": "عرض السجلات الطبية",
+        "write": "تعديل السجلات الطبية",
+        "prescribe": "وصف الأدوية"
+      },
+      "finance": {
+        "view": "عرض المالية",
+        "record": "تسجيل المدفوعات"
+      },
+      "revenue": {
+        "view": "عرض الإيرادات"
+      },
+      "inventory": {
+        "view": "عرض المخزون",
+        "manage": "إدارة المخزون"
+      },
+      "services": {
+        "manage": "إدارة الخدمات"
+      },
+      "team": {
+        "view": "عرض الفريق",
+        "ops": "عمليات الفريق",
+        "roles": "إدارة الأدوار والصلاحيات"
+      },
+      "clinic": {
+        "manage": "إدارة إعدادات العيادة"
+      },
+      "settings": {
+        "view": "عرض الإعدادات"
+      },
+      "reports": {
+        "view": "عرض التقارير"
+      },
+      "analytics": {
+        "view": "عرض التحليلات"
+      },
+      "automation": {
+        "view": "عرض الأتمتة"
+      },
+      "ai": {
+        "view": "استخدام المساعد الذكي"
+      },
+      "booking": {
+        "link": "نسخ رابط الحجز"
+      }
+    },
+    "backToSettings": "العودة للإعدادات",
+    "duplicateCopySuffix": "{name} (نسخة)",
+    "roleNames": {
+      "owner": "المالك",
+      "admin": "مشرف",
+      "manager": "مدير",
+      "doctor": "طبيب",
+      "receptionist": "استقبال",
+      "nurse": "تمريض",
+      "assistant": "مساعد",
+      "lab": "مختبر",
+      "cashier": "كاشير",
+      "intern": "متدرب"
+    }
   }
 }

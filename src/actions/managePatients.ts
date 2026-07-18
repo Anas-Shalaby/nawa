@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { normalizeEgyptPhone } from "@/lib/booking/schema";
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { toStoredPhoneNumber } from "@/lib/datetime/cairo";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
@@ -62,6 +63,9 @@ export async function createPatient(input: PatientInput): Promise<ManagePatientR
   if ("success" in validated) return validated;
 
   try {
+    const denied = await requirePermission("patients.create");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -115,6 +119,9 @@ export async function createDependent(
   }
 
   try {
+    const denied = await requirePermission("patients.create");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -175,6 +182,9 @@ export async function updatePatient(
   if ("success" in validated) return validated;
 
   try {
+    const denied = await requirePermission("patients.update");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -208,6 +218,9 @@ export async function updatePatient(
 
 export async function archivePatient(patientId: string): Promise<ManagePatientResult> {
   try {
+    const denied = await requirePermission("patients.archive");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -234,6 +247,9 @@ export async function archivePatient(patientId: string): Promise<ManagePatientRe
 
 export async function restorePatient(patientId: string): Promise<ManagePatientResult> {
   try {
+    const denied = await requirePermission("patients.archive");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -264,6 +280,9 @@ export async function deletePatient(patientId: string): Promise<ManagePatientRes
   }
 
   try {
+    const denied = await requirePermission("patients.delete");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -331,6 +350,9 @@ export async function clearPatientWarning(
   patientId: string,
 ): Promise<ManagePatientResult> {
   try {
+    const denied = await requirePermission("patients.update");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -362,6 +384,9 @@ export async function givePatientStrike(
   patientId: string,
 ): Promise<ManagePatientResult> {
   try {
+    const denied = await requirePermission("patients.update");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

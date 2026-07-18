@@ -1,6 +1,7 @@
 import { fetchWorkingHours } from "@/actions/workingHours";
 import { ScheduleSettingsShell } from "@/components/settings/ScheduleSettingsShell";
 import { getTranslations } from "next-intl/server";
+import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 
 export async function generateMetadata({
   params,
@@ -17,6 +18,9 @@ export async function generateMetadata({
 }
 
 export default async function ScheduleSettingsPage() {
+  const gate = await requirePagePermission("/dashboard/settings/schedule");
+  if (!gate.allowed) return gate.ui;
+
   const days = await fetchWorkingHours();
   return <ScheduleSettingsShell initialDays={days} />;
 }

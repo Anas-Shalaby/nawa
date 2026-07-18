@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { ComingSoonPlaceholder } from "@/components/dashboard/ComingSoonPlaceholder";
+import { TeamOpsShell } from "@/components/team/TeamOpsShell";
+import { fetchTeamOpsSnapshot } from "@/lib/queries/teamOpsSnapshot";
+import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 
 export async function generateMetadata({
   params,
@@ -7,20 +9,17 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "comingSoon.staff" });
-  return { title: t("metaTitle") };
+  const t = await getTranslations({ locale, namespace: "teamOps" });
+  return {
+    title: t("metaTitle"),
+    description: t("subtitle"),
+  };
 }
 
 export default async function StaffPage() {
-  const t = await getTranslations("comingSoon");
-  const feature = await getTranslations("comingSoon.staff");
+  const gate = await requirePagePermission("/dashboard/staff");
+  if (!gate.allowed) return gate.ui;
 
-  return (
-    <ComingSoonPlaceholder
-      title={feature("title")}
-      description={feature("description")}
-      badge={t("badge")}
-      icon="userCog"
-    />
-  );
+  const snapshot = await fetchTeamOpsSnapshot();
+  return <TeamOpsShell snapshot={snapshot} />;
 }

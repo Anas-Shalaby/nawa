@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
@@ -49,6 +50,9 @@ export async function savePatientPrescription(input: {
   lines: PrescriptionLineInput[];
 }): Promise<SavePrescriptionResult> {
   try {
+    const denied = await requirePermission("ehr.prescribe");
+    if (denied) return { success: false, error: denied };
+
     if (!input.lines.length) {
       return { success: false, error: "Add at least one medicine." };
     }

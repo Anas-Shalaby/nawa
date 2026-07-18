@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { AppointmentStatus } from "@/lib/dashboard/types";
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { isSlotBlockingStatus } from "@/lib/scheduling/slotBlocking";
 import { hasSlotConflict } from "@/lib/scheduling/slotConflict";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
@@ -33,6 +34,9 @@ export async function updateAppointmentStatus(
   newStatus: AppointmentStatus,
 ): Promise<UpdateStatusResult> {
   try {
+    const denied = await requirePermission("queue.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -143,6 +147,9 @@ export async function markAppointmentNoShow(
   patientId: string,
 ): Promise<MarkNoShowResult> {
   try {
+    const denied = await requirePermission("queue.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

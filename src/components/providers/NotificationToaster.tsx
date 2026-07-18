@@ -3,14 +3,16 @@
 import { useLocale } from "next-intl";
 import { Toaster } from "sonner";
 import { localeDirection, type Locale } from "@/i18n/routing";
+import { useAppTheme } from "@/components/theme/AppThemeProvider";
 
 export function NotificationToaster() {
   const locale = useLocale() as Locale;
   const dir = localeDirection[locale];
+  const { theme } = useAppTheme();
 
   return (
     <Toaster
-      theme="dark"
+      theme={theme}
       dir={dir}
       position={dir === "rtl" ? "top-left" : "top-right"}
       closeButton

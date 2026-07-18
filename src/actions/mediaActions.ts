@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import {
   buildEhrStoragePath,
@@ -29,6 +30,9 @@ function isPatientMediaTag(value: unknown): value is PatientMediaTag {
 /** Upload image to Storage + insert patient_media — runs on the server with session cookies. */
 export async function uploadPatientMedia(formData: FormData): Promise<MediaActionResult> {
   try {
+    const denied = await requirePermission("ehr.write");
+    if (denied) return { success: false, error: denied };
+
     const file = formData.get("file");
     const patientId = formData.get("patientId");
     const tag = formData.get("tag");
@@ -129,6 +133,9 @@ export async function insertPatientMediaRecord(input: {
   notes?: string | null;
 }): Promise<MediaActionResult> {
   try {
+    const denied = await requirePermission("ehr.write");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -189,6 +196,9 @@ export async function insertPatientMediaRecord(input: {
 
 export async function deletePatientMediaRecord(mediaId: string): Promise<MediaActionResult> {
   try {
+    const denied = await requirePermission("ehr.write");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

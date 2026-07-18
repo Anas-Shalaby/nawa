@@ -5,6 +5,10 @@ import {
   type RegisterClinicResult,
 } from "@/actions/registerClinic.types";
 import { generateUniqueTenantSlug } from "@/lib/onboarding/slug";
+import {
+  syncMembershipToJwt,
+  upsertClinicMembership,
+} from "@/lib/auth/membership";
 import { createTenantSubscription } from "@/lib/subscriptions/createTenantSubscription";
 import { isSubscriptionPlanId } from "@/lib/subscriptions/types";
 import { createClient as createServerClient } from "@/utils/supabase/server";
@@ -120,6 +124,7 @@ export async function registerClinic(
         provider: "email",
         providers: ["email"],
         tenant_id: tenant.id,
+        staff_role: "owner",
       },
       user_metadata: {
         display_name: clinicName,
@@ -130,6 +135,61 @@ export async function registerClinic(
       await admin.from("tenants").delete().eq("id", tenant.id);
       throw new Error(metadataError.message);
     }
+
+    const staffInsert = await admin
+      .from("staff_profiles")
+      .insert({
+        tenant_id: tenant.id,
+        user_id: createdUserId,
+        display_name: clinicName,
+        role: "owner",
+        availability: "available",
+        email,
+        is_suspended: false,
+      })
+      .select("id")
+      .single();
+
+    let staffProfileId = staffInsert.data?.id as string | undefined;
+
+    if (staffInsert.error || !staffProfileId) {
+      const fallback = await admin
+        .from("staff_profiles")
+        .insert({
+          tenant_id: tenant.id,
+          user_id: createdUserId,
+          display_name: clinicName,
+          role: "owner",
+          availability: "available",
+        })
+        .select("id")
+        .single();
+
+      if (fallback.error || !fallback.data) {
+        throw new Error(fallback.error?.message ?? staffInsert.error?.message ?? "Could not create owner staff profile.");
+      }
+      staffProfileId = fallback.data.id;
+    }
+
+    const membership = await upsertClinicMembership({
+      tenantId: tenant.id,
+      userId: createdUserId,
+      staffProfileId,
+      role: "owner",
+      status: "active",
+    });
+
+    await syncMembershipToJwt({
+      userId: createdUserId,
+      tenantId: tenant.id,
+      role: "owner",
+      staffProfileId,
+      membershipId: membership?.id ?? null,
+      existingMetadata: {
+        provider: "email",
+        providers: ["email"],
+      },
+    });
 
     const supabase = await createServerClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({

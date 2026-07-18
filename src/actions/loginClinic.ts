@@ -4,6 +4,8 @@ import {
   type LoginClinicInput,
   type LoginClinicResult,
 } from "@/actions/loginClinic.types";
+import { ensureClinicOwnerAccess } from "@/lib/auth/ensureClinicOwner";
+import { syncUserClinicMembershipsFromStaff } from "@/lib/auth/membership";
 import { createClient as createServerClient } from "@/utils/supabase/server";
 
 function mapLoginError(message: string): LoginClinicResult {
@@ -45,6 +47,21 @@ export async function loginClinic(input: LoginClinicInput): Promise<LoginClinicR
 
   if (error) {
     return mapLoginError(error.message);
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    try {
+      await ensureClinicOwnerAccess(user);
+      await syncUserClinicMembershipsFromStaff(user.id, user.email);
+      // Refresh session JWT so updated app_metadata (staff_role) is available immediately.
+      await supabase.auth.refreshSession();
+    } catch (bootstrapError) {
+      console.error("[loginClinic] owner bootstrap failed", bootstrapError);
+    }
   }
 
   return {

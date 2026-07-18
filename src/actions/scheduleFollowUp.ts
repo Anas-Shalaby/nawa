@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { hasSlotConflict } from "@/lib/scheduling/slotConflict";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
@@ -19,6 +20,9 @@ export async function scheduleFollowUp(
   isReExamination = false,
 ): Promise<ScheduleFollowUpResult> {
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

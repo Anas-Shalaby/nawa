@@ -12,8 +12,8 @@ import type { Locale } from "@/i18n/routing";
 
 interface InventoryItemCardProps {
   item: InventoryItem;
-  onEdit: () => void;
-  onRestock: () => void;
+  onEdit?: () => void;
+  onRestock?: () => void;
 }
 
 export function InventoryItemCard({
@@ -83,24 +83,30 @@ export function InventoryItemCard({
         </span>
       </div>
 
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={onRestock}
-          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-subtle bg-base/40 px-3 py-2.5 text-xs font-medium text-primary transition hover:border-accent/40 hover:bg-accent/10"
-        >
-          <Plus className="h-3.5 w-3.5 text-accent" aria-hidden />
-          {t("restock")}
-        </button>
-        <button
-          type="button"
-          onClick={onEdit}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle px-3 py-2.5 text-xs font-medium text-muted transition hover:bg-elevated hover:text-primary"
-        >
-          <Pencil className="h-3.5 w-3.5" aria-hidden />
-          {t("edit")}
-        </button>
-      </div>
+      {(onRestock || onEdit) && (
+        <div className="flex gap-2">
+          {onRestock ? (
+            <button
+              type="button"
+              onClick={onRestock}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-subtle bg-base/40 px-3 py-2.5 text-xs font-medium text-primary transition hover:border-accent/40 hover:bg-accent/10"
+            >
+              <Plus className="h-3.5 w-3.5 text-accent" aria-hidden />
+              {t("restock")}
+            </button>
+          ) : null}
+          {onEdit ? (
+            <button
+              type="button"
+              onClick={onEdit}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-subtle px-3 py-2.5 text-xs font-medium text-muted transition hover:bg-elevated hover:text-primary"
+            >
+              <Pencil className="h-3.5 w-3.5" aria-hidden />
+              {t("edit")}
+            </button>
+          ) : null}
+        </div>
+      )}
     </motion.article>
   );
 }

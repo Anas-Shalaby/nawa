@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PatientDetailShell } from "@/components/ehr/PatientDetailShell";
+import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 import { fetchDoctorProfile } from "@/lib/queries/doctorProfile";
 import { fetchPatientMedia } from "@/lib/queries/patientMedia";
 import { fetchPatientPayments } from "@/lib/queries/patientPayments";
@@ -31,6 +32,9 @@ export default async function PatientDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const gate = await requirePagePermission("/dashboard/patients");
+  if (!gate.allowed) return gate.ui;
+
   const { id } = await params;
   const [patient, tenantId, media, payments, services, visits, profile, family] =
     await Promise.all([

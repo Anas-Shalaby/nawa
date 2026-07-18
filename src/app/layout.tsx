@@ -8,7 +8,7 @@ export const viewport: Viewport = {
 
 /** Static favicon + PWA links — files live in /public and /src/app/icon.png */
 export const metadata: Metadata = {
-  applicationName: "Nawa",
+  applicationName: "Nawah",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [

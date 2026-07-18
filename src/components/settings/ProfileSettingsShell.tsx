@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Camera,
+  CalendarClock,
   ImageIcon,
   Loader2,
   LocateFixed,
@@ -12,13 +13,16 @@ import {
   Phone,
   Plus,
   Sparkles,
+  Building2,
   UserRound,
   X,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { Can } from "@/components/auth/Can";
 import { saveDoctorProfile } from "@/actions/saveDoctorProfile";
 import type { DoctorProfile } from "@/lib/queries/doctorProfile";
+import { EntityContextHeader } from "@/components/settings/EntityContextHeader";
 
 interface ProfileSettingsShellProps {
   profile: DoctorProfile;
@@ -495,14 +499,22 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
 
   return (
     <div className="w-full" dir="rtl">
-      <div className="mb-6 text-start">
-        <Link
-          href="/dashboard/settings"
-          className="text-sm text-muted transition hover:text-primary"
-        >
-          {t("backToSettings")}
-        </Link>
-      </div>
+      <EntityContextHeader
+        entityLabel={t("entityLabel")}
+        title={t("title")}
+        subtitle={t("subtitle")}
+        icon={Building2}
+        breadcrumb={{ href: "/dashboard/settings", label: t("backToSettings") }}
+        action={
+          <Link
+            href="/dashboard/settings/schedule"
+            className="inline-flex items-center gap-2 rounded-xl border border-subtle bg-surface px-4 py-2.5 text-sm font-medium text-primary transition hover:border-accent/40 hover:bg-accent/10"
+          >
+            <CalendarClock className="h-4 w-4 text-accent" aria-hidden />
+            {t("editWorkingHours")}
+          </Link>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         {/* Form — right in RTL (first in DOM for RTL reading) */}
@@ -513,8 +525,7 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
                 <Sparkles className="h-3.5 w-3.5" aria-hidden />
                 Nawa
               </div>
-              <h1 className="text-2xl font-semibold text-primary">{t("title")}</h1>
-              <p className="mt-1.5 text-sm text-muted">{t("subtitle")}</p>
+              <p className="text-sm text-muted">{t("formEyebrow")}</p>
             </div>
 
             <div className="mb-8 grid gap-5 sm:grid-cols-2">
@@ -672,23 +683,25 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
               </div>
             </div>
 
-            <div className="sticky bottom-4 z-10 mt-8">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isPending || !doctorName.trim()}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                    {t("saving")}
-                  </>
-                ) : (
-                  t("save")
-                )}
-              </button>
-            </div>
+            <Can permission="clinic.manage">
+              <div className="sticky bottom-4 z-10 mt-8">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isPending || !doctorName.trim()}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                      {t("saving")}
+                    </>
+                  ) : (
+                    t("save")
+                  )}
+                </button>
+              </div>
+            </Can>
           </div>
         </section>
 

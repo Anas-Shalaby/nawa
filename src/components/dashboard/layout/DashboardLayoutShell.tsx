@@ -5,14 +5,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheaterMode } from "@/components/ehr/TheaterModeContext";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardTopbar } from "./DashboardTopbar";
+import type { ClinicMembershipOption } from "@/lib/auth/membership";
 
 interface DashboardLayoutShellProps {
   clinicName: string;
   tenantId: string;
+  clinics: ClinicMembershipOption[];
   children: React.ReactNode;
 }
 
-export function DashboardLayoutShell({ clinicName, tenantId, children }: DashboardLayoutShellProps) {
+export function DashboardLayoutShell({
+  clinicName,
+  tenantId,
+  clinics,
+  children,
+}: DashboardLayoutShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const { isTheater } = useTheaterMode();
@@ -52,6 +59,7 @@ export function DashboardLayoutShell({ clinicName, tenantId, children }: Dashboa
           <DashboardTopbar
             clinicName={clinicName}
             tenantId={tenantId}
+            clinics={clinics}
             onOpenMobileMenu={() => setMobileOpen(true)}
           />
         )}

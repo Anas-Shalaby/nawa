@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { motion } from "framer-motion";
+import { Can } from "@/components/auth/Can";
 import { Package, Plus, Search, Stethoscope } from "lucide-react";
 import type { Service } from "@/lib/booking/types";
 import { ServiceCard } from "./ServiceCard";
@@ -105,14 +106,16 @@ export function ServicesShell({ initialServices }: ServicesShellProps) {
               className="w-full rounded-xl border border-subtle bg-surface py-2.5 ps-9 pe-3 text-sm text-primary outline-none transition focus:border-accent"
             />
           </div>
-          <button
-            type="button"
-            onClick={openCreateModal}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-            {t("addNew")}
-          </button>
+          <Can permission="services.manage">
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+            >
+              <Plus className="h-4 w-4" aria-hidden />
+              {t("addNew")}
+            </button>
+          </Can>
         </div>
       </div>
 

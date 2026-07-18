@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { isSlotBlockingStatus } from "@/lib/scheduling/slotBlocking";
 import { hasSlotConflict } from "@/lib/scheduling/slotConflict";
@@ -107,6 +108,9 @@ export async function createAgendaAppointment(
   input: AgendaAppointmentInput,
 ): Promise<ManageAgendaAppointmentResult> {
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
     const trimmedNotes = input.notes?.trim() || null;
@@ -157,6 +161,9 @@ export async function updateAgendaAppointment(
   input: Omit<AgendaAppointmentInput, "patientId">,
 ): Promise<ManageAgendaAppointmentResult> {
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
     const trimmedNotes = input.notes?.trim() || null;
@@ -226,6 +233,9 @@ export async function updateAgendaAppointmentStatus(
   newStatus: AgendaEditableStatus,
 ): Promise<ManageAgendaAppointmentResult> {
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -285,6 +295,9 @@ export async function cancelAgendaAppointment(
   appointmentId: string,
 ): Promise<ManageAgendaAppointmentResult> {
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

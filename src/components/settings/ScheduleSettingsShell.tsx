@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CalendarClock, Copy, Loader2, Plus, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { Can } from "@/components/auth/Can";
 import { saveWorkingHours } from "@/actions/workingHours";
 import {
   buildTimeOptions,
@@ -234,10 +235,10 @@ export function ScheduleSettingsShell({ initialDays }: ScheduleSettingsShellProp
     <div className="mx-auto max-w-4xl pb-28" dir="rtl">
       <div className="mb-8 text-start">
         <Link
-          href="/dashboard/settings"
+          href="/dashboard/settings/clinic"
           className="text-sm text-muted transition hover:text-primary"
         >
-          {t("backToSettings")}
+          {t("backToClinic")}
         </Link>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -373,25 +374,27 @@ export function ScheduleSettingsShell({ initialDays }: ScheduleSettingsShellProp
         ))}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-subtle bg-base/90 p-4 backdrop-blur-md">
-        <div className="mx-auto max-w-4xl">
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isPending}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:brightness-110 disabled:opacity-60"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                {t("saving")}
-              </>
-            ) : (
-              t("saveSettings")
-            )}
-          </button>
+      <Can permission="clinic.manage">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-subtle bg-base/90 p-4 backdrop-blur-md">
+          <div className="mx-auto max-w-4xl">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isPending}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:brightness-110 disabled:opacity-60"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  {t("saving")}
+                </>
+              ) : (
+                t("saveSettings")
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      </Can>
     </div>
   );
 }

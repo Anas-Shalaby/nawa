@@ -13,6 +13,8 @@ import {
 import { toast } from "sonner";
 import type { InventoryItem, InventoryOverview } from "@/lib/inventory/types";
 import type { Locale } from "@/i18n/routing";
+import { Can } from "@/components/auth/Can";
+import { usePermission } from "@/components/auth/PermissionProvider";
 import { InventoryItemCard } from "./InventoryItemCard";
 import { InventoryItemModal } from "./InventoryItemModal";
 import { InventoryRestockModal } from "./InventoryRestockModal";
@@ -30,6 +32,7 @@ function formatMoney(amount: number, locale: Locale): string {
 export function InventoryShell({ overview }: InventoryShellProps) {
   const t = useTranslations("inventory");
   const locale = useLocale() as Locale;
+  const canManage = usePermission("inventory.manage");
   const [items, setItems] = useState(overview.items);
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -168,14 +171,16 @@ export function InventoryShell({ overview }: InventoryShellProps) {
             className="w-full rounded-xl border border-subtle bg-surface py-2.5 ps-9 pe-3 text-sm text-primary outline-none transition focus:border-accent"
           />
         </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-        >
-          <Plus className="h-4 w-4" aria-hidden />
-          {t("addItem")}
-        </button>
+        <Can permission="inventory.manage">
+          <button
+            type="button"
+            onClick={openCreate}
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+          >
+            <Plus className="h-4 w-4" aria-hidden />
+            {t("addItem")}
+          </button>
+        </Can>
       </div>
 
       {filtered.length === 0 ? (
@@ -201,8 +206,8 @@ export function InventoryShell({ overview }: InventoryShellProps) {
             >
               <InventoryItemCard
                 item={item}
-                onEdit={() => openEdit(item)}
-                onRestock={() => setRestockItem(item)}
+                onEdit={canManage ? () => openEdit(item) : undefined}
+                onRestock={canManage ? () => setRestockItem(item) : undefined}
               />
             </motion.div>
           ))}

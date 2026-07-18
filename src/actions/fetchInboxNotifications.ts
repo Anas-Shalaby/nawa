@@ -72,7 +72,7 @@ export async function fetchInboxNotifications(
             : "Low stock",
         body: outOfStock
           ? isAr
-            ? `${row.name} خلص من العيادة.`
+            ? `${row.name} نفد من العيادة.`
             : `${row.name} is out of stock.`
           : isAr
             ? `${row.name}: متبقي ${row.quantity} (الحد ${row.min_threshold}).`

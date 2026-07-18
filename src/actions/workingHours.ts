@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import {
   AVAILABILITY_DAY_ORDER,
   DEFAULT_WORKING_HOURS,
@@ -130,6 +131,9 @@ export async function saveWorkingHours(
   days: WorkingHoursDayInput[],
 ): Promise<SaveWorkingHoursResult> {
   try {
+    const denied = await requirePermission("clinic.manage");
+    if (denied) return { success: false, error: denied };
+
     for (const day of days) {
       const error = validateDay(day);
       if (error) return { success: false, error };

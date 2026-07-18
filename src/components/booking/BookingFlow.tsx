@@ -418,7 +418,7 @@ export function BookingFlow({ tenant, services }: BookingFlowProps) {
 
         <p className="px-5 pb-4 text-center text-xs text-booking-muted">
           {t("poweredByBefore")}{" "}
-          <span className="font-bold text-booking-accent">Nawa</span>{" "}
+          <span className="font-bold text-booking-accent">Nawah</span>{" "}
           <span aria-hidden>✦</span>
         </p>
       </form>

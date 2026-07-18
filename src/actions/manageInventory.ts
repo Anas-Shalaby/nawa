@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 import type { InventoryItem } from "@/lib/inventory/types";
@@ -62,6 +63,9 @@ export async function upsertInventoryItem(
   itemId?: string,
 ): Promise<InventoryActionResult> {
   try {
+    const denied = await requirePermission("inventory.manage");
+    if (denied) return { success: false, error: denied };
+
     const validated = validateInput(input);
     if (!("ok" in validated)) return validated;
 
@@ -115,6 +119,9 @@ export async function restockInventoryItem(
   addQuantity: number,
 ): Promise<InventoryActionResult> {
   try {
+    const denied = await requirePermission("inventory.manage");
+    if (denied) return { success: false, error: denied };
+
     const amount = Math.floor(Number(addQuantity) || 0);
     if (amount <= 0) {
       return { success: false, error: "Restock quantity must be greater than zero." };
@@ -167,6 +174,9 @@ export async function deleteInventoryItem(
   itemId: string,
 ): Promise<InventoryActionResult> {
   try {
+    const denied = await requirePermission("inventory.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

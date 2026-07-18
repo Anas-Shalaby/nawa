@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ComingSoonPlaceholder } from "@/components/dashboard/ComingSoonPlaceholder";
+import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 
 export async function generateMetadata({
   params,
@@ -12,6 +13,9 @@ export async function generateMetadata({
 }
 
 export default async function MarketingPage() {
+  const gate = await requirePagePermission("/dashboard/marketing");
+  if (!gate.allowed) return gate.ui;
+
   const t = await getTranslations("comingSoon");
   const feature = await getTranslations("comingSoon.marketing");
 

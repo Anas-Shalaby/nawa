@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { parseTimeToMinutes } from "@/lib/scheduling/timeUtils";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
@@ -26,6 +27,9 @@ export async function createTimeBlock(
   reason?: string | null,
 ): Promise<CreateTimeBlockResult> {
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) return { success: false, error: denied };
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return {
         success: false,

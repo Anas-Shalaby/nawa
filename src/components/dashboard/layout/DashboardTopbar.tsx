@@ -5,16 +5,22 @@ import { useTranslations } from "next-intl";
 import { useGlobalBookingDrawer } from "@/components/booking/GlobalBookingDrawerContext";
 import { LocaleSwitcher } from "@/components/shared/LocaleSwitcher";
 import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
+import { ClinicSwitcher } from "@/components/dashboard/ClinicSwitcher";
+import { UserAvatarMenu } from "@/components/dashboard/UserAvatarMenu";
+import { AppThemeToggle } from "@/components/theme/AppThemeToggle";
+import type { ClinicMembershipOption } from "@/lib/auth/membership";
 
 interface DashboardTopbarProps {
   clinicName: string;
   tenantId: string;
+  clinics: ClinicMembershipOption[];
   onOpenMobileMenu: () => void;
 }
 
 export function DashboardTopbar({
   clinicName,
-  tenantId: _tenantId,
+  tenantId,
+  clinics,
   onOpenMobileMenu,
 }: DashboardTopbarProps) {
   const t = useTranslations("dashboard.internalBooking");
@@ -31,9 +37,11 @@ export function DashboardTopbar({
         >
           <Menu className="h-5 w-5" />
         </button>
-        <div className="text-start">
-          <p className="text-sm font-semibold text-primary">{clinicName}</p>
-        </div>
+        <ClinicSwitcher
+          activeTenantId={tenantId}
+          clinics={clinics}
+          clinicName={clinicName}
+        />
       </div>
 
       <div className="flex items-center gap-2">
@@ -49,6 +57,8 @@ export function DashboardTopbar({
           </span>
         </button>
         <NotificationCenter />
+        <AppThemeToggle />
+        <UserAvatarMenu />
         <LocaleSwitcher />
       </div>
     </header>

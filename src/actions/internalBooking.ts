@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { getSlotAvailability } from "@/actions/slots";
 import { normalizeEgyptPhone } from "@/lib/booking/schema";
@@ -227,6 +228,15 @@ export async function createInternalBooking(
   }
 
   try {
+    const denied = await requirePermission("appointments.manage");
+    if (denied) {
+      return {
+        success: false,
+        errorCode: "UNKNOWN",
+        message: denied,
+      };
+    }
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
     const phoneNumber = toStoredPhoneNumber(normalized);

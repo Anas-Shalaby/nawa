@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/shared/LocaleSwitcher";
+import { AppThemeToggle } from "@/components/theme/AppThemeToggle";
 import { slideInX } from "@/lib/i18n/motion";
 import type { Locale } from "@/i18n/routing";
 
@@ -20,7 +21,7 @@ export function AuthFormPanel({ children }: AuthFormPanelProps) {
   return (
     <div
       className={[
-        "order-1 flex min-h-screen flex-col bg-slate-950 px-6 py-8 md:order-2 md:px-10 md:py-10 lg:px-14",
+        "order-1 flex min-h-screen flex-col bg-base px-6 py-8 md:order-2 md:px-10 md:py-10 lg:px-14",
         "rtl:md:order-1",
       ].join(" ")}
     >
@@ -33,11 +34,14 @@ export function AuthFormPanel({ children }: AuthFormPanelProps) {
             height={36}
             className="h-9 w-12 rounded-xl"
           />
-          <span className="text-sm font-semibold text-slate-100">
+          <span className="text-sm font-semibold text-primary">
             {tBrand("nawa")}
           </span>
         </Link>
-        <LocaleSwitcher />
+        <div className="flex items-center gap-2">
+          <AppThemeToggle />
+          <LocaleSwitcher />
+        </div>
       </div>
 
       <motion.div

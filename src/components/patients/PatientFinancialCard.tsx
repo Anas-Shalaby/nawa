@@ -7,6 +7,7 @@ import { Banknote, Receipt } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import type { PatientPaymentRecord } from "@/lib/queries/patientPayments";
 import { WhatsAppActionMenu } from "@/components/whatsapp/WhatsAppActionMenu";
+import { Can } from "@/components/auth/Can";
 import { RecordPaymentModal } from "./RecordPaymentModal";
 
 interface PatientFinancialCardProps {
@@ -107,20 +108,22 @@ export function PatientFinancialCard({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setModalOpen(true)}
-          disabled={balanceDue <= 0}
-          className={[
-            "mb-4 w-full rounded-xl px-4 py-2.5 text-sm font-medium transition",
-            hasDebt
-              ? "bg-rose-500/20 text-rose-100 hover:bg-rose-500/30"
-              : "border border-subtle text-muted",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-          ].join(" ")}
-        >
-          {t("recordPayment")}
-        </button>
+        <Can permission="finance.record">
+          <button
+            type="button"
+            onClick={() => setModalOpen(true)}
+            disabled={balanceDue <= 0}
+            className={[
+              "mb-4 w-full rounded-xl px-4 py-2.5 text-sm font-medium transition",
+              hasDebt
+                ? "bg-rose-500/20 text-rose-100 hover:bg-rose-500/30"
+                : "border border-subtle text-muted",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+            ].join(" ")}
+          >
+            {t("recordPayment")}
+          </button>
+        </Can>
 
         {hasDebt && (
           <div className="mb-4">

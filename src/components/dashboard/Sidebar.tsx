@@ -15,14 +15,19 @@ import {
   ChevronLeft,
   ChevronRight,
   KanbanSquare,
+  LogOut,
   Megaphone,
   Package,
   Settings,
   Stethoscope,
+  UserRound,
   UserCog,
   Users,
   X,
 } from "lucide-react";
+import { logoutClinic } from "@/actions/logoutClinic";
+import { usePermissionContext } from "@/components/auth/PermissionProvider";
+import { permissionForDashboardPath } from "@/lib/auth/permissions";
 
 interface NavItem {
   href: string;
@@ -93,6 +98,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     sectionKey: "sectionSystem",
     items: [
+      { href: "/dashboard/account", labelKey: "navAccount", icon: UserRound },
       { href: "/dashboard/settings", labelKey: "navSettings", icon: Settings },
     ],
   },
@@ -113,6 +119,15 @@ export function Sidebar({
 }: SidebarProps) {
   const t = useTranslations("dashboard.layout");
   const pathname = usePathname();
+  const { can } = usePermissionContext();
+
+  const sections = NAV_SECTIONS.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => {
+      const required = permissionForDashboardPath(item.href);
+      return !required || can(required);
+    }),
+  })).filter((section) => section.items.length > 0);
 
   function isActive(href: string): boolean {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -150,7 +165,7 @@ export function Sidebar({
               animate={{ opacity: 1 }}
               className="text-start"
             >
-              <p className="text-sm font-semibold text-primary">Nawa</p>
+              <p className="text-sm font-semibold text-primary">Nawah</p>
               <p className="text-xs text-muted">{t("brandTagline")}</p>
             </motion.div>
           )}
@@ -167,7 +182,7 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto p-3">
-        {NAV_SECTIONS.map((section, sectionIndex) => (
+        {sections.map((section, sectionIndex) => (
           <div
             key={section.sectionKey}
             className={
@@ -209,21 +224,37 @@ export function Sidebar({
         ))}
       </nav>
 
-      <div className="hidden border-t border-subtle p-3 lg:block">
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-subtle px-3 py-2 text-xs text-muted transition hover:bg-elevated hover:text-primary"
-        >
-          {collapsed ? (
-            <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
-          ) : (
-            <>
-              <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-              {t("collapse")}
-            </>
-          )}
-        </button>
+      <div className="border-t border-subtle p-3">
+        <form action={logoutClinic}>
+          <button
+            type="submit"
+            title={collapsed ? t("logout") : undefined}
+            className={[
+              "mb-2 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-accent-danger/10 hover:text-accent-danger",
+              collapsed ? "justify-center px-2" : "",
+            ].join(" ")}
+          >
+            <LogOut className="h-5 w-5 shrink-0" aria-hidden />
+            {!collapsed && <span>{t("logout")}</span>}
+          </button>
+        </form>
+
+        <div className="hidden lg:block">
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-subtle px-3 py-2 text-xs text-muted transition hover:bg-elevated hover:text-primary"
+          >
+            {collapsed ? (
+              <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
+            ) : (
+              <>
+                <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                {t("collapse")}
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </motion.aside>
   );

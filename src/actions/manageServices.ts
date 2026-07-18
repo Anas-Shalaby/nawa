@@ -1,5 +1,6 @@
 "use server";
 
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { revalidatePath } from "next/cache";
 import { createServiceSchema } from "@/lib/services/schema";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
@@ -86,6 +87,9 @@ export async function addService(input: ServiceInput): Promise<ManageServiceResu
   const normalized = validated.value;
 
   try {
+    const denied = await requirePermission("services.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -126,6 +130,9 @@ export async function updateService(
   const normalized = validated.value;
 
   try {
+    const denied = await requirePermission("services.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 
@@ -168,6 +175,9 @@ export async function addServiceLegacy(
 
 export async function deleteService(serviceId: string): Promise<ManageServiceResult> {
   try {
+    const denied = await requirePermission("services.manage");
+    if (denied) return { success: false, error: denied };
+
     const supabase = await createAuthenticatedClient();
     const tenantId = await resolveTenantId(supabase);
 

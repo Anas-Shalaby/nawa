@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requirePermission } from "@/lib/auth/staffPermissions";
 import { createAuthenticatedClient, resolveTenantId } from "@/utils/supabase/auth";
 
 export interface RecordPaymentResult {
@@ -15,6 +16,9 @@ export async function recordPatientPayment(
   amountPaid: number,
 ): Promise<RecordPaymentResult> {
   try {
+    const denied = await requirePermission("finance.record");
+    if (denied) return { success: false, error: denied };
+
     const amount = Math.floor(amountPaid);
     if (!Number.isFinite(amount) || amount <= 0) {
       return { success: false, error: "Payment amount must be greater than zero." };

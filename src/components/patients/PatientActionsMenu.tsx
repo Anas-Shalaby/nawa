@@ -19,6 +19,8 @@ import {
   Trash2,
 } from "lucide-react";
 import type { PatientRecord } from "@/lib/queries/patients";
+import { Can } from "@/components/auth/Can";
+import { usePermission } from "@/components/auth/PermissionProvider";
 
 interface PatientActionsMenuProps {
   patient: PatientRecord;
@@ -48,6 +50,10 @@ export function PatientActionsMenu({
   onDelete,
 }: PatientActionsMenuProps) {
   const t = useTranslations("patients");
+  const canUpdate = usePermission("patients.update");
+  const canArchive = usePermission("patients.archive");
+  const canDelete = usePermission("patients.delete");
+  const hasAnyAction = canUpdate || canArchive || canDelete;
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState<MenuPosition | null>(null);
@@ -144,40 +150,50 @@ export function PatientActionsMenu({
             className="z-[80] overflow-hidden rounded-xl border border-subtle bg-surface shadow-2xl"
           >
             {!patient.isArchived && (
-              <MenuItem
-                icon={<Pencil className="h-4 w-4" />}
-                label={t("edit")}
-                onClick={() => runAndClose(onEdit)}
-              />
+              <Can permission="patients.update">
+                <MenuItem
+                  icon={<Pencil className="h-4 w-4" />}
+                  label={t("edit")}
+                  onClick={() => runAndClose(onEdit)}
+                />
+              </Can>
             )}
             {!patient.isArchived && patient.noShowCount > 0 && (
-              <MenuItem
-                icon={<ShieldCheck className="h-4 w-4" />}
-                label={t("clearWarning")}
-                onClick={() => runAndClose(onClearWarning)}
-              />
+              <Can permission="patients.update">
+                <MenuItem
+                  icon={<ShieldCheck className="h-4 w-4" />}
+                  label={t("clearWarning")}
+                  onClick={() => runAndClose(onClearWarning)}
+                />
+              </Can>
             )}
-            <MenuItem
-              icon={
-                patient.isArchived ? (
-                  <ArchiveRestore className="h-4 w-4" />
-                ) : (
-                  <Archive className="h-4 w-4" />
-                )
-              }
-              label={patient.isArchived ? t("restore") : t("archive")}
-              onClick={() => runAndClose(onArchiveToggle)}
-            />
-            <MenuItem
-              icon={<Trash2 className="h-4 w-4" />}
-              label={t("delete")}
-              danger
-              onClick={() => runAndClose(onDelete)}
-            />
+            <Can permission="patients.archive">
+              <MenuItem
+                icon={
+                  patient.isArchived ? (
+                    <ArchiveRestore className="h-4 w-4" />
+                  ) : (
+                    <Archive className="h-4 w-4" />
+                  )
+                }
+                label={patient.isArchived ? t("restore") : t("archive")}
+                onClick={() => runAndClose(onArchiveToggle)}
+              />
+            </Can>
+            <Can permission="patients.delete">
+              <MenuItem
+                icon={<Trash2 className="h-4 w-4" />}
+                label={t("delete")}
+                danger
+                onClick={() => runAndClose(onDelete)}
+              />
+            </Can>
           </div>,
           document.body,
         )
       : null;
+
+  if (!hasAnyAction) return null;
 
   return (
     <div className="relative">

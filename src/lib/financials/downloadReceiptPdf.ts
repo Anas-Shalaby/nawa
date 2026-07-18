@@ -51,7 +51,7 @@ export async function downloadReceiptPdf(input: ReceiptPdfInput): Promise<void> 
         </div>
         <img
           src="${escapeHtml(logoUrl)}"
-          alt="Nawa"
+          alt="Nawah"
           width="48"
           height="48"
           style="width:48px;height:48px;border-radius:12px;object-fit:cover;display:block;flex-shrink:0;"

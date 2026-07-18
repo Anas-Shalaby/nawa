@@ -17,12 +17,12 @@ export const AuthField = forwardRef<HTMLInputElement, AuthFieldProps>(function A
 ) {
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-medium text-slate-400">
+      <label htmlFor={id} className="mb-2 block text-sm font-medium text-muted">
         {label}
       </label>
       <div className="relative">
         <Icon
-          className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500"
+          className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
           strokeWidth={1.75}
           aria-hidden
         />
@@ -30,16 +30,16 @@ export const AuthField = forwardRef<HTMLInputElement, AuthFieldProps>(function A
           ref={ref}
           id={id}
           className={[
-            "w-full rounded-xl border border-slate-800 bg-slate-900/60 py-3.5 pe-4 ps-11 text-sm text-slate-100",
-            "placeholder:text-slate-600 transition-colors",
-            "focus:border-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-700",
-            error ? "border-red-900/60 focus:border-red-800 focus:ring-red-950" : "",
+            "w-full rounded-xl border border-subtle bg-surface/80 py-3.5 pe-4 ps-11 text-sm text-primary",
+            "placeholder:text-muted/60 transition-colors",
+            "focus:border-accent/40 focus:outline-none focus:ring-2 focus:ring-accent/25",
+            error ? "border-accent-danger/50 focus:border-accent-danger focus:ring-accent-danger/20" : "",
             className,
           ].join(" ")}
           {...inputProps}
         />
       </div>
-      {error ? <p className="mt-1.5 text-xs text-red-400/90">{error}</p> : null}
+      {error ? <p className="mt-1.5 text-xs text-accent-danger">{error}</p> : null}
     </div>
   );
 });

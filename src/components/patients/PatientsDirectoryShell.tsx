@@ -320,7 +320,7 @@ export function PatientsDirectoryShell({
                         : "text-primary hover:bg-elevated",
                     ].join(" ")}
                   >
-                    زار العيادة قريباً
+                    زار العيادة قريبًا
                   </button>
                 </div>
               )}
@@ -406,7 +406,7 @@ export function PatientsDirectoryShell({
                       due > 0 ? "text-accent-danger" : "text-status-completed",
                     ].join(" ")}
                   >
-                    {due > 0 ? `${new Intl.NumberFormat("ar-EG").format(due)} ج.م` : "خالص"}
+                    {due > 0 ? `${new Intl.NumberFormat("ar-EG").format(due)} ج.م` : "مسدد"}
                   </p>
 
                   <div className="flex items-center justify-end gap-2">
