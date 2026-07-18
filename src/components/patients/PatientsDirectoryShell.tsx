@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
@@ -24,6 +33,10 @@ import { matchesPatientSearch } from "@/lib/patients/search";
 import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
 import type { PatientRecord } from "@/lib/queries/patients";
 import { PatientFormModal, type PatientFormValues } from "./PatientFormModal";
+
+const MENU_WIDTH = 176;
+const MENU_ESTIMATED_HEIGHT = 200;
+const VIEWPORT_GAP = 8;
 
 interface PatientsDirectoryShellProps {
   patients: PatientRecord[];
@@ -65,7 +78,6 @@ export function PatientsDirectoryShell({
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<GridFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<PatientRecord | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<PatientRecord | null>(null);
@@ -85,16 +97,6 @@ export function PatientsDirectoryShell({
     function handleClickOutside(event: MouseEvent) {
       if (filterRef.current?.contains(event.target as Node)) return;
       setFilterOpen(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("[data-action-menu-root='true']")) return;
-      setMenuOpenId(null);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -139,7 +141,6 @@ export function PatientsDirectoryShell({
   function openEdit(patient: PatientRecord) {
     setEditingPatient(patient);
     setModalOpen(true);
-    setMenuOpenId(null);
   }
 
   function handleSaved(values: PatientFormValues, patientId?: string) {
@@ -186,7 +187,6 @@ export function PatientsDirectoryShell({
   function confirmDelete() {
     if (!deletingPatient) return;
     const patient = deletingPatient;
-    setMenuOpenId(null);
     setDeletingPatient(null);
 
     const snapshot = patients;
@@ -202,7 +202,6 @@ export function PatientsDirectoryShell({
 
   function requestStrike(patient: PatientRecord) {
     setStrikePatient(patient);
-    setMenuOpenId(null);
   }
 
   function confirmStrike() {
@@ -419,65 +418,14 @@ export function PatientsDirectoryShell({
                       عرض الملف
                     </Link>
 
-                    <div className="relative" data-action-menu-root="true">
-                      <button
-                        type="button"
-                        onClick={() => setMenuOpenId((prev) => (prev === patient.id ? null : patient.id))}
-                        className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary"
-                        aria-label="خيارات سريعة"
-                      >
-                        <CircleEllipsis className="h-4 w-4" />
-                      </button>
-                      {menuOpenId === patient.id && (
-                        <div className="absolute z-20 mt-2 w-44 rounded-xl border border-subtle bg-surface p-1 shadow-2xl shadow-black/25 ltr:right-0 rtl:left-0">
-                          <a
-                            href={whatsappUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-primary transition hover:bg-elevated"
-                          >
-                            <MessageCircle className="h-4 w-4 text-accent-success" />
-                            واتساب
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => openEdit(patient)}
-                            className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-primary transition hover:bg-elevated"
-                          >
-                            <Pencil className="h-4 w-4" />
-                            {t("edit")}
-                          </button>
-                          {!patient.isArchived && (
-                            <button
-                              type="button"
-                              disabled={pendingId === patient.id || isPending}
-                              onClick={() => requestStrike(patient)}
-                              className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-accent-danger transition hover:bg-accent-danger/10 disabled:opacity-50"
-                            >
-                              {pendingId === patient.id ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <UserX className="h-4 w-4" />
-                              )}
-                              {t("giveStrike")}
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            disabled={pendingId === patient.id || isPending}
-                            onClick={() => requestDelete(patient)}
-                            className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-accent-danger transition hover:bg-accent-danger/10 disabled:opacity-50"
-                          >
-                            {pendingId === patient.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4" />
-                            )}
-                            {t("delete")}
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <DirectoryActionsMenu
+                      patient={patient}
+                      whatsappUrl={whatsappUrl}
+                      pending={pendingId === patient.id || isPending}
+                      onEdit={() => openEdit(patient)}
+                      onStrike={() => requestStrike(patient)}
+                      onDelete={() => requestDelete(patient)}
+                    />
                   </div>
                 </motion.li>
               );
@@ -624,6 +572,218 @@ export function PatientsDirectoryShell({
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function DirectoryActionsMenu({
+  patient,
+  whatsappUrl,
+  pending,
+  onEdit,
+  onStrike,
+  onDelete,
+}: {
+  patient: PatientRecord;
+  whatsappUrl: string;
+  pending: boolean;
+  onEdit: () => void;
+  onStrike: () => void;
+  onDelete: () => void;
+}) {
+  const t = useTranslations("patients");
+  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [position, setPosition] = useState<{
+    top: number;
+    left: number;
+    openUpward: boolean;
+  } | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    function updatePosition() {
+      const trigger = triggerRef.current;
+      if (!trigger) return;
+
+      const rect = trigger.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUpward =
+        spaceBelow < MENU_ESTIMATED_HEIGHT && rect.top > spaceBelow;
+
+      let left = rect.right - MENU_WIDTH;
+      left = Math.max(
+        VIEWPORT_GAP,
+        Math.min(left, window.innerWidth - MENU_WIDTH - VIEWPORT_GAP),
+      );
+
+      const top = openUpward
+        ? Math.max(VIEWPORT_GAP, rect.top - VIEWPORT_GAP)
+        : Math.min(rect.bottom + VIEWPORT_GAP, window.innerHeight - VIEWPORT_GAP);
+
+      setPosition({ top, left, openUpward });
+    }
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: MouseEvent) {
+      const target = event.target as Node;
+      if (
+        triggerRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  function runAndClose(action: () => void) {
+    setOpen(false);
+    action();
+  }
+
+  const menu =
+    open && mounted && position
+      ? createPortal(
+          <div
+            ref={menuRef}
+            role="menu"
+            data-action-menu-root="true"
+            style={{
+              position: "fixed",
+              top: position.openUpward ? undefined : position.top,
+              bottom: position.openUpward
+                ? window.innerHeight - position.top
+                : undefined,
+              left: position.left,
+              width: MENU_WIDTH,
+            }}
+            className="z-[90] rounded-xl border border-subtle bg-surface p-1 shadow-2xl shadow-black/25"
+          >
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-primary transition hover:bg-elevated"
+            >
+              <MessageCircle className="h-4 w-4 text-accent-success" />
+              واتساب
+            </a>
+            <MenuButton
+              icon={<Pencil className="h-4 w-4" />}
+              label={t("edit")}
+              onClick={() => runAndClose(onEdit)}
+            />
+            {!patient.isArchived && (
+              <MenuButton
+                icon={
+                  pending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <UserX className="h-4 w-4" />
+                  )
+                }
+                label={t("giveStrike")}
+                danger
+                disabled={pending}
+                onClick={() => runAndClose(onStrike)}
+              />
+            )}
+            <MenuButton
+              icon={
+                pending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )
+              }
+              label={t("delete")}
+              danger
+              disabled={pending}
+              onClick={() => runAndClose(onDelete)}
+            />
+          </div>,
+          document.body,
+        )
+      : null;
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary"
+        aria-label="خيارات سريعة"
+        aria-expanded={open}
+        aria-haspopup="menu"
+      >
+        <CircleEllipsis className="h-4 w-4" />
+      </button>
+      {menu}
+    </>
+  );
+}
+
+function MenuButton({
+  icon,
+  label,
+  onClick,
+  danger = false,
+  disabled = false,
+}: {
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+  danger?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      role="menuitem"
+      disabled={disabled}
+      onClick={onClick}
+      className={[
+        "mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm transition disabled:opacity-50",
+        danger
+          ? "text-accent-danger hover:bg-accent-danger/10"
+          : "text-primary hover:bg-elevated",
+      ].join(" ")}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }
 
