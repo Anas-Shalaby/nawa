@@ -16,7 +16,7 @@ export function MarketingCard({
       className={[
         "rounded-[1.5rem] border p-6 md:p-7",
         highlighted
-          ? "border-accent/35 bg-surface/90 shadow-[0_0_40px_rgba(108,92,231,0.12)]"
+          ? "border-accent/30 bg-surface/90"
           : "border-subtle/80 bg-surface/70",
         className,
       ].join(" ")}

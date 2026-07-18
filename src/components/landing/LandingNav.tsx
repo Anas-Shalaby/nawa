@@ -9,11 +9,11 @@ import { LocaleSwitcher } from "@/components/shared/LocaleSwitcher";
 import { LandingThemeToggle } from "./LandingThemeToggle";
 
 const NAV_LINKS = [
-  { href: "#features", key: "features" as const },
-  { href: "#tour", key: "tour" as const },
   { href: "#value", key: "value" as const },
+  { href: "#tour", key: "tour" as const },
+  { href: "#features", key: "features" as const },
   { href: "#pricing", key: "pricing" as const },
-];
+] as const;
 
 export function LandingNav() {
   const t = useTranslations("landing.nav");

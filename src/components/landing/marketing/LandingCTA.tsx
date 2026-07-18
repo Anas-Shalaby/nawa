@@ -12,7 +12,7 @@ interface LandingCTAProps {
 
 const VARIANTS = {
   primary:
-    "bg-accent text-white shadow-[0_0_28px_rgba(108,92,231,0.28)] hover:brightness-110",
+    "bg-accent text-white hover:brightness-110",
   secondary:
     "border border-subtle bg-surface/70 text-primary hover:border-accent/35 hover:bg-surface",
   ghost:

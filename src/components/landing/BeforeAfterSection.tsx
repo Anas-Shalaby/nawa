@@ -2,14 +2,31 @@ import { getTranslations } from "next-intl/server";
 import { Section } from "./marketing/Section";
 import { SectionHeading } from "./marketing/SectionHeading";
 
+const BEFORE = [
+  "phones",
+  "paper",
+  "crowd",
+  "missed",
+  "reminders",
+  "cash",
+  "stress",
+] as const;
+
+const AFTER = [
+  "digital",
+  "schedule",
+  "autoReminders",
+  "records",
+  "reception",
+  "smart",
+  "visibility",
+] as const;
+
 export async function BeforeAfterSection() {
   const t = await getTranslations("landing.beforeAfter");
 
-  const beforeItems = ["phones", "paper", "crowd", "missed", "confused"] as const;
-  const afterItems = ["schedule", "reminders", "records", "flow", "focus"] as const;
-
   return (
-    <Section ariaLabelledBy="landing-before-after-title">
+    <Section ariaLabelledBy="landing-before-after-title" className="md:py-36">
       <SectionHeading
         id="landing-before-after-title"
         eyebrow={t("eyebrow")}
@@ -17,35 +34,47 @@ export async function BeforeAfterSection() {
         subtitle={t("subtitle")}
       />
 
-      <div className="mt-10 grid gap-5 lg:grid-cols-2">
-        <article className="rounded-[1.75rem] border border-accent-danger/25 bg-accent-danger/[0.04] p-6 md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-danger">
+      <div className="mt-12 grid overflow-hidden rounded-[2rem] border border-subtle/80 lg:grid-cols-2">
+        <article className="bg-elevated/40 p-7 md:p-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
             {t("beforeLabel")}
           </p>
-          <h3 className="mt-2 text-2xl font-semibold text-primary">{t("beforeTitle")}</h3>
-          <ul className="mt-6 space-y-3">
-            {beforeItems.map((key) => (
+          <h3 className="mt-3 text-2xl font-semibold text-primary md:text-3xl">
+            {t("beforeTitle")}
+          </h3>
+          <ul className="mt-8 space-y-3">
+            {BEFORE.map((key) => (
               <li
                 key={key}
-                className="rounded-xl border border-subtle/70 bg-surface/60 px-4 py-3 text-sm text-muted"
+                className="flex items-start gap-3 rounded-xl border border-subtle/60 bg-base/40 px-4 py-3 text-sm text-muted"
               >
+                <span
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-danger/70"
+                  aria-hidden
+                />
                 {t(`before.${key}`)}
               </li>
             ))}
           </ul>
         </article>
 
-        <article className="rounded-[1.75rem] border border-accent-success/30 bg-accent-success/[0.05] p-6 md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-success">
+        <article className="border-t border-subtle/80 bg-surface/90 p-7 md:p-10 lg:border-s lg:border-t-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
             {t("afterLabel")}
           </p>
-          <h3 className="mt-2 text-2xl font-semibold text-primary">{t("afterTitle")}</h3>
-          <ul className="mt-6 space-y-3">
-            {afterItems.map((key) => (
+          <h3 className="mt-3 text-2xl font-semibold text-primary md:text-3xl">
+            {t("afterTitle")}
+          </h3>
+          <ul className="mt-8 space-y-3">
+            {AFTER.map((key) => (
               <li
                 key={key}
-                className="rounded-xl border border-subtle/70 bg-surface/70 px-4 py-3 text-sm text-primary"
+                className="flex items-start gap-3 rounded-xl border border-accent/15 bg-accent/[0.04] px-4 py-3 text-sm text-primary"
               >
+                <span
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-success"
+                  aria-hidden
+                />
                 {t(`after.${key}`)}
               </li>
             ))}

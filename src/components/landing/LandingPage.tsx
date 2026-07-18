@@ -2,13 +2,15 @@ import { getTranslations } from "next-intl/server";
 import { LandingThemeProvider } from "./LandingThemeProvider";
 import { LandingNav } from "./LandingNav";
 import { HeroSection } from "./hero/HeroSection";
-import { ClinicChaosStory } from "./ClinicChaosStory";
-import { DoctorOutcomesSection } from "./DoctorOutcomesSection";
+import { WhyClinicsChooseSection } from "./WhyClinicsChooseSection";
 import { BeforeAfterSection } from "./BeforeAfterSection";
+import { ClinicWorkflowTour } from "./ClinicWorkflowTour";
 import { ProblemSolutionBento } from "./ProblemSolutionBento";
 import { MorningInsightsSection } from "./MorningInsightsSection";
-import { ClinicWorkflowTour } from "./ClinicWorkflowTour";
+import { MedicalRecordsShowcase } from "./MedicalRecordsShowcase";
+import { AutomationLane } from "./AutomationLane";
 import { ProductProofSection } from "./ProductProofSection";
+import { RoiCalculatorSection } from "./RoiCalculatorSection";
 import { PricingSection } from "./PricingSection";
 import { FinalCTASection } from "./FinalCTASection";
 import { LandingFooter } from "./LandingFooter";
@@ -28,13 +30,15 @@ export async function LandingPage() {
       <LandingNav />
       <main id="main-content" className="relative">
         <HeroSection />
-        <ClinicChaosStory />
-        <DoctorOutcomesSection />
+        <WhyClinicsChooseSection />
         <BeforeAfterSection />
+        <ClinicWorkflowTour />
         <ProblemSolutionBento />
         <MorningInsightsSection />
-        <ClinicWorkflowTour />
+        <MedicalRecordsShowcase />
+        <AutomationLane />
         <ProductProofSection />
+        <RoiCalculatorSection />
         <PricingSection />
         <FinalCTASection />
       </main>

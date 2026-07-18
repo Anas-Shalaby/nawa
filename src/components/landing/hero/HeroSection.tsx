@@ -11,25 +11,27 @@ const ClinicProductShowcase = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="h-[28rem] animate-pulse rounded-[1.75rem] border border-subtle bg-surface/60 md:h-[32rem]"
+        className="h-[28rem] animate-pulse rounded-[1.75rem] border border-subtle bg-surface/60 md:h-[34rem]"
         aria-hidden
       />
     ),
   },
 );
 
+const METRICS = ["metric1", "metric2", "metric3"] as const;
+
 export function HeroSection() {
   const t = useTranslations("landing.hero");
 
   return (
-    <section className="relative overflow-hidden px-6 pb-20 pt-12 md:pb-28 md:pt-20">
+    <section className="relative overflow-hidden px-6 pb-20 pt-12 md:pb-28 md:pt-16">
       <div className="landing-hero-radial pointer-events-none absolute inset-0" aria-hidden />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-12 lg:gap-10">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-12 lg:gap-12">
         <div className="text-start lg:col-span-5">
           <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-accent md:text-sm">
             {t("badge")}
           </p>
-          <h1 className="text-balance text-4xl font-semibold tracking-tight text-primary md:text-6xl md:leading-[1.05]">
+          <h1 className="text-balance text-4xl font-semibold tracking-tight text-primary md:text-[3.4rem] md:leading-[1.05]">
             {t("headline")}
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted md:text-lg">
@@ -51,7 +53,7 @@ export function HeroSection() {
             </a>
           </div>
 
-          <ul className="mt-8 flex flex-wrap gap-2">
+          <ul className="mt-6 flex flex-wrap gap-2">
             {(["chip1", "chip2", "chip3"] as const).map((key) => (
               <li
                 key={key}
@@ -61,6 +63,17 @@ export function HeroSection() {
               </li>
             ))}
           </ul>
+
+          <dl className="mt-8 grid grid-cols-3 gap-3 border-t border-subtle/70 pt-6">
+            {METRICS.map((key) => (
+              <div key={key} className="text-start">
+                <dt className="text-[11px] text-muted">{t(`${key}Label`)}</dt>
+                <dd className="mt-1 text-lg font-semibold tabular-nums text-primary md:text-xl">
+                  {t(`${key}Value`)}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <div className="lg:col-span-7">

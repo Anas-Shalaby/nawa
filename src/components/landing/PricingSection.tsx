@@ -39,7 +39,7 @@ export function PricingSection() {
             className={[
               "relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border p-7 md:p-8",
               plan.highlighted
-                ? "border-accent/40 bg-surface/90 shadow-[0_0_40px_rgba(108,92,231,0.14)]"
+                ? "border-accent/35 bg-surface/90"
                 : "border-subtle/80 bg-surface/70",
             ].join(" ")}
           >
@@ -105,6 +105,13 @@ export function PricingSection() {
 
       <PricingComparison />
       <PricingFAQ />
+
+      <div className="mt-10 rounded-[1.75rem] border border-subtle/80 bg-elevated/40 px-6 py-8 text-center md:px-10">
+        <p className="text-lg font-semibold text-primary">{t("confidence.title")}</p>
+        <p className="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          {t("confidence.body")}
+        </p>
+      </div>
     </Section>
   );
 }
