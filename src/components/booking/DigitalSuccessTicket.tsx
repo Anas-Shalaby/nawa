@@ -167,20 +167,22 @@ export function DigitalSuccessTicket({
           <PerforationEdge position="bottom" />
 
           <div className="space-y-3 border-t border-subtle/60 bg-elevated/30 px-6 py-5">
-            <a
-              href={ticket.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={[
-                "flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl",
-                "bg-[#4285F4] px-4 py-3 text-sm font-semibold text-white",
-                "shadow-[0_12px_32px_rgba(66,133,244,0.35)] transition",
-                "hover:brightness-110 active:scale-[0.98]",
-              ].join(" ")}
-            >
-              <MapPin className="h-4 w-4" aria-hidden />
-              {t("directions")}
-            </a>
+            {ticket.mapsUrl ? (
+              <a
+                href={ticket.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={[
+                  "flex min-h-[52px] w-full items-center justify-center gap-2 rounded-xl",
+                  "bg-[#4285F4] px-4 py-3 text-sm font-semibold text-white",
+                  "shadow-[0_12px_32px_rgba(66,133,244,0.35)] transition",
+                  "hover:brightness-110 active:scale-[0.98]",
+                ].join(" ")}
+              >
+                <MapPin className="h-4 w-4" aria-hidden />
+                {t("directions")}
+              </a>
+            ) : null}
 
             <button
               type="button"

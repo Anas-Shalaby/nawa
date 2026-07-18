@@ -15,11 +15,27 @@ export interface BookingTicketView {
   dateLabel: string;
   timeLabel: string;
   status: string;
-  mapsUrl: string;
+  /** Google Maps URL from doctor identity; null when no location is set. */
+  mapsUrl: string | null;
 }
 
-function buildMapsUrl(clinicName: string): string {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${clinicName} Cairo Egypt`)}`;
+function buildClinicMapsUrl(input: {
+  location: string | null;
+  latitude: number | null;
+  longitude: number | null;
+}): string | null {
+  const hasCoordinates =
+    input.latitude !== null && input.longitude !== null;
+  if (hasCoordinates) {
+    return `https://www.google.com/maps/search/?api=1&query=${input.latitude},${input.longitude}`;
+  }
+
+  const location = input.location?.trim();
+  if (location) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+  }
+
+  return null;
 }
 
 export async function fetchBookingTicketView(
@@ -31,7 +47,9 @@ export async function fetchBookingTicketView(
 
   const { data: tenant, error: tenantError } = await supabase
     .from("tenants")
-    .select("id, name, slug, is_active")
+    .select(
+      "id, name, slug, is_active, clinic_location, clinic_latitude, clinic_longitude",
+    )
     .eq("slug", tenantSlug)
     .maybeSingle();
 
@@ -80,6 +98,10 @@ export async function fetchBookingTicketView(
     dateLabel: formatAppointmentDateLong(appointment.appointment_date, locale),
     timeLabel: formatAppointmentTime(appointment.appointment_date, locale),
     status: appointment.status,
-    mapsUrl: buildMapsUrl(tenant.name),
+    mapsUrl: buildClinicMapsUrl({
+      location: tenant.clinic_location,
+      latitude: tenant.clinic_latitude,
+      longitude: tenant.clinic_longitude,
+    }),
   };
 }

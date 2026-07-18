@@ -16,13 +16,16 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cancelAgendaAppointment } from "@/actions/manageAgendaAppointment";
 import { findNextAvailableSlot } from "@/actions/internalBooking";
+import { updateAppointmentStatus } from "@/actions/updateAppointmentStatus";
 import { useGlobalBookingDrawer } from "@/components/booking/GlobalBookingDrawerContext";
+import { QueueStatusSelect } from "@/components/dashboard/QueueStatusSelect";
 import {
   buildCairoAppointmentIso,
   formatSlotLabel,
   getCairoDateKeyFromIso,
   getCairoTodayKey,
 } from "@/lib/datetime/cairo";
+import { AGENDA_SELECTABLE_STATUSES } from "@/lib/dashboard/queueStateMachine";
 import type { AppointmentStatus, DashboardService } from "@/lib/dashboard/types";
 import type { AgendaAppointment } from "@/lib/queries/agenda";
 import type { WorkingHoursDay } from "@/lib/scheduling/types";
@@ -320,6 +323,15 @@ export function InteractiveAgendaCanvas({
                         ),
                       )
                     }
+                    onStatusChange={(appointmentId, status) =>
+                      setAppointments((current) =>
+                        current.map((appointment) =>
+                          appointment.id === appointmentId
+                            ? { ...appointment, status }
+                            : appointment,
+                        ),
+                      )
+                    }
                   />
                 ))}
               </div>
@@ -411,6 +423,7 @@ function DayColumn({
   onEmptySlot,
   onReschedule,
   onCancelled,
+  onStatusChange,
 }: {
   date: string;
   appointments: AgendaAppointment[];
@@ -422,6 +435,7 @@ function DayColumn({
   onEmptySlot: (time: string) => void;
   onReschedule: (appointment: AgendaAppointment) => void;
   onCancelled: (appointmentId: string) => void;
+  onStatusChange: (appointmentId: string, status: AppointmentStatus) => void;
 }) {
   const dayOfWeek = dateKeyDayOfWeek(date);
   const dayHours = workingHours.find((day) => day.dayOfWeek === dayOfWeek);
@@ -469,6 +483,7 @@ function DayColumn({
           locale={locale}
           onReschedule={onReschedule}
           onCancelled={onCancelled}
+          onStatusChange={onStatusChange}
         />
       ))}
     </div>
@@ -481,17 +496,21 @@ function AppointmentBlock({
   locale,
   onReschedule,
   onCancelled,
+  onStatusChange,
 }: {
   appointment: AgendaAppointment;
   startHour: number;
   locale: Locale;
   onReschedule: (appointment: AgendaAppointment) => void;
   onCancelled: (appointmentId: string) => void;
+  onStatusChange: (appointmentId: string, status: AppointmentStatus) => void;
 }) {
   const t = useTranslations("agenda");
   const tc = useTranslations("agenda.calendar");
+  const tStatus = useTranslations("dashboard.detail.status");
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const time = getCairoTime(appointment.appointmentDate);
   const minutes = timeToMinutes(time);
@@ -524,6 +543,28 @@ function AppointmentBlock({
     });
   }
 
+  function handleStatusChange(status: AppointmentStatus) {
+    if (status === appointment.status) return;
+
+    const previous = appointment.status;
+    setIsUpdatingStatus(true);
+    onStatusChange(appointment.id, status);
+
+    startTransition(async () => {
+      const result = await updateAppointmentStatus(appointment.id, status);
+
+      if (!result.success) {
+        onStatusChange(appointment.id, previous);
+        toast.error(t("error"), { description: result.error });
+        setIsUpdatingStatus(false);
+        return;
+      }
+
+      toast.success(t("statusUpdateSuccess"));
+      setIsUpdatingStatus(false);
+    });
+  }
+
   return (
     <div
       ref={rootRef}
@@ -552,8 +593,13 @@ function AppointmentBlock({
           {appointment.serviceName}
         </span>
         {height >= 58 ? (
-          <span className="mt-1 block text-[10px] tabular-nums opacity-70" dir="ltr">
-            {formatTimeLabel(time, locale)}
+          <span className="mt-1 flex items-center justify-between gap-1 text-[10px] opacity-70">
+            <span className="tabular-nums" dir="ltr">
+              {formatTimeLabel(time, locale)}
+            </span>
+            <span className="truncate font-medium">
+              {tStatus(appointment.status)}
+            </span>
           </span>
         ) : null}
       </button>
@@ -564,7 +610,7 @@ function AppointmentBlock({
             initial={{ opacity: 0, y: -4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
-            className="absolute start-0 top-full z-50 mt-2 w-56 rounded-xl border border-subtle bg-surface p-3 text-start shadow-2xl shadow-black/30"
+            className="absolute start-0 top-full z-50 mt-2 w-60 rounded-xl border border-subtle bg-surface p-3 text-start shadow-2xl shadow-black/30"
           >
             <p className="text-sm font-bold text-primary">
               {appointment.patientName}
@@ -573,6 +619,25 @@ function AppointmentBlock({
               <Phone className="h-3.5 w-3.5" aria-hidden />
               {appointment.phoneNumber}
             </p>
+
+            <div className="mt-3 space-y-2 border-t border-subtle pt-3">
+              <p className="text-[11px] font-medium text-muted">
+                {t("statusLabel")}
+              </p>
+              <QueueStatusSelect
+                value={appointment.status}
+                allowedStatuses={AGENDA_SELECTABLE_STATUSES}
+                isUpdating={isUpdatingStatus}
+                compact
+                onChange={handleStatusChange}
+              />
+              {appointment.status === "pending" ? (
+                <p className="text-[10px] leading-relaxed text-muted">
+                  {t("pendingSlotHint")}
+                </p>
+              ) : null}
+            </div>
+
             <div className="mt-3 grid gap-1 border-t border-subtle pt-2">
               <button
                 type="button"
