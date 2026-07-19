@@ -33,6 +33,8 @@ interface QuickOpsPanelProps {
   attentionItems: AttentionItem[];
   unreadCount: number;
   onWalkInAdded: (appointment: import("@/lib/dashboard/types").Appointment) => void;
+  /** Slim rail: search + walk-in only (used by calm Floor layout). */
+  compact?: boolean;
 }
 
 export function QuickOpsPanel({
@@ -47,6 +49,7 @@ export function QuickOpsPanel({
   attentionItems,
   unreadCount,
   onWalkInAdded,
+  compact = false,
 }: QuickOpsPanelProps) {
   const t = useTranslations("dashboard.commandCenter");
   const tv = useTranslations("validation");
@@ -94,22 +97,41 @@ export function QuickOpsPanel({
 
   return (
     <aside className="flex min-h-0 flex-col gap-3 rounded-2xl border border-subtle bg-surface p-3 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto">
-      <div className="shrink-0">
-        <p className="text-[11px] font-medium text-muted">{clinicName}</p>
-        <h1 className="text-sm font-semibold text-primary">{t("title")}</h1>
-        <p className="text-[10px] text-muted">{dateLabel}</p>
-      </div>
+      {!compact ? (
+        <div className="shrink-0">
+          <p className="text-[11px] font-medium text-muted">{clinicName}</p>
+          <h1 className="text-sm font-semibold text-primary">{t("title")}</h1>
+          <p className="text-[10px] text-muted">{dateLabel}</p>
+        </div>
+      ) : (
+        <div className="shrink-0">
+          <h2 className="text-sm font-semibold text-primary">{t("ops.compactTitle")}</h2>
+          <p className="text-[10px] text-muted">{dateLabel}</p>
+        </div>
+      )}
 
       <PatientQuickSearch disabled={!canManageQueue} />
 
-      <OperationsCommandList
-        pendingTomorrowCount={pendingTomorrowCount}
-        unpaidCount={unpaidCount}
-        unreadCount={unreadCount}
-        canViewRevenue={canViewRevenue}
-        canManageQueue={canManageQueue}
-        onWalkInClick={() => setShowWalkIn((value) => !value)}
-      />
+      {compact ? (
+        canCreateWalkIn ? (
+          <button
+            type="button"
+            onClick={() => setShowWalkIn((value) => !value)}
+            className="inline-flex h-10 w-full items-center justify-center rounded-xl border border-subtle bg-elevated/60 text-xs font-semibold text-primary transition hover:border-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
+          >
+            {t("ops.walkInTitle")}
+          </button>
+        ) : null
+      ) : (
+        <OperationsCommandList
+          pendingTomorrowCount={pendingTomorrowCount}
+          unpaidCount={unpaidCount}
+          unreadCount={unreadCount}
+          canViewRevenue={canViewRevenue}
+          canManageQueue={canManageQueue}
+          onWalkInClick={() => setShowWalkIn((value) => !value)}
+        />
+      )}
 
       {showWalkIn ? (
         <section className="rounded-xl border border-subtle bg-elevated/60 p-3">
@@ -176,38 +198,40 @@ export function QuickOpsPanel({
         </section>
       ) : null}
 
-      <section className="flex min-h-0 flex-1 flex-col rounded-xl border border-subtle bg-elevated/40 p-3">
-        <h2 className="mb-2 shrink-0 text-xs font-semibold text-primary">
-          {t("ops.urgentTitle")}
-        </h2>
-        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pe-1">
-          <AttentionCenter items={attentionItems} compact />
+      {!compact ? (
+        <section className="flex min-h-0 flex-1 flex-col rounded-xl border border-subtle bg-elevated/40 p-3">
+          <h2 className="mb-2 shrink-0 text-xs font-semibold text-primary">
+            {t("ops.urgentTitle")}
+          </h2>
+          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pe-1">
+            <AttentionCenter items={attentionItems} compact />
 
-          {canViewRevenue &&
-            yesterdayUnpaid.map((patient) => (
-              <Link
-                key={patient.id}
-                href={`/dashboard/patients/${patient.id}`}
-                className="block rounded-lg border border-accent-danger/30 bg-accent-danger/10 px-2.5 py-2 text-[11px] text-primary transition hover:border-accent-danger/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-danger/30"
-              >
-                <span className="font-semibold text-accent-danger">
-                  {t("ops.collectYesterday", {
-                    name: patient.name,
-                    amount: patient.amountDue.toLocaleString(),
-                  })}
-                </span>
-              </Link>
-            ))}
+            {canViewRevenue &&
+              yesterdayUnpaid.map((patient) => (
+                <Link
+                  key={patient.id}
+                  href={`/dashboard/patients/${patient.id}`}
+                  className="block rounded-lg border border-accent-danger/30 bg-accent-danger/10 px-2.5 py-2 text-[11px] text-primary transition hover:border-accent-danger/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-danger/30"
+                >
+                  <span className="font-semibold text-accent-danger">
+                    {t("ops.collectYesterday", {
+                      name: patient.name,
+                      amount: patient.amountDue.toLocaleString(),
+                    })}
+                  </span>
+                </Link>
+              ))}
 
-          {attentionItems.length === 0 &&
-          unpaidCount === 0 &&
-          pendingTomorrowCount === 0 ? (
-            <p className="rounded-lg border border-dashed border-subtle px-2 py-6 text-center text-[11px] text-muted">
-              {t("ops.noUrgent")}
-            </p>
-          ) : null}
-        </div>
-      </section>
+            {attentionItems.length === 0 &&
+            unpaidCount === 0 &&
+            pendingTomorrowCount === 0 ? (
+              <p className="rounded-lg border border-dashed border-subtle px-2 py-6 text-center text-[11px] text-muted">
+                {t("ops.noUrgent")}
+              </p>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
     </aside>
   );
 }

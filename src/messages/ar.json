@@ -141,8 +141,42 @@
     },
     "analyticsPage": {
       "metaTitle": "الإحصائيات — نواة",
-      "title": "إحصائيات العيادة",
-      "subtitle": "رسوم بيانية واضحة لأداء العيادة — آخر ٣٠ يومًا."
+      "title": "الرؤى",
+      "subtitle": "هل تتحسن صحة العيادة بمرور الوقت؟",
+      "rangeLabel": "الفترة",
+      "range": {
+        "7": "7 أيام",
+        "30": "30 يوماً",
+        "90": "90 يوماً"
+      },
+      "kpis": "المؤشرات الأساسية",
+      "kpi": {
+        "newPatients": "مرضى جدد",
+        "returningHint": "{count} عائدون",
+        "returningRate": "معدل العودة",
+        "noShowRate": "معدل عدم الحضور",
+        "cancelRate": "معدل الإلغاء",
+        "revenueGrowth": "نمو الإيراد",
+        "revenueHint": "{amount} {currency} خلال الفترة",
+        "attendance": "نسبة الحضور",
+        "completedHint": "{count} مكتمل",
+        "avgWait": "متوسط الانتظار",
+        "minutes": "{mins} د",
+        "savedHours": "ساعات مستردة",
+        "hoursValue": "{hours} س",
+        "warningHint": "{count} مرضى في قائمة التحذير"
+      },
+      "reliabilityTitle": "الموثوقية",
+      "reliabilityHint": "الزيارات المكتملة مقابل عدم الحضور عبر الزمن",
+      "busyHoursTitle": "ساعات الذروة",
+      "busyHoursHint": "متى يحجز المرضى أكثر",
+      "popularServicesTitle": "الخدمات الأكثر طلباً",
+      "popularServicesHint": "أكثر الخدمات اكتمالاً في هذه الفترة",
+      "serviceMeta": "{count} زيارات · {amount} {currency}",
+      "series": {
+        "completed": "مكتمل",
+        "noShow": "لم يحضر"
+      }
     },
     "analytics": {
       "kpiAttendance": "معدل الحضور",
@@ -168,7 +202,8 @@
       "chartSavedHoursTitle": "الوقت المسترد",
       "chartSavedHoursHint": "ساعات وفرتها العيادة من ملء المواعيد الفارغة تلقائيًا",
       "chartWarningTitle": "قائمة التحذير",
-      "chartWarningHint": "مرضى لديهم غياب واحد ويحتاجون متابعة قبل الحجز التالي"
+      "chartWarningHint": "مرضى لديهم غياب واحد ويحتاجون متابعة قبل الحجز التالي",
+      "currency": "ج.م"
     },
     "queue": {
       "title": "مرضى اليوم",
@@ -328,7 +363,7 @@
     },
     "settings": "الإعدادات",
     "layout": {
-      "brandTagline": "إدارة العيادات",
+      "brandTagline": "نظام العيادة",
       "sectionOperations": "العمليات",
       "sectionClinic": "إدارة العيادة",
       "sectionFinance": "المالية والنمو",
@@ -341,7 +376,7 @@
       "navInventory": "إدارة المخزون",
       "navStaff": "عمليات الفريق",
       "navFinancials": "الحسابات",
-      "navAnalytics": "الإحصائيات",
+      "navAnalytics": "الرؤى",
       "navMarketing": "حملات التسويق",
       "navAiAssistant": "المساعد الذكي",
       "navSettings": "الإعدادات",
@@ -351,7 +386,13 @@
       "navAccount": "حسابي",
       "logout": "تسجيل الخروج",
       "themeLight": "الوضع الفاتح",
-      "themeDark": "الوضع الداكن"
+      "themeDark": "الوضع الداكن",
+      "navToday": "اليوم",
+      "navFloor": "الطابق",
+      "navInsights": "الرؤى",
+      "navSchedule": "الجدول",
+      "navBusiness": "الأعمال",
+      "navTeam": "الفريق"
     },
     "avatarMenu": {
       "open": "قائمة الحساب",
@@ -456,7 +497,8 @@
       "mobile": {
         "ops": "عمليات",
         "floor": "الساحة",
-        "radar": "رادار"
+        "radar": "رادار",
+        "alerts": "تنبيهات"
       },
       "summary": {
         "ariaLabel": "ملخص العمليات اليوم",
@@ -496,7 +538,8 @@
         "callNextSuccess": "تم استدعاء المريض لغرفة الطبيب",
         "badgePayments": "مدفوعات معلّقة",
         "badgeTomorrow": "تأكيدات الغد",
-        "badgeNotifications": "إشعارات غير مقروءة"
+        "badgeNotifications": "إشعارات غير مقروءة",
+        "compactTitle": "إجراءات سريعة"
       },
       "floor": {
         "title": "الساحة الحية",
@@ -516,7 +559,9 @@
           "cashDrawer": "هل تمت مراجعة درج النقدية؟",
           "callTomorrow": "هل تم الاتصال بمرضى الغد؟ ({count})",
           "unpaid": "هل روجعت تحصيلات أمس المعلّقة؟ ({count})"
-        }
+        },
+        "emptyTitle": "الطابق هادئ",
+        "emptyBody": "عند وصول المرضى سيظهرون هنا حسب المرحلة."
       },
       "radar": {
         "roomsTitle": "حالة الغرف",
@@ -590,6 +635,11 @@
           "unpaid": "غير مدفوع",
           "waived": "معفى",
           "unknown": ""
+        },
+        "primary": {
+          "checkIn": "حضور",
+          "start": "بدء",
+          "complete": "إنهاء"
         }
       },
       "status": {
@@ -600,7 +650,135 @@
         "completed": "مكتمل",
         "no_show": "لم يحضر",
         "canceled": "ملغي"
+      },
+      "metaTitle": "الطابق — نواة",
+      "floorPageTitle": "الطابق",
+      "floorPageSubtitle": "من يحتاج إجراءً الآن على أرض العيادة؟",
+      "next": {
+        "title": "التالي",
+        "checkIn": "تسجيل حضور",
+        "start": "بدء الجلسة",
+        "empty": "الطابور فارغ"
       }
+    },
+    "todayHome": {
+      "metaTitle": "اليوم — نواة",
+      "subtitle": "كيف تسير العيادة اليوم — وما الخطوة التالية؟",
+      "quickActions": "إجراءات سريعة",
+      "kpis": "أرقام اليوم",
+      "viewAll": "عرض الكل",
+      "greeting": {
+        "morning": "صباح الخير، {name}",
+        "afternoon": "مساء النور، {name}",
+        "evening": "مساء الخير، {name}"
+      },
+      "actions": {
+        "openFloor": "فتح الطابق",
+        "book": "حجز جديد",
+        "patients": "المرضى",
+        "agenda": "المواعيد"
+      },
+      "kpi": {
+        "appointments": "المواعيد",
+        "waiting": "بالانتظار",
+        "completed": "مكتمل",
+        "revenue": "إيراد اليوم",
+        "outstanding": "مستحقات",
+        "inventory": "تنبيهات المخزون"
+      },
+      "queue": {
+        "title": "قائمة الانتظار الآن",
+        "empty": "لا يوجد أحد بالانتظار حالياً"
+      },
+      "upcoming": {
+        "title": "المواعيد القادمة",
+        "empty": "لا توجد مواعيد قادمة"
+      },
+      "team": {
+        "title": "توفر الفريق",
+        "empty": "لا توجد حالة للفريق بعد",
+        "status": {
+          "available": "متاح",
+          "busy": "مشغول",
+          "break": "استراحة",
+          "offline": "غير متصل"
+        }
+      },
+      "recentPatients": {
+        "title": "أحدث المرضى",
+        "empty": "لا يوجد مرضى بعد"
+      }
+    },
+    "clinicOs": {
+      "metaTitle": "اليوم — نواة",
+      "subtitle": "ما الخطوة التالية في رعاية المرضى؟",
+      "greeting": {
+        "morning": "صباح الخير، {name}",
+        "afternoon": "مساء النور، {name}",
+        "evening": "مساء الخير، {name}"
+      },
+      "currentTitle": "المريض الحالي",
+      "nextTitle": "المريض التالي",
+      "currentEmpty": "لا أحد في الجلسة",
+      "nextEmpty": "الطابور فارغ",
+      "complete": "إنهاء الزيارة",
+      "start": "بدء الجلسة",
+      "checkIn": "تسجيل حضور",
+      "openChart": "فتح الملف",
+      "writeRx": "روشتة",
+      "walkIn": "حضور فوري",
+      "schedule": "المواعيد",
+      "inSessionMins": "في الجلسة · {mins} د",
+      "waitingMins": "بالانتظار · {mins} د",
+      "statusLine": "{waiting} بالانتظار · متوسط {avgWait} د",
+      "statusCalm": "كل شيء هادئ",
+      "alertPrefix": "تنبيه:",
+      "finishVisit": "إنهاء الزيارة",
+      "startVisit": "بدء الزيارة",
+      "personaSubtitle": {
+        "doctor": "اعالج المريض أمامك.",
+        "receptionist": "حافظ على انسياب العيادة.",
+        "owner": "اقرأ نبض اليوم واتخذ قرارًا.",
+        "accountant": "حصّل المستحقات.",
+        "default": "ما الذي يجب فعله الآن؟"
+      },
+      "snapshotTitle": "لمحة اليوم",
+      "snapshotRevenue": "إيراد اليوم",
+      "snapshotOutstanding": "زيارات غير مسددة",
+      "openBusiness": "فتح الأعمال",
+      "queueTitle": "طابور اليوم",
+      "queueWaiting": "انتظار",
+      "queueInSession": "في الكشف",
+      "queueCompleted": "مكتمل",
+      "alertsTitle": "تنبيهات",
+      "alertUnpaid": "{count} أرصدة مستحقة",
+      "outstandingTitle": "الأرصدة المستحقة",
+      "quickActions": "إجراءات سريعة",
+      "searchPatient": "بحث عن مريض",
+      "newBooking": "حجز جديد"
+    },
+    "business": {
+      "metaTitle": "الأعمال — نواة",
+      "title": "الأعمال",
+      "subtitle": "كيف أداء العيادة؟",
+      "overview": "نظرة عامة",
+      "revenueToday": "إيراد اليوم",
+      "revenueWeek": "إيراد الأسبوع",
+      "outstanding": "المستحق",
+      "completedVisits": "زيارات مكتملة",
+      "thisMonth": "هذا الشهر",
+      "noShows": "نسبة عدم الحضور",
+      "inRange": "آخر {days} يومًا",
+      "patientGrowth": "مرضى جدد",
+      "newPatientsHint": "{returning} عائدون",
+      "inventoryAlerts": "تنبيهات المخزون",
+      "lowStockHint": "أصناف تحت الحد",
+      "stockOk": "المخزون جيد",
+      "outstandingList": "من عليه مستحقات",
+      "viewPatients": "المرضى",
+      "recentPayments": "مدفوعات حديثة",
+      "currency": "جنيه",
+      "emptyAccess": "ليس لديك صلاحية لعرض مقاييس الأعمال."
     }
   },
   "services": {
@@ -763,9 +941,9 @@
     }
   },
   "financials": {
-    "metaTitle": "الإيرادات والعائد — نواة",
-    "title": "الإيرادات وعائد نواة",
-    "subtitle": "تتبّع الإيرادات وقيمة استرداد المواعيد الملغاة تلقائيًا.",
+    "metaTitle": "الحسابات — نواة",
+    "title": "الحسابات",
+    "subtitle": "كم ربحنا — ومن لا يزال مديناً؟",
     "dailyRevenue": "إيراد اليوم",
     "monthlyRevenue": "إيراد الشهر",
     "nawaSavedRevenue": "إيرادات نواة المستردة",
@@ -787,7 +965,36 @@
     "receiptService": "الخدمة / البند",
     "receiptAmount": "المبلغ",
     "receiptFooter": "تم الإنشاء بواسطة نواة",
-    "receiptDownloaded": "تم تحميل الإيصال PDF"
+    "receiptDownloaded": "تم تحميل الإيصال PDF",
+    "periodLabel": "الفترة",
+    "period": {
+      "today": "اليوم",
+      "week": "هذا الأسبوع",
+      "month": "هذا الشهر"
+    },
+    "kpis": "الأرقام الأساسية",
+    "kpi": {
+      "earned": "المكتسب",
+      "outstanding": "المستحقات",
+      "collections": "التحصيلات",
+      "aov": "متوسط قيمة الزيارة"
+    },
+    "vsLastMonth": "مقارنة بالشهر السابق",
+    "debtorsCount": "{count} مرضى عليهم رصيد",
+    "visitsMonth": "{count} زيارات مكتملة هذا الشهر",
+    "noShowLoss": "خسائر عدم الحضور ({scope}): {amount} {currency}",
+    "trendTitle": "اتجاه الإيراد · 30 يوماً",
+    "trendTooltip": "الإيراد",
+    "topServices": "أعلى الخدمات",
+    "serviceVisits": "{count} زيارات",
+    "outstandingTitle": "أرصدة مستحقة",
+    "outstandingEmpty": "لا توجد مستحقات حالياً.",
+    "whatsapp": "واتساب",
+    "recentPayments": "أحدث المدفوعات",
+    "paymentsEmpty": "لا توجد مدفوعات مسجلة بعد.",
+    "topPatients": "أعلى المرضى إيراداً",
+    "recentVisits": "أحدث الزيارات المكتملة",
+    "pdfFailed": "تعذر إنشاء ملف PDF"
   },
   "invoice": {
     "taxInvoice": "فاتورة ضريبية",
@@ -1099,6 +1306,13 @@
     },
     "errors": {
       "statusUpdate": "تعذّر تحديث الحالة"
+    },
+    "sections": {
+      "members": "الأعضاء",
+      "membersHint": "من في الخدمة ومتاح الآن.",
+      "rolesPermissions": "الأدوار والصلاحيات",
+      "activity": "النشاط",
+      "activityHint": "أحداث الفريق المباشرة."
     }
   },
   "comingSoon": {
@@ -1206,7 +1420,7 @@
     "recallInvite": "دعوة فحص دوري"
   },
   "ehr": {
-    "metaTitle": "السجل البصري — نواة",
+    "metaTitle": "مساحة المريض — نواة",
     "tabGeneral": "معلومات عامة",
     "tabVisitRecord": "سجل المريض",
     "tabVisualEhr": "السجل البصري",
@@ -1297,6 +1511,151 @@
       "after": "بعد",
       "x-ray": "أشعة",
       "general": "عام"
+    },
+    "prescriptionItem": "روشتة · {count} أدوية",
+    "workspace": {
+      "label": "مساحة المريض",
+      "metaTitle": "مساحة المريض — نواة",
+      "noActiveVisit": "لا يوجد موعد اليوم",
+      "summaryTitle": "الملخص السريري",
+      "summaryHint": "ما يجب ألّا يفوتك قبل البدء.",
+      "allergies": "الحساسية",
+      "chronicDiseases": "الأمراض المزمنة",
+      "currentMeds": "الأدوية الحالية",
+      "notRecorded": "غير مسجّل",
+      "none": "لا يوجد",
+      "alertsTitle": "تنبيهات",
+      "noAlerts": "لا تنبيهات",
+      "alerts": {
+        "strikes": "{count} ضربات مسجّلة",
+        "balance": "مستحق {amount} {currency}"
+      },
+      "notesTitle": "ملاحظات الكشف",
+      "notesHintVisit": "زيارة اليوم — {service}",
+      "notesHintPatient": "لا زيارة اليوم — تُحفظ الملاحظات في سجل المريض",
+      "notesPlaceholder": "ماذا حدث في هذا الكشف…",
+      "saveNotes": "حفظ الملاحظات",
+      "notesSaved": "تم حفظ الملاحظات",
+      "notesSaveError": "تعذّر حفظ الملاحظات",
+      "rxTitle": "الروشتة",
+      "rxHint": "اكتب الروشتة هنا — بدون شاشة منفصلة.",
+      "collapseRx": "طي",
+      "mediaTitle": "الملفات الطبية",
+      "mediaHint": "قبل/بعد، أشعة، مستندات.",
+      "timelineTitle": "الخط الزمني",
+      "timelineHint": "زيارات ومدفوعات ووسائط وروشتات وملاحظات — الأحدث أولًا.",
+      "timelineEmpty": "لا شيء في الخط الزمني بعد.",
+      "timeline": {
+        "visit": "زيارة",
+        "payment": "دفعة",
+        "media": "وسائط",
+        "prescription": "روشتة",
+        "note": "ملاحظة",
+        "alertsAndAllergies": "تنبيهات وحساسيات حرجة",
+        "currentMedications": "الأدوية المزمنة الحالية",
+        "recentDiagnosis": "التشخيص الأخير"
+      },
+      "followUp": "متابعة",
+      "followUpTitle": "المتابعة",
+      "followUpHint": "احجز الزيارة التالية قبل أن يغادر.",
+      "bookFollowUp": "حجز متابعة",
+      "billingTitle": "الفوترة",
+      "billingHint": "اجمع المستحق بدون مغادرة الكشف.",
+      "billingClear": "لا مستحقات.",
+      "recentPayments": "آخر المدفوعات",
+      "viewAll": "عرض الكل",
+      "patientId": "رقم المريض",
+      "age": "العمر",
+      "ageYears": "{years} سنة",
+      "gender": "الجنس",
+      "male": "ذكر",
+      "female": "أنثى",
+      "callPatient": "اتصال",
+      "editPatient": "تعديل المريض",
+      "printFile": "طباعة الملف",
+      "lastVisitLabel": "آخر زيارة",
+      "bloodType": "فصيلة الدم",
+      "lastDiagnosis": "آخر تشخيص",
+      "familyMembers": "أفراد الأسرة",
+      "familyCount": "{count} فرد",
+      "insertTemplate": "قالب",
+      "chiefComplaint": "الشكوى الرئيسية",
+      "history": "التاريخ المرضي",
+      "examination": "الفحص",
+      "assessment": "التقييم",
+      "plan": "الخطة",
+      "templateInserted": "تم إدراج القالب",
+      "timelineShowAll": "عرض الكل",
+      "timelineShowLess": "عرض أقل",
+      "followUpItem": "تم جدولة متابعة",
+      "finishVisit": "إنهاء الزيارة",
+      "finishVisitTitle": "إنهاء هذه الزيارة",
+      "finishVisitHint": "اختر ما تريد فعله قبل الإتمام.",
+      "finishSaveVisit": "حفظ ملاحظات الكشف",
+      "finishPrintRx": "طباعة الروشتة",
+      "finishScheduleFollowUp": "حجز متابعة",
+      "finishOpenPayment": "تسجيل دفعة",
+      "finishVisitConfirm": "إتمام",
+      "finishVisitSuccess": "تم إنهاء الزيارة بنجاح",
+      "finishVisitCancel": "إلغاء",
+      "noActiveVisitFinish": "لا توجد زيارة نشطة لإنهائها",
+      "visit": {
+        "saving": "جاري الحفظ...",
+        "saved": "تم حفظ التعديلات",
+        "step1": "الشكوى الرئيسية",
+        "step2": "التاريخ المرضي",
+        "step3": "الفحص الإكلينيكي",
+        "step4": "التقييم والتشخيص",
+        "step5": "الفحوصات المطلوبة",
+        "step6": "خطة العلاج",
+        "step7": "الروشتة الطبية",
+        "step8": "المتابعة والجدولة",
+        "step9": "الفوترة والحسابات",
+        "step10": "إنهاء الزيارة",
+        "stepDescription1": "السبب الرئيسي لزيارة المريض اليوم",
+        "stepDescription2": "التاريخ الاجتماعي والطبّي والدوائي للمريض",
+        "stepDescription3": "فحص الأعراض البدنية والعلامات الحيوية",
+        "stepDescription4": "تسجيل التشخيص الأساسي والفرعي والملاحظات",
+        "stepDescription5": "طلب تحاليل أو أشعة أو فحوصات خارجية",
+        "stepDescription6": "الملاحظات العلاجية العامة وتوجيهات أسلوب الحياة",
+        "stepDescription7": "الأدوية الموصوفة والروشتة المدمجة",
+        "stepDescription8": "تحديد موعد الاستشارة القادمة",
+        "stepDescription9": "مراجعة المستحقات المالية وتحصيل الدفعات",
+        "stepDescription10": "إتمام الجلسة الحالية وطباعة المخرجات",
+        "ccPlaceholder": "اكتب الشكوى الرئيسية للمريض هنا...",
+        "ccSuggest": "اقتراحات شائعة",
+        "historyHPI": "تاريخ المرض الحالي (HPI)",
+        "historyPast": "التاريخ المرضي السابق",
+        "historyDrug": "التاريخ الدوائي",
+        "historyFamily": "التاريخ العائلي",
+        "historySocial": "التاريخ الاجتماعي للمريض",
+        "historyPlaceholder": "أدخل تفاصيل السجل الطبي للمريض...",
+        "examVitals": "العلامات الحيوية",
+        "examNotes": "ملاحظات الفحص الإكلينيكي",
+        "examNotesPlaceholder": "سجّل نتائج الفحص البدني هنا...",
+        "vitalHR": "نبضات القلب (نبضة/د)",
+        "vitalBP": "ضغط الدم (mmHg)",
+        "vitalTemp": "درجة الحرارة (مئوية)",
+        "vitalWeight": "الوزن (كجم)",
+        "assessPrimary": "التشخيص الأساسي",
+        "assessSecondary": "التشخيص الفرعي",
+        "assessNotes": "الملاحظات الإكلينيكية والتشخيصية",
+        "assessPlaceholder": "أدخل تفاصيل التقييم أو التشخيص...",
+        "investLab": "التحاليل المطلوبة",
+        "investImaging": "الأشعة المطلوبة",
+        "investOther": "فحوصات أخرى",
+        "investPlaceholder": "اكتب الفحوصات والتحاليل المطلوبة...",
+        "treatmentLifestyle": "توجيهات أسلوب الحياة",
+        "treatmentProcedures": "الإجراءات الطبية المنجزة",
+        "treatmentInstructions": "التعليمات العلاجية",
+        "treatmentPlaceholder": "اكتب خطة العلاج والتعليمات للمريض...",
+        "followUpNone": "لا يتطلب متابعة",
+        "followUpSelect": "جدولة زيارة متابعة قادمة",
+        "followUpNotes": "تعليمات أو ملاحظات المتابعة",
+        "none": "لا يوجد",
+        "collapseRx": "طي",
+        "insertTemplate": "تعديل"
+      }
     }
   },
   "settings": {
@@ -1329,7 +1688,19 @@
     "profileLinkHint": "الصورة والاسم والتخصص كما يراها المريض في صفحة الحجز",
     "rolesTitle": "الأدوار والصلاحيات",
     "rolesHint": "خصص ما يمكن لكل دور في الفريق الوصول إليه",
-    "sectionTeam": "الفريق"
+    "sectionTeam": "الفريق",
+    "hubClinic": "العيادة",
+    "hubBooking": "الحجز والمواعيد",
+    "hubServices": "الخدمات",
+    "hubServicesHint": "الكتالوج والأسعار والباقات",
+    "hubRooms": "الغرف",
+    "hubRoomsHint": "قريبًا — إعداد الغرف والكراسي",
+    "hubSystem": "النظام",
+    "hubNotifications": "الإشعارات",
+    "hubNotificationsHint": "صندوق الوارد والتنبيهات التشغيلية",
+    "hubIntegrations": "التكاملات",
+    "hubIntegrationsHint": "قريبًا — واتساب والمدفوعات والمعامل",
+    "soon": "قريبًا"
   },
   "accountSettings": {
     "metaTitle": "حسابي — نواة",
@@ -2189,12 +2560,12 @@
     }
   },
   "prescription": {
-    "title": "منشئ الوصفة الطبية الإلكترونية",
-    "forPatient": "للمريض: {name}",
+    "title": "الروشتة",
+    "forPatient": "المريض: {name}",
     "close": "إغلاق",
-    "searchPlaceholder": "ابحث عن دواء...",
-    "addCustom": "إضافة «{name}» كدواء مخصص",
-    "emptyList": "ابدأ بالبحث عن دواء أو اختر قالبًا سريعًا.",
+    "searchPlaceholder": "ابحث عن دواء فوراً…",
+    "addCustom": "أضف «{name}» كدواء مخصص",
+    "emptyList": "ابحث عن دواء أو افتح المفضلة / السابقة / القوالب.",
     "removeDrug": "حذف الدواء",
     "dosage": "الجرعة",
     "frequency": "التكرار",
@@ -2202,19 +2573,62 @@
     "notes": "ملاحظات",
     "notesPlaceholder": "مثال: بعد الأكل",
     "paperPatient": "المريض",
-    "paperAge": "العمر",
+    "paperAge": "السن",
     "paperAgeUnknown": "—",
     "paperDate": "التاريخ",
-    "paperEmpty": "ستظهر الأدوية هنا فور إضافتها",
+    "paperEmpty": "ستظهر الأدوية هنا أثناء الإضافة",
     "signature": "توقيع الطبيب",
-    "print": "طباعة الوصفة الطبية",
-    "whatsapp": "إرسال واتساب",
-    "save": "حفظ في السجل",
-    "saving": "جارٍ الحفظ…",
-    "emptyError": "أضف دواءً واحدًا على الأقل",
-    "saveError": "تعذّر حفظ الوصفة الطبية",
-    "saveSuccess": "تم حفظ الوصفة الطبية في سجل المريض",
-    "templateApplied": "تم تطبيق القالب"
+    "print": "طباعة",
+    "whatsapp": "واتساب",
+    "save": "حفظ الروشتة",
+    "saving": "جاري الحفظ…",
+    "emptyError": "أضف دواء واحداً على الأقل",
+    "saveError": "تعذر حفظ الروشتة",
+    "saveSuccess": "تم حفظ الروشتة",
+    "templateApplied": "تم التحميل في المحرر",
+    "tabs": {
+      "search": "بحث",
+      "favorites": "مفضلة",
+      "previous": "سابقة",
+      "templates": "قوالب",
+      "chronic": "مزمن"
+    },
+    "dosageBuilder": "منشئ الجرعة",
+    "steps": {
+      "amount": "الكمية",
+      "form": "الشكل",
+      "frequency": "التكرار",
+      "duration": "المدة",
+      "notes": "ملاحظات"
+    },
+    "next": "التالي",
+    "back": "رجوع",
+    "addLine": "إضافة للروشتة",
+    "linesTitle": "بنود الروشتة",
+    "markChronic": "دواء مزمن",
+    "chronicBadge": "مزمن",
+    "duplicate": "تكرار",
+    "moreLines": "+{count} أخرى",
+    "favoritesEmpty": "ضع نجمة على دواء لتثبيته هنا.",
+    "previousEmpty": "لا توجد روشتات محفوظة لهذا المريض بعد.",
+    "systemTemplates": "حزم سريعة",
+    "clinicTemplates": "قوالب العيادة",
+    "clinicTemplatesEmpty": "احفظ روشتة كقالب لإعادة استخدامها.",
+    "chronicEmpty": "لا توجد أدوية مزمنة على الملف بعد.",
+    "lineCount": "{count} أدوية",
+    "saveTemplate": "حفظ كقالب",
+    "templateNamePrompt": "اسم القالب",
+    "templateSaveSuccess": "تم حفظ القالب",
+    "templateSaveError": "تعذر حفظ القالب",
+    "toggleFavorite": "تبديل المفضلة",
+    "favoriteAdded": "أُضيف للمفضلة",
+    "favoriteRemoved": "أُزيل من المفضلة",
+    "favoriteError": "تعذر تحديث المفضلة",
+    "showPreview": "معاينة",
+    "hidePreview": "تعديل",
+    "qrHint": "تحقق",
+    "issuedBy": "تم الإصدار تقنياً بواسطة نواة ✦",
+    "chronicBadgeShort": "مزمن"
   },
   "accessDenied": {
     "title": "ليس لديك صلاحية",

@@ -19,6 +19,8 @@
 
 **تحديث لاحق (إنفاذ الصلاحيات):** راجع [authorization-audit.md](./authorization-audit.md) لمصفوفة الصفحات/الإجراءات، الحراسة في الواجهة، وواجهة Roles & Permissions، والمخاطر المتبقية.
 
+**الدليل الشامل للمنصة (منتج + تقنية + prompts تسويق):** [nawah-complete-guide.md](./nawah-complete-guide.md)
+
 ---
 
 ## المراحل المنفَّذة

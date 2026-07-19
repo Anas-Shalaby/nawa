@@ -59,7 +59,9 @@ export function AttendanceDonutChart({ analytics }: AttendanceDonutChartProps) {
             </ResponsiveContainer>
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
               <p className="text-3xl font-semibold tabular-nums text-primary">
-                {t("kpiPercent", { value: analytics.attendanceRate })}
+                {t("kpiPercent", {
+                  value: analytics.attendanceRate ?? "—",
+                })}
               </p>
               <p className="mt-1 text-xs text-muted">{t("attendanceCenterLabel")}</p>
             </div>

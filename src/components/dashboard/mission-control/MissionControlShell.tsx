@@ -13,15 +13,12 @@ import { LayoutGroup } from "framer-motion";
 import type { DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
 import { updateAppointmentStatus } from "@/actions/updateAppointmentStatus";
-import { useNotifications } from "@/components/providers/NotificationsContext";
 import { useAppointmentsRealtime } from "@/lib/dashboard/useAppointmentsRealtime";
 import { useOptimisticAppointments } from "@/lib/dashboard/useOptimisticAppointments";
 import {
   buildAttentionItems,
-  buildInsights,
   computeMissionControlMetrics,
   statusForZone,
-  zoneForStatus,
 } from "@/lib/dashboard/missionControlSelectors";
 import type {
   Appointment,
@@ -34,15 +31,24 @@ import { MissionControlNowProvider } from "./MissionControlNowProvider";
 import { MissionControlSummaryBar } from "./MissionControlSummaryBar";
 import { QuickOpsPanel } from "./QuickOpsPanel";
 import { LiveFloorBoard } from "./LiveFloorBoard";
-import { ClinicRadarPanel } from "./ClinicRadarPanel";
+import { AttentionCenter } from "./AttentionCenter";
 
-type MobileSection = "ops" | "floor" | "radar";
+type MobileSection = "ops" | "floor" | "alerts";
 
 interface MissionControlShellProps extends MissionControlSnapshot {}
 
+function suggestNext(appointments: Appointment[]): Appointment | null {
+  return (
+    appointments.find((item) => item.status === "checked_in") ??
+    appointments.find(
+      (item) => item.status === "pending" || item.status === "confirmed",
+    ) ??
+    null
+  );
+}
+
 export function MissionControlShell({
   clinicName,
-  doctorName,
   date,
   tenantId,
   appointments: initialAppointments,
@@ -52,16 +58,11 @@ export function MissionControlShell({
   canCreateWalkIn,
   services,
   pendingTomorrowCount,
-  todayPayments: initialPayments,
   yesterdayUnpaid,
-  rooms: initialRooms,
   doctors: initialDoctors,
-  attentionItems: initialAttention,
-  insights: initialInsights,
 }: MissionControlShellProps) {
   const t = useTranslations("dashboard.commandCenter");
   const locale = useLocale() as Locale;
-  const { unreadCount } = useNotifications();
   const [sourceAppointments, setSourceAppointments] = useState(initialAppointments);
   const { appointments, applyOptimistic, isPending } = useOptimisticAppointments(
     sourceAppointments,
@@ -124,58 +125,29 @@ export function MissionControlShell({
     live.doctorsAvailable = initialDoctors.filter(
       (doctor) => doctor.availability === "available",
     ).length;
-    live.capacityPct = live.totalToday === 0
-      ? 0
-      : Math.min(
-          100,
-          Math.round(
-            ((live.waitingNow + live.inSession + live.completed) / live.totalToday) * 100,
-          ),
-        );
+    live.capacityPct =
+      live.totalToday === 0
+        ? 0
+        : Math.min(
+            100,
+            Math.round(
+              ((live.waitingNow + live.inSession + live.completed) / live.totalToday) *
+                100,
+            ),
+          );
     return live;
   }, [appointments, canViewRevenue, initialMetrics.todayRevenueEgp, initialDoctors]);
 
-  const serviceFrequency = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const appointment of appointments) {
-      map.set(appointment.serviceName, (map.get(appointment.serviceName) ?? 0) + 1);
-    }
-    return map;
-  }, [appointments]);
-
   const attentionItems = useMemo(
     () =>
-      buildAttentionItems(
-        appointments,
-        pendingTomorrowCount,
-        canViewRevenue,
+      buildAttentionItems(appointments, pendingTomorrowCount, canViewRevenue).slice(
+        0,
+        3,
       ),
     [appointments, pendingTomorrowCount, canViewRevenue],
   );
 
-  const insights = useMemo(
-    () => buildInsights(appointments, metrics, serviceFrequency),
-    [appointments, metrics, serviceFrequency],
-  );
-
-  const rooms = useMemo(() => {
-    const inSession = appointments.filter((item) => item.status === "in_session");
-    if (initialRooms.length > 0) {
-      return initialRooms.map((room) => {
-        const occupant =
-          inSession.find((item) => item.roomId === room.id) ??
-          (room.id === "room-1" ? inSession[0] : room.id === "room-2" ? inSession[1] : null);
-        return {
-          ...room,
-          busy: Boolean(occupant),
-          detail: occupant?.serviceName ?? "",
-          currentPatientName: occupant?.patientName ?? null,
-          currentAppointmentId: occupant?.id ?? null,
-        };
-      });
-    }
-    return initialRooms;
-  }, [appointments, initialRooms]);
+  const nextPatient = useMemo(() => suggestNext(appointments), [appointments]);
 
   const persistStatus = useCallback(
     (appointment: Appointment, status: AppointmentStatus) => {
@@ -225,25 +197,26 @@ export function MissionControlShell({
     [appointments, persistStatus],
   );
 
-  const onWalkInAdded = useCallback((appointment: Appointment) => {
-    setSourceAppointments((current) =>
-      [...current, appointment].sort(
-        (a, b) =>
-          new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime(),
-      ),
-    );
-    applyOptimistic({ type: "add", appointment });
-  }, [applyOptimistic]);
+  const onWalkInAdded = useCallback(
+    (appointment: Appointment) => {
+      setSourceAppointments((current) =>
+        [...current, appointment].sort(
+          (a, b) =>
+            new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime(),
+        ),
+      );
+      applyOptimistic({ type: "add", appointment });
+    },
+    [applyOptimistic],
+  );
 
-  const numberLocale = locale === "ar" ? "ar-EG" : "en-EG";
   const dateLabel = formatCairoDateShort(date, locale);
   const unpaidCount = canViewRevenue ? yesterdayUnpaid.length : 0;
 
   const sectionClass = (section: MobileSection) =>
-    [
-      mobileSection === section ? "flex" : "hidden",
-      "min-h-0 flex-col lg:flex",
-    ].join(" ");
+    [mobileSection === section ? "flex" : "hidden", "min-h-0 flex-col lg:flex"].join(
+      " ",
+    );
 
   return (
     <MissionControlNowProvider>
@@ -256,16 +229,26 @@ export function MissionControlShell({
             {liveAnnouncement}
           </div>
 
+          <header className="mb-3 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs text-muted">{clinicName}</p>
+              <h1 className="text-xl font-semibold tracking-tight text-primary">
+                {t("floorPageTitle")}
+              </h1>
+              <p className="text-xs text-muted">{dateLabel}</p>
+              <p className="mt-1 text-sm text-muted">{t("floorPageSubtitle")}</p>
+            </div>
+          </header>
+
           <MissionControlSummaryBar
             metrics={metrics}
-            canViewRevenue={canViewRevenue}
+            canViewRevenue={false}
+            compact
             onFocusWaiting={() => setMobileSection("floor")}
-            onFocusRemaining={() => setMobileSection("floor")}
-            onFocusDoctors={() => setMobileSection("radar")}
           />
 
           <div className="mb-2 flex gap-1 lg:hidden">
-            {(["ops", "floor", "radar"] as MobileSection[]).map((section) => (
+            {(["ops", "floor", "alerts"] as MobileSection[]).map((section) => (
               <button
                 key={section}
                 type="button"
@@ -296,13 +279,14 @@ export function MissionControlShell({
                 canManageQueue={canManageQueue}
                 pendingTomorrowCount={pendingTomorrowCount}
                 yesterdayUnpaid={yesterdayUnpaid}
-                attentionItems={attentionItems}
-                unreadCount={unreadCount}
+                attentionItems={[]}
+                unreadCount={0}
                 onWalkInAdded={onWalkInAdded}
+                compact
               />
             </div>
 
-            <div className={`${sectionClass("floor")} lg:col-span-6`}>
+            <div className={`${sectionClass("floor")} lg:col-span-6 xl:col-span-7`}>
               <LiveFloorBoard
                 appointments={appointments}
                 totalToday={metrics.totalToday}
@@ -318,18 +302,58 @@ export function MissionControlShell({
               />
             </div>
 
-            <div className={`${sectionClass("radar")} lg:col-span-3`}>
-              <ClinicRadarPanel
-                rooms={rooms}
-                doctors={initialDoctors}
-                metrics={metrics}
-                canViewRevenue={canViewRevenue}
-                todayPayments={initialPayments}
-                yesterdayUnpaid={yesterdayUnpaid}
-                attentionItems={[...attentionItems, ...initialAttention].slice(0, 12)}
-                insights={insights.length > 0 ? insights : initialInsights}
-                numberLocale={numberLocale}
-              />
+            <div className={`${sectionClass("alerts")} lg:col-span-3 xl:col-span-2`}>
+              <aside className="flex min-h-0 flex-col gap-3 rounded-2xl border border-subtle bg-surface p-4 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto">
+                <section>
+                  <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+                    {t("next.title")}
+                  </h2>
+                  {nextPatient ? (
+                    <div className="rounded-xl border border-subtle bg-elevated/40 p-3">
+                      <p className="truncate text-sm font-semibold text-primary">
+                        {nextPatient.patientName}
+                      </p>
+                      <p className="truncate text-xs text-muted">
+                        {nextPatient.serviceName}
+                      </p>
+                      {canManageQueue ? (
+                        <button
+                          type="button"
+                          disabled={Boolean(pendingId)}
+                          onClick={() =>
+                            persistStatus(
+                              nextPatient,
+                              nextPatient.status === "checked_in"
+                                ? "in_session"
+                                : "checked_in",
+                            )
+                          }
+                          className="mt-3 inline-flex h-9 w-full items-center justify-center rounded-lg bg-accent text-xs font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-50"
+                        >
+                          {nextPatient.status === "checked_in"
+                            ? t("next.start")
+                            : t("next.checkIn")}
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl border border-dashed border-subtle px-3 py-6 text-center text-xs text-muted">
+                      {t("next.empty")}
+                    </p>
+                  )}
+                </section>
+
+                <section>
+                  <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+                    {t("attention.title")}
+                  </h2>
+                  {attentionItems.length > 0 ? (
+                    <AttentionCenter items={attentionItems} compact />
+                  ) : (
+                    <p className="text-xs text-muted">{t("ops.noUrgent")}</p>
+                  )}
+                </section>
+              </aside>
             </div>
           </div>
         </div>

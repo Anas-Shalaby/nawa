@@ -141,8 +141,42 @@
     },
     "analyticsPage": {
       "metaTitle": "Analytics — Nawah",
-      "title": "Clinic analytics",
-      "subtitle": "Clear charts for clinic performance — last 30 days."
+      "title": "Insights",
+      "subtitle": "Is the clinic getting healthier over time?",
+      "rangeLabel": "Date range",
+      "range": {
+        "7": "7 days",
+        "30": "30 days",
+        "90": "90 days"
+      },
+      "kpis": "Key metrics",
+      "kpi": {
+        "newPatients": "New patients",
+        "returningHint": "{count} returning",
+        "returningRate": "Returning patients",
+        "noShowRate": "No-show rate",
+        "cancelRate": "Cancellation rate",
+        "revenueGrowth": "Revenue growth",
+        "revenueHint": "{amount} {currency} in period",
+        "attendance": "Attendance",
+        "completedHint": "{count} completed",
+        "avgWait": "Avg wait",
+        "minutes": "{mins}m",
+        "savedHours": "Hours recovered",
+        "hoursValue": "{hours}h",
+        "warningHint": "{count} patients on warning"
+      },
+      "reliabilityTitle": "Reliability",
+      "reliabilityHint": "Completed visits vs no-shows over time",
+      "busyHoursTitle": "Busy hours",
+      "busyHoursHint": "When patients book most",
+      "popularServicesTitle": "Popular services",
+      "popularServicesHint": "Most completed services in this period",
+      "serviceMeta": "{count} visits · {amount} {currency}",
+      "series": {
+        "completed": "Completed",
+        "noShow": "No-show"
+      }
     },
     "analytics": {
       "kpiAttendance": "Attendance rate",
@@ -168,7 +202,8 @@
       "chartSavedHoursTitle": "Saved hours",
       "chartSavedHoursHint": "Hours your clinic recovered by auto-filling empty slots",
       "chartWarningTitle": "Warning list",
-      "chartWarningHint": "Patients with one no-show who need follow-up before rebooking"
+      "chartWarningHint": "Patients with one no-show who need follow-up before rebooking",
+      "currency": "EGP"
     },
     "queue": {
       "title": "Today's Queue",
@@ -328,7 +363,7 @@
     },
     "settings": "Settings",
     "layout": {
-      "brandTagline": "Clinic management",
+      "brandTagline": "Clinic OS",
       "sectionOperations": "Operations",
       "sectionClinic": "Clinic management",
       "sectionFinance": "Finance & growth",
@@ -341,7 +376,7 @@
       "navInventory": "Inventory",
       "navStaff": "Team operations",
       "navFinancials": "Billing & ROI",
-      "navAnalytics": "Analytics",
+      "navAnalytics": "Insights",
       "navMarketing": "Marketing",
       "navAiAssistant": "AI assistant",
       "navSettings": "Settings",
@@ -351,7 +386,13 @@
       "navAccount": "My account",
       "logout": "Log out",
       "themeLight": "Light mode",
-      "themeDark": "Dark mode"
+      "themeDark": "Dark mode",
+      "navToday": "Today",
+      "navFloor": "Floor",
+      "navInsights": "Insights",
+      "navSchedule": "Schedule",
+      "navBusiness": "Business",
+      "navTeam": "Team"
     },
     "avatarMenu": {
       "open": "Account menu",
@@ -455,7 +496,8 @@
       "mobile": {
         "ops": "Quick Ops",
         "floor": "Live Floor",
-        "radar": "Radar"
+        "radar": "Radar",
+        "alerts": "Alerts"
       },
       "summary": {
         "ariaLabel": "Today's operational summary",
@@ -495,7 +537,8 @@
         "callNextSuccess": "Patient called to doctor room",
         "badgePayments": "Pending payments",
         "badgeTomorrow": "Tomorrow confirmations",
-        "badgeNotifications": "Unread notifications"
+        "badgeNotifications": "Unread notifications",
+        "compactTitle": "Quick actions"
       },
       "floor": {
         "title": "Live floor",
@@ -515,7 +558,9 @@
           "cashDrawer": "Did you check the cash drawer?",
           "callTomorrow": "Did you call tomorrow's patients? ({count})",
           "unpaid": "Did you review yesterday's unpaid balances? ({count})"
-        }
+        },
+        "emptyTitle": "Floor is clear",
+        "emptyBody": "When patients arrive, they will appear here by stage."
       },
       "radar": {
         "roomsTitle": "Rooms status",
@@ -589,6 +634,11 @@
           "unpaid": "Unpaid",
           "waived": "Waived",
           "unknown": ""
+        },
+        "primary": {
+          "checkIn": "Check in",
+          "start": "Start",
+          "complete": "Complete"
         }
       },
       "status": {
@@ -599,7 +649,135 @@
         "completed": "Completed",
         "no_show": "No-show",
         "canceled": "Canceled"
+      },
+      "metaTitle": "Floor — Nawah",
+      "floorPageTitle": "Floor",
+      "floorPageSubtitle": "Who needs action next on the live floor?",
+      "next": {
+        "title": "Next",
+        "checkIn": "Check in",
+        "start": "Start session",
+        "empty": "Queue is clear"
       }
+    },
+    "todayHome": {
+      "metaTitle": "Today — Nawah",
+      "subtitle": "How is the clinic today — and what’s next?",
+      "quickActions": "Quick actions",
+      "kpis": "Today’s numbers",
+      "viewAll": "View all",
+      "greeting": {
+        "morning": "Good morning, {name}",
+        "afternoon": "Good afternoon, {name}",
+        "evening": "Good evening, {name}"
+      },
+      "actions": {
+        "openFloor": "Open floor",
+        "book": "New booking",
+        "patients": "Patients",
+        "agenda": "Agenda"
+      },
+      "kpi": {
+        "appointments": "Appointments",
+        "waiting": "Waiting",
+        "completed": "Completed",
+        "revenue": "Revenue today",
+        "outstanding": "Outstanding",
+        "inventory": "Inventory alerts"
+      },
+      "queue": {
+        "title": "Current queue",
+        "empty": "No one waiting right now"
+      },
+      "upcoming": {
+        "title": "Upcoming appointments",
+        "empty": "No upcoming appointments"
+      },
+      "team": {
+        "title": "Team availability",
+        "empty": "No team status yet",
+        "status": {
+          "available": "Available",
+          "busy": "Busy",
+          "break": "On break",
+          "offline": "Offline"
+        }
+      },
+      "recentPatients": {
+        "title": "Recent patients",
+        "empty": "No patients yet"
+      }
+    },
+    "clinicOs": {
+      "metaTitle": "Today — Nawah",
+      "subtitle": "What’s the next thing you should do for care?",
+      "greeting": {
+        "morning": "Good morning, {name}",
+        "afternoon": "Good afternoon, {name}",
+        "evening": "Good evening, {name}"
+      },
+      "currentTitle": "Current patient",
+      "nextTitle": "Next patient",
+      "currentEmpty": "No one in session",
+      "nextEmpty": "Queue is clear",
+      "complete": "Complete visit",
+      "start": "Start session",
+      "checkIn": "Check in",
+      "openChart": "Open chart",
+      "writeRx": "Prescription",
+      "walkIn": "Walk-in",
+      "schedule": "Schedule",
+      "inSessionMins": "In session · {mins}m",
+      "waitingMins": "Waiting · {mins}m",
+      "statusLine": "{waiting} waiting · avg wait {avgWait}m",
+      "statusCalm": "All clear",
+      "alertPrefix": "Attention:",
+      "finishVisit": "Finish visit",
+      "startVisit": "Start visit",
+      "personaSubtitle": {
+        "doctor": "Treat the patient in front of you.",
+        "receptionist": "Keep the flow moving.",
+        "owner": "See today’s pulse and decide.",
+        "accountant": "Collect what’s owed.",
+        "default": "What’s the next thing you should do?"
+      },
+      "snapshotTitle": "Today’s snapshot",
+      "snapshotRevenue": "Revenue today",
+      "snapshotOutstanding": "Unpaid visits",
+      "openBusiness": "Open Business",
+      "queueTitle": "Today’s queue",
+      "queueWaiting": "Waiting",
+      "queueInSession": "In session",
+      "queueCompleted": "Completed",
+      "alertsTitle": "Alerts",
+      "alertUnpaid": "{count} outstanding balances",
+      "outstandingTitle": "Outstanding balances",
+      "quickActions": "Quick actions",
+      "searchPatient": "Search patient",
+      "newBooking": "New booking"
+    },
+    "business": {
+      "metaTitle": "Business — Nawah",
+      "title": "Business",
+      "subtitle": "How is the clinic performing?",
+      "overview": "Overview",
+      "revenueToday": "Revenue today",
+      "revenueWeek": "Revenue this week",
+      "outstanding": "Outstanding",
+      "completedVisits": "Completed visits",
+      "thisMonth": "This month",
+      "noShows": "No-show rate",
+      "inRange": "Last {days} days",
+      "patientGrowth": "New patients",
+      "newPatientsHint": "{returning} returning",
+      "inventoryAlerts": "Inventory alerts",
+      "lowStockHint": "Items below threshold",
+      "stockOk": "Stock healthy",
+      "outstandingList": "Who still owes",
+      "viewPatients": "Patients",
+      "recentPayments": "Recent payments",
+      "currency": "EGP",
+      "emptyAccess": "You don’t have access to business metrics."
     }
   },
   "services": {
@@ -762,9 +940,9 @@
     }
   },
   "financials": {
-    "metaTitle": "Billing & ROI — Nawah",
-    "title": "Billing & ROI Tracker",
-    "subtitle": "Track revenue and the financial value of automated slot recovery.",
+    "metaTitle": "Financials — Nawah",
+    "title": "Financials",
+    "subtitle": "How much did we make — and who still owes us?",
     "dailyRevenue": "Today's Revenue",
     "monthlyRevenue": "Monthly Revenue",
     "nawaSavedRevenue": "Nawah Saved Revenue",
@@ -786,7 +964,36 @@
     "receiptService": "Service / Item",
     "receiptAmount": "Amount",
     "receiptFooter": "Generated by Nawah",
-    "receiptDownloaded": "Receipt PDF downloaded"
+    "receiptDownloaded": "Receipt PDF downloaded",
+    "periodLabel": "Period",
+    "period": {
+      "today": "Today",
+      "week": "This week",
+      "month": "This month"
+    },
+    "kpis": "Key numbers",
+    "kpi": {
+      "earned": "Earned",
+      "outstanding": "Outstanding",
+      "collections": "Collections",
+      "aov": "Avg visit value"
+    },
+    "vsLastMonth": "vs last month",
+    "debtorsCount": "{count} patients with balance",
+    "visitsMonth": "{count} completed visits this month",
+    "noShowLoss": "No-show losses ({scope}): {amount} {currency}",
+    "trendTitle": "Revenue trend · 30 days",
+    "trendTooltip": "Revenue",
+    "topServices": "Top services",
+    "serviceVisits": "{count} visits",
+    "outstandingTitle": "Outstanding balances",
+    "outstandingEmpty": "No outstanding balances.",
+    "whatsapp": "WhatsApp",
+    "recentPayments": "Recent payments",
+    "paymentsEmpty": "No payments recorded yet.",
+    "topPatients": "Top patients by revenue",
+    "recentVisits": "Recent completed visits",
+    "pdfFailed": "Could not generate PDF"
   },
   "invoice": {
     "taxInvoice": "Tax Invoice",
@@ -1098,6 +1305,13 @@
     },
     "errors": {
       "statusUpdate": "Could not update status"
+    },
+    "sections": {
+      "members": "Members",
+      "membersHint": "Who is on duty and available now.",
+      "rolesPermissions": "Roles & permissions",
+      "activity": "Activity",
+      "activityHint": "Live team events."
     }
   },
   "comingSoon": {
@@ -1205,7 +1419,7 @@
     "recallInvite": "Routine check-up invite"
   },
   "ehr": {
-    "metaTitle": "Visual EHR — Nawah",
+    "metaTitle": "Patient Workspace — Nawah",
     "tabGeneral": "General Info",
     "tabVisitRecord": "Patient record",
     "tabVisualEhr": "Visual EHR",
@@ -1296,6 +1510,151 @@
       "after": "After",
       "x-ray": "X-Ray",
       "general": "General"
+    },
+    "prescriptionItem": "Prescription · {count} medicines",
+    "workspace": {
+      "label": "Patient Workspace",
+      "metaTitle": "Patient Workspace — Nawah",
+      "noActiveVisit": "No visit on today’s schedule",
+      "summaryTitle": "Clinical summary",
+      "summaryHint": "What you must not miss before you start.",
+      "allergies": "Allergies",
+      "chronicDiseases": "Chronic diseases",
+      "currentMeds": "Current medications",
+      "notRecorded": "Not recorded",
+      "none": "None",
+      "alertsTitle": "Alerts",
+      "noAlerts": "No alerts",
+      "alerts": {
+        "strikes": "{count} strike(s) on record",
+        "balance": "Outstanding {amount} {currency}"
+      },
+      "notesTitle": "Consultation notes",
+      "notesHintVisit": "Today’s visit — {service}",
+      "notesHintPatient": "No visit today — notes save to the patient record",
+      "notesPlaceholder": "What happened in this consultation…",
+      "saveNotes": "Save notes",
+      "notesSaved": "Notes saved",
+      "notesSaveError": "Could not save notes",
+      "rxTitle": "Prescription",
+      "rxHint": "Build the Rx here — no separate screen.",
+      "collapseRx": "Collapse",
+      "mediaTitle": "Medical media",
+      "mediaHint": "Before / after, X-rays, documents.",
+      "timelineTitle": "Timeline",
+      "timelineHint": "Visits, payments, media, prescriptions, and notes — newest first.",
+      "timelineEmpty": "Nothing on the timeline yet.",
+      "timeline": {
+        "visit": "Visit",
+        "payment": "Payment",
+        "media": "Media",
+        "prescription": "Prescription",
+        "note": "Note",
+        "alertsAndAllergies": "Critical Alerts & Allergies",
+        "currentMedications": "Current Chronic Medications",
+        "recentDiagnosis": "Recent Diagnosis"
+      },
+      "followUp": "Follow-up",
+      "followUpTitle": "Follow-up",
+      "followUpHint": "Book the next visit before they leave.",
+      "bookFollowUp": "Book follow-up",
+      "billingTitle": "Billing",
+      "billingHint": "Collect without leaving the consult.",
+      "billingClear": "Nothing outstanding.",
+      "recentPayments": "Recent payments",
+      "viewAll": "View all",
+      "patientId": "Patient ID",
+      "age": "Age",
+      "ageYears": "{years} years",
+      "gender": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "callPatient": "Call",
+      "editPatient": "Edit patient",
+      "printFile": "Print file",
+      "lastVisitLabel": "Last visit",
+      "bloodType": "Blood type",
+      "lastDiagnosis": "Last diagnosis",
+      "familyMembers": "Family members",
+      "familyCount": "{count} member(s)",
+      "insertTemplate": "Template",
+      "chiefComplaint": "Chief Complaint",
+      "history": "History",
+      "examination": "Examination",
+      "assessment": "Assessment",
+      "plan": "Plan",
+      "templateInserted": "Template inserted",
+      "timelineShowAll": "Show all",
+      "timelineShowLess": "Show less",
+      "followUpItem": "Follow-up scheduled",
+      "finishVisit": "Finish Visit",
+      "finishVisitTitle": "Finish this visit",
+      "finishVisitHint": "Choose what to do before completing.",
+      "finishSaveVisit": "Save consultation notes",
+      "finishPrintRx": "Print prescription",
+      "finishScheduleFollowUp": "Schedule follow-up",
+      "finishOpenPayment": "Record payment",
+      "finishVisitConfirm": "Complete",
+      "finishVisitSuccess": "Visit completed successfully",
+      "finishVisitCancel": "Cancel",
+      "noActiveVisitFinish": "No active visit to finish",
+      "visit": {
+        "saving": "Saving...",
+        "saved": "Saved",
+        "step1": "Chief Complaint",
+        "step2": "History",
+        "step3": "Clinical Examination",
+        "step4": "Assessment & Diagnosis",
+        "step5": "Investigations",
+        "step6": "Treatment Plan",
+        "step7": "Prescription",
+        "step8": "Follow-up",
+        "step9": "Billing",
+        "step10": "Finish Visit",
+        "stepDescription1": "Primary reason for today's visit",
+        "stepDescription2": "Social, medical, and drug background",
+        "stepDescription3": "Free text examination and vitals",
+        "stepDescription4": "Primary/secondary diagnosis and notes",
+        "stepDescription5": "Optional lab and imaging requests",
+        "stepDescription6": "General plan and lifestyle advice",
+        "stepDescription7": "Active medications and recipes",
+        "stepDescription8": "Schedule next appointment",
+        "stepDescription9": "Outstanding balance and payment collection",
+        "stepDescription10": "Complete visit and print recipes",
+        "ccPlaceholder": "Describe the chief complaint...",
+        "ccSuggest": "Suggestions",
+        "historyHPI": "History of Present Illness (HPI)",
+        "historyPast": "Past Medical History",
+        "historyDrug": "Drug History",
+        "historyFamily": "Family History",
+        "historySocial": "Social History",
+        "historyPlaceholder": "Enter clinical history background...",
+        "examVitals": "Vitals",
+        "examNotes": "Clinical Examination Notes",
+        "examNotesPlaceholder": "Record physical exam findings...",
+        "vitalHR": "Heart Rate (bpm)",
+        "vitalBP": "Blood Pressure (mmHg)",
+        "vitalTemp": "Temperature (°C)",
+        "vitalWeight": "Weight (kg)",
+        "assessPrimary": "Primary Diagnosis",
+        "assessSecondary": "Secondary Diagnosis",
+        "assessNotes": "Clinical Notes",
+        "assessPlaceholder": "Enter diagnosis details...",
+        "investLab": "Lab Requests",
+        "investImaging": "Imaging Requests",
+        "investOther": "Other Investigations",
+        "investPlaceholder": "Describe requested tests...",
+        "treatmentLifestyle": "Lifestyle Advice",
+        "treatmentProcedures": "Procedures",
+        "treatmentInstructions": "Instructions",
+        "treatmentPlaceholder": "Enter treatment plan and advice...",
+        "followUpNone": "No follow-up required",
+        "followUpSelect": "Schedule next follow-up",
+        "followUpNotes": "Follow-up instructions/notes",
+        "none": "None",
+        "collapseRx": "Collapse",
+        "insertTemplate": "Edit"
+      }
     }
   },
   "settings": {
@@ -1328,7 +1687,19 @@
     "profileLinkHint": "Photo, name, and specialty as patients see them on booking",
     "rolesTitle": "Roles & permissions",
     "rolesHint": "Customize what each staff role can access",
-    "sectionTeam": "Team"
+    "sectionTeam": "Team",
+    "hubClinic": "Clinic",
+    "hubBooking": "Booking & hours",
+    "hubServices": "Services",
+    "hubServicesHint": "Catalog, pricing, and packages",
+    "hubRooms": "Rooms",
+    "hubRoomsHint": "Coming soon — room & chair setup",
+    "hubSystem": "System",
+    "hubNotifications": "Notifications",
+    "hubNotificationsHint": "Inbox and operational alerts",
+    "hubIntegrations": "Integrations",
+    "hubIntegrationsHint": "Coming soon — WhatsApp, payments, labs",
+    "soon": "Soon"
   },
   "accountSettings": {
     "metaTitle": "My account — Nawah",
@@ -2188,12 +2559,12 @@
     }
   },
   "prescription": {
-    "title": "e-Prescription builder",
+    "title": "Prescription",
     "forPatient": "Patient: {name}",
     "close": "Close",
-    "searchPlaceholder": "Search for medicine...",
+    "searchPlaceholder": "Search medicines instantly…",
     "addCustom": "Add “{name}” as custom medicine",
-    "emptyList": "Search for a medicine or pick a quick template.",
+    "emptyList": "Search a medicine or open Favorites / Previous / Templates.",
     "removeDrug": "Remove medicine",
     "dosage": "Dosage",
     "frequency": "Frequency",
@@ -2206,14 +2577,57 @@
     "paperDate": "Date",
     "paperEmpty": "Medicines will appear here as you add them",
     "signature": "Doctor signature",
-    "print": "Print prescription",
-    "whatsapp": "Send via WhatsApp",
-    "save": "Save to record",
+    "print": "Print",
+    "whatsapp": "WhatsApp",
+    "save": "Save prescription",
     "saving": "Saving…",
     "emptyError": "Add at least one medicine",
     "saveError": "Could not save prescription",
-    "saveSuccess": "Prescription saved to patient record",
-    "templateApplied": "Template applied"
+    "saveSuccess": "Prescription saved",
+    "templateApplied": "Loaded into builder",
+    "tabs": {
+      "search": "Search",
+      "favorites": "Favorites",
+      "previous": "Previous",
+      "templates": "Templates",
+      "chronic": "Chronic"
+    },
+    "dosageBuilder": "Dosage builder",
+    "steps": {
+      "amount": "Dose",
+      "form": "Form",
+      "frequency": "Frequency",
+      "duration": "Duration",
+      "notes": "Notes"
+    },
+    "next": "Next",
+    "back": "Back",
+    "addLine": "Add to prescription",
+    "linesTitle": "Prescription lines",
+    "markChronic": "Chronic medication",
+    "chronicBadge": "Chronic",
+    "duplicate": "Duplicate",
+    "moreLines": "+{count} more",
+    "favoritesEmpty": "Star a medicine to pin it here.",
+    "previousEmpty": "No saved prescriptions for this patient yet.",
+    "systemTemplates": "Quick packs",
+    "clinicTemplates": "Clinic templates",
+    "clinicTemplatesEmpty": "Save a prescription as a template to reuse it.",
+    "chronicEmpty": "No chronic medications on this file yet.",
+    "lineCount": "{count} medicines",
+    "saveTemplate": "Save as template",
+    "templateNamePrompt": "Template name",
+    "templateSaveSuccess": "Template saved",
+    "templateSaveError": "Could not save template",
+    "toggleFavorite": "Toggle favorite",
+    "favoriteAdded": "Added to favorites",
+    "favoriteRemoved": "Removed from favorites",
+    "favoriteError": "Could not update favorite",
+    "showPreview": "Preview",
+    "hidePreview": "Edit",
+    "qrHint": "Verify",
+    "issuedBy": "Issued with Nawah",
+    "chronicBadgeShort": "Chronic"
   },
   "accessDenied": {
     "title": "Access denied",

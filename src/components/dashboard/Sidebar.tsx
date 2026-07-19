@@ -14,7 +14,7 @@ import {
   CalendarDays,
   ChevronLeft,
   ChevronRight,
-  KanbanSquare,
+  Home,
   LogOut,
   Megaphone,
   Package,
@@ -44,7 +44,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     sectionKey: "sectionOperations",
     items: [
-      { href: "/dashboard", labelKey: "navQueue", icon: KanbanSquare },
+      { href: "/dashboard", labelKey: "navToday", icon: Home },
       {
         href: "/dashboard/upcoming",
         labelKey: "navUpcoming",
@@ -75,7 +75,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       {
         href: "/dashboard/analytics",
-        labelKey: "navAnalytics",
+        labelKey: "navInsights",
         icon: BarChart3,
       },
       {

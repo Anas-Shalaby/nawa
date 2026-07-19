@@ -218,7 +218,7 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
   ] = await Promise.all([
     supabase
       .from("tenants")
-      .select("id, name, doctor_name")
+      .select("id, name, doctor_name, specialty")
       .eq("id", tenantId)
       .single(),
     fetchTodayAppointmentRows(supabase, tenantId, startIso, endExclusiveIso),
@@ -262,9 +262,9 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
 
   let tenant = tenantResult.data;
   if (tenantResult.error || !tenant) {
-    const fallback = await supabase
+     const fallback = await supabase
       .from("tenants")
-      .select("id, name")
+      .select("id, name, specialty")
       .eq("id", tenantId)
       .single();
     if (fallback.error || !fallback.data) {
@@ -272,7 +272,7 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
         `Failed to load clinic: ${tenantResult.error?.message ?? fallback.error?.message}`,
       );
     }
-    tenant = { ...fallback.data, doctor_name: fallback.data.name };
+    tenant = { ...fallback.data, doctor_name: fallback.data.name, specialty: fallback.data.specialty };
   }
 
   if (servicesError) {
@@ -422,6 +422,7 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
     attentionItems,
     insights,
     unreadNotificationsHint: 0,
+    specialty: tenant.specialty ?? undefined,
   };
 }
 

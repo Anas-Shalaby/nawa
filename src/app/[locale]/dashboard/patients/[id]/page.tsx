@@ -11,6 +11,12 @@ import {
   fetchPatientTenantId,
 } from "@/lib/queries/patients";
 import { fetchPatientVisitHistory } from "@/lib/queries/patientVisits";
+import {
+  fetchClinicPrescriptionTemplates,
+  fetchMedicineFavorites,
+  fetchPatientChronicMedications,
+  fetchPatientPrescriptions,
+} from "@/lib/queries/prescriptions";
 import { fetchDashboardServices } from "@/lib/queries/services";
 
 export async function generateMetadata({
@@ -20,10 +26,10 @@ export async function generateMetadata({
 }) {
   const { locale, id } = await params;
   const patient = await fetchPatientById(id);
-  const t = await getTranslations({ locale, namespace: "ehr" });
+  const t = await getTranslations({ locale, namespace: "ehr.workspace" });
 
   return {
-    title: patient ? `${patient.name} — ${t("metaTitle")}` : t("metaTitle"),
+    title: patient ? `${patient.name} — ${t("label")}` : t("metaTitle"),
   };
 }
 
@@ -36,17 +42,33 @@ export default async function PatientDetailPage({
   if (!gate.allowed) return gate.ui;
 
   const { id } = await params;
-  const [patient, tenantId, media, payments, services, visits, profile, family] =
-    await Promise.all([
-      fetchPatientById(id),
-      fetchPatientTenantId(),
-      fetchPatientMedia(id),
-      fetchPatientPayments(id),
-      fetchDashboardServices(),
-      fetchPatientVisitHistory(id),
-      fetchDoctorProfile(),
-      fetchPatientFamily(id),
-    ]);
+  const [
+    patient,
+    tenantId,
+    media,
+    payments,
+    services,
+    visits,
+    profile,
+    family,
+    prescriptions,
+    favorites,
+    clinicTemplates,
+    chronicMedications,
+  ] = await Promise.all([
+    fetchPatientById(id),
+    fetchPatientTenantId(),
+    fetchPatientMedia(id),
+    fetchPatientPayments(id),
+    fetchDashboardServices(),
+    fetchPatientVisitHistory(id),
+    fetchDoctorProfile(),
+    fetchPatientFamily(id),
+    fetchPatientPrescriptions(id),
+    fetchMedicineFavorites(),
+    fetchClinicPrescriptionTemplates(),
+    fetchPatientChronicMedications(id),
+  ]);
 
   if (!patient) {
     notFound();
@@ -64,6 +86,13 @@ export default async function PatientDetailPage({
         doctorName={profile.doctorName}
         clinicName={profile.clinicName}
         specialty={profile.specialty}
+        clinicPhone={profile.clinicPhone}
+        clinicLocation={profile.clinicLocation}
+        logoUrl={profile.avatarUrl}
+        initialPrescriptions={prescriptions}
+        initialFavorites={favorites}
+        clinicTemplates={clinicTemplates}
+        chronicMedications={chronicMedications}
         family={family}
       />
     </div>

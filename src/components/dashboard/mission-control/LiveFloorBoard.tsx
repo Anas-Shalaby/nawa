@@ -35,27 +35,21 @@ function DailyChecklist({
   canViewRevenue: boolean;
 }) {
   const t = useTranslations("dashboard.commandCenter.floor");
-  const items = [
-    t("checklist.empty"),
-    t("checklist.cashDrawer"),
-    t("checklist.callTomorrow", { count: Math.max(pendingTomorrowCount, 0) }),
-    ...(canViewRevenue ? [t("checklist.unpaid", { count: unpaidCount })] : []),
-  ];
 
   return (
-    <div className="flex min-h-[16rem] flex-1 flex-col justify-center overflow-y-auto rounded-xl border border-dashed border-subtle bg-elevated/30 p-4 lg:min-h-0">
-      <p className="mb-3 text-sm font-semibold text-primary">{t("checklistTitle")}</p>
-      <ul className="space-y-2">
-        {items.map((item) => (
-          <li
-            key={item}
-            className="flex items-start gap-2 rounded-lg border border-subtle bg-surface px-3 py-2 text-xs text-primary"
-          >
-            <span className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded border border-subtle bg-elevated" />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
+    <div className="flex min-h-[16rem] flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-subtle bg-elevated/20 p-6 text-center lg:min-h-0">
+      <p className="text-sm font-semibold text-primary">{t("emptyTitle")}</p>
+      <p className="mt-1 max-w-sm text-xs text-muted">{t("emptyBody")}</p>
+      {(pendingTomorrowCount > 0 || (canViewRevenue && unpaidCount > 0)) && (
+        <ul className="mt-4 space-y-1 text-xs text-muted">
+          {pendingTomorrowCount > 0 ? (
+            <li>{t("checklist.callTomorrow", { count: pendingTomorrowCount })}</li>
+          ) : null}
+          {canViewRevenue && unpaidCount > 0 ? (
+            <li>{t("checklist.unpaid", { count: unpaidCount })}</li>
+          ) : null}
+        </ul>
+      )}
     </div>
   );
 }

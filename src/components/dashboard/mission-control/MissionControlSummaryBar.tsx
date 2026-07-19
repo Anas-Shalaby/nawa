@@ -7,6 +7,7 @@ import { SummaryMetric } from "./SummaryMetric";
 interface MissionControlSummaryBarProps {
   metrics: MissionControlMetrics;
   canViewRevenue: boolean;
+  compact?: boolean;
   onFocusWaiting?: () => void;
   onFocusRemaining?: () => void;
   onFocusDoctors?: () => void;
@@ -15,11 +16,36 @@ interface MissionControlSummaryBarProps {
 export function MissionControlSummaryBar({
   metrics,
   canViewRevenue,
+  compact = false,
   onFocusWaiting,
   onFocusRemaining,
   onFocusDoctors,
 }: MissionControlSummaryBarProps) {
   const t = useTranslations("dashboard.commandCenter.summary");
+
+  if (compact) {
+    return (
+      <section
+        aria-label={t("ariaLabel")}
+        className="mb-3 rounded-2xl border border-subtle bg-surface px-3 py-2"
+      >
+        <div className="flex gap-2 overflow-x-auto pb-0.5">
+          <SummaryMetric
+            label={t("waiting")}
+            value={metrics.waitingNow}
+            tone={metrics.waitingNow > 0 ? "warning" : "neutral"}
+            onClick={onFocusWaiting}
+          />
+          <SummaryMetric label={t("inSession")} value={metrics.inSession} />
+          <SummaryMetric
+            label={t("completed")}
+            value={metrics.completed}
+            tone="success"
+          />
+        </div>
+      </section>
+    );
+  }
 
   const waitTone =
     metrics.averageWaitMinutes >= 20

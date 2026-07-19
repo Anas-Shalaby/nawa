@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAppTheme } from "./AppThemeProvider";
 
 export function AppThemeToggle() {
-  const t = useTranslations("dashboard.sidebar");
+  const t = useTranslations("dashboard.layout");
   const { theme, toggleTheme, mounted } = useAppTheme();
 
   const isLight = theme === "light";

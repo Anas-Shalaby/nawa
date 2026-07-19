@@ -309,6 +309,7 @@ export function capabilityFlagsFromRole(
 /** Route → minimum permission to open the page. */
 export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   "/dashboard": "dashboard.view",
+  "/dashboard/floor": "dashboard.view",
   "/dashboard/upcoming": "appointments.view",
   "/dashboard/agenda": "appointments.view",
   "/dashboard/notifications": "dashboard.view",

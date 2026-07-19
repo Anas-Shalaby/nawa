@@ -145,11 +145,14 @@
   }
 
   .invoice-print-root,
-  .invoice-print-root * {
+  .invoice-print-root *,
+  .patient-workspace-print,
+  .patient-workspace-print * {
     visibility: visible !important;
   }
 
-  .invoice-print-root {
+  .invoice-print-root,
+  .patient-workspace-print {
     position: absolute !important;
     inset-inline-start: 0 !important;
     top: 0 !important;

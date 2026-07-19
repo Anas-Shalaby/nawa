@@ -2,17 +2,11 @@
 
 import { memo, type HTMLAttributes } from "react";
 import { useTranslations } from "next-intl";
-import { Phone, Printer, User } from "lucide-react";
+import { Phone, User } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Appointment, AppointmentStatus, FloorZone } from "@/lib/dashboard/types";
 import { QueueStatusSelect } from "@/components/dashboard/QueueStatusSelect";
-import {
-  arrivalLabelKey,
-  computePatientAge,
-  genderLabelKey,
-  resolvePaymentStatus,
-  waitSeverity,
-} from "@/lib/dashboard/missionControlSelectors";
+import { waitSeverity } from "@/lib/dashboard/missionControlSelectors";
 import { formatAppointmentTime } from "@/lib/datetime/cairo";
 import type { Locale } from "@/i18n/routing";
 
@@ -21,6 +15,8 @@ interface PatientQuickActionsProps {
   canManageQueue: boolean;
   onStatusChange: (status: AppointmentStatus) => void;
   isUpdating: boolean;
+  primaryLabel: string;
+  onPrimary?: () => void;
 }
 
 export function PatientQuickActions({
@@ -28,11 +24,23 @@ export function PatientQuickActions({
   canManageQueue,
   onStatusChange,
   isUpdating,
+  primaryLabel,
+  onPrimary,
 }: PatientQuickActionsProps) {
   const t = useTranslations("dashboard.commandCenter.card");
 
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-1 border-t border-subtle/80 pt-2">
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-subtle/80 pt-2">
+      {canManageQueue && onPrimary ? (
+        <button
+          type="button"
+          disabled={isUpdating}
+          onClick={onPrimary}
+          className="inline-flex h-8 items-center rounded-lg bg-accent px-2.5 text-[11px] font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:opacity-50"
+        >
+          {primaryLabel}
+        </button>
+      ) : null}
       <a
         href={`tel:${appointment.phoneNumber}`}
         className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg border border-subtle bg-elevated/60 text-muted transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
@@ -47,14 +55,6 @@ export function PatientQuickActions({
       >
         <User className="h-3.5 w-3.5" aria-hidden />
       </Link>
-      <button
-        type="button"
-        onClick={() => window.print()}
-        className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg border border-subtle bg-elevated/60 text-muted transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
-        aria-label={t("print")}
-      >
-        <Printer className="h-3.5 w-3.5" aria-hidden />
-      </button>
       {canManageQueue ? (
         <QueueStatusSelect
           compact
@@ -87,6 +87,15 @@ interface PatientOpsCardProps {
   canManageQueue: boolean;
 }
 
+function primaryForZone(
+  zone: FloorZone,
+): { status: AppointmentStatus; labelKey: "checkIn" | "start" | "complete" } | null {
+  if (zone === "outside") return { status: "checked_in", labelKey: "checkIn" };
+  if (zone === "waiting") return { status: "in_session", labelKey: "start" };
+  if (zone === "doctor") return { status: "completed", labelKey: "complete" };
+  return null;
+}
+
 export const PatientOpsCard = memo(function PatientOpsCard({
   appointment,
   zone,
@@ -101,17 +110,14 @@ export const PatientOpsCard = memo(function PatientOpsCard({
 }: PatientOpsCardProps) {
   const t = useTranslations("dashboard.commandCenter");
   const tc = useTranslations("dashboard.commandCenter.card");
-  const age = computePatientAge(appointment.dateOfBirth);
-  const payment = resolvePaymentStatus(appointment);
   const severity = zone === "waiting" ? waitSeverity(waitMinutes) : "neutral";
   const timerMinutes = zone === "doctor" ? consultMinutes : waitMinutes;
-
-  const serviceColor = appointment.serviceColorCode ?? "#6C5CE7";
+  const primary = primaryForZone(zone);
 
   return (
     <article
       className={[
-        "rounded-xl border bg-surface p-2.5 shadow-sm transition-shadow",
+        "rounded-xl border bg-surface p-3 shadow-sm transition-shadow",
         severity === "danger"
           ? "border-accent-danger"
           : severity === "warning"
@@ -122,7 +128,7 @@ export const PatientOpsCard = memo(function PatientOpsCard({
       ].join(" ")}
       aria-busy={busy}
     >
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2.5">
         {dragHandleProps ? (
           <div
             {...dragHandleProps}
@@ -130,93 +136,48 @@ export const PatientOpsCard = memo(function PatientOpsCard({
             aria-label={t("floor.dragHandle")}
           />
         ) : null}
-        <div
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
-          style={{ backgroundColor: `${serviceColor}cc` }}
-        >
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-elevated text-[11px] font-bold text-primary">
           {initials(appointment.patientName)}
         </div>
         <div className="min-w-0 flex-1 text-start">
-          <div className="flex items-start justify-between gap-1">
-            <p className="truncate text-sm font-semibold text-primary">
-              {appointment.patientName}
-            </p>
-            {appointment.priority && appointment.priority !== "normal" ? (
-              <span className="shrink-0 rounded-full bg-accent-danger/15 px-1.5 py-0.5 text-[9px] font-bold uppercase text-accent-danger">
-                {appointment.priority}
-              </span>
-            ) : null}
-          </div>
-          <p className="text-[10px] text-muted">
-            {formatAppointmentTime(appointment.appointmentDate, locale)}
-            {age != null ? ` · ${tc("age", { age })}` : ""}
-            {appointment.gender && appointment.gender !== "unspecified"
-              ? ` · ${tc(`gender.${genderLabelKey(appointment.gender)}`)}`
-              : ""}
-          </p>
-          <div className="mt-1 flex flex-wrap items-center gap-1">
-            <span
-              className="rounded-full px-1.5 py-0.5 text-[9px] font-medium text-primary"
-              style={{ backgroundColor: `${serviceColor}22`, color: serviceColor }}
-            >
-              {appointment.serviceName}
-            </span>
-            {appointment.assignedStaffName ? (
-              <span className="text-[9px] text-muted">{appointment.assignedStaffName}</span>
-            ) : null}
-            {appointment.arrivalSource ? (
-              <span className="text-[9px] text-muted">
-                {tc(`arrival.${arrivalLabelKey(appointment.arrivalSource)}`)}
-              </span>
-            ) : null}
-          </div>
-          {(zone === "waiting" || zone === "doctor") && (
-            <p
-              className={[
-                "mt-1 text-[10px] tabular-nums",
-                severity === "danger"
-                  ? "font-semibold text-accent-danger"
-                  : severity === "warning"
-                    ? "text-accent-warning"
-                    : "text-muted",
-              ].join(" ")}
-            >
-              <time dateTime={new Date(Date.now() - timerMinutes * 60_000).toISOString()}>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-primary">
+                {appointment.patientName}
+              </p>
+              <p className="truncate text-xs text-muted">
+                {appointment.serviceName}
+                {" · "}
+                {formatAppointmentTime(appointment.appointmentDate, locale)}
+              </p>
+            </div>
+            {(zone === "waiting" || zone === "doctor") && (
+              <p
+                className={[
+                  "shrink-0 text-xs font-medium tabular-nums",
+                  severity === "danger"
+                    ? "text-accent-danger"
+                    : severity === "warning"
+                      ? "text-accent-warning"
+                      : "text-muted",
+                ].join(" ")}
+              >
                 {zone === "doctor"
                   ? tc("consultMins", { mins: timerMinutes })
                   : tc("waitMins", { mins: timerMinutes })}
-              </time>
-            </p>
-          )}
-          <div className="mt-1 flex flex-wrap gap-1 text-[9px]">
-            {payment !== "unknown" ? (
-              <span
-                className={[
-                  "rounded-full px-1.5 py-0.5",
-                  payment === "paid"
-                    ? "bg-accent-success/15 text-accent-success"
-                    : "bg-accent-warning/15 text-accent-warning",
-                ].join(" ")}
-              >
-                {tc(`payment.${payment}`)}
-              </span>
-            ) : null}
-            {appointment.isFollowUp ? (
-              <span className="rounded-full bg-accent/15 px-1.5 py-0.5 text-accent">
-                {tc("followUp")}
-              </span>
-            ) : null}
-            {appointment.insuranceProvider ? (
-              <span className="rounded-full bg-elevated px-1.5 py-0.5 text-muted">
-                {appointment.insuranceProvider}
-              </span>
-            ) : null}
+              </p>
+            )}
           </div>
+
           <PatientQuickActions
             appointment={appointment}
             canManageQueue={canManageQueue}
             onStatusChange={onStatusChange}
             isUpdating={busy}
+            primaryLabel={primary ? tc(`primary.${primary.labelKey}`) : ""}
+            onPrimary={
+              primary ? () => onStatusChange(primary.status) : undefined
+            }
           />
         </div>
       </div>
