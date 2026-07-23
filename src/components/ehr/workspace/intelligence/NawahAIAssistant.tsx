@@ -39,7 +39,7 @@ export function NawahAIAssistant({
       setError(null);
       setIsLoading(true);
 
-      async function fetchSummary() {
+      const fetchSummary = async () => {
         try {
           const res = await fetch("/api/nawah-ai", {
             method: "POST",

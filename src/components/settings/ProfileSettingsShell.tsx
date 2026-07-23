@@ -225,6 +225,8 @@ function PhonePreview({
   previewLabel: string;
   locationCta: string;
 }) {
+  const t = useTranslations("profileSettings");
+
   return (
     <div className="sticky top-8">
       <p className="mb-4 text-center text-xs font-medium uppercase tracking-widest text-muted">

@@ -192,7 +192,7 @@ export function PatientHeader({
               <Printer className="h-4 w-4" aria-hidden />
             </Button>
 
-            <Button variant="premium" size="sm" asChild>
+            <Button variant="outline" size="sm" asChild>
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-4 w-4 me-2 text-accent-success" aria-hidden />
                 {t("whatsapp")}
