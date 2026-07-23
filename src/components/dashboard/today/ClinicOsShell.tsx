@@ -13,11 +13,13 @@ import type { DropResult } from "@hello-pangea/dnd";
 import { FilePlus2, UserRound, UserRoundPlus } from "lucide-react";
 import { toast } from "sonner";
 import { updateAppointmentStatus } from "@/actions/updateAppointmentStatus";
-import { Link, useRouter } from "@/i18n/navigation";
-import { PsychiatryOsDashboard } from "./PsychiatryOsDashboard";
+import { Link } from "@/i18n/navigation";
 import { MissionControlNowProvider } from "@/components/dashboard/mission-control/MissionControlNowProvider";
 import { LiveFloorBoard } from "@/components/dashboard/mission-control/LiveFloorBoard";
 import { QuickOpsPanel } from "@/components/dashboard/mission-control/QuickOpsPanel";
+import { JourneyWidget } from "@/features/journey/components/JourneyWidget";
+import { ClinicHealthWidget } from "@/features/journey/components/ClinicHealthWidget";
+import { evaluateJourney } from "@/features/journey/engine/JourneyEngine";
 import { useAppointmentsRealtime } from "@/lib/dashboard/useAppointmentsRealtime";
 import { useOptimisticAppointments } from "@/lib/dashboard/useOptimisticAppointments";
 import {
@@ -210,6 +212,27 @@ export function ClinicOsShell(props: MissionControlSnapshot) {
     useState(initialAppointments);
   const { appointments, applyOptimistic, isPending } =
     useOptimisticAppointments(sourceAppointments);
+
+  const evaluatedPhases = useMemo(() => {
+    return evaluateJourney(props.journeyContext || {
+      hasLogo: false,
+      hasSpecialty: false,
+      hasWorkingHours: false,
+      hasServices: false,
+      hasTeamMembers: false,
+      hasPatients: false,
+      hasAppointments: false,
+      hasCompletedSessions: false,
+    });
+  }, [props.journeyContext]);
+
+  const currentPhaseIndex = useMemo(() => {
+    const index = evaluatedPhases.findIndex(p => !p.isCompleted);
+    return index === -1 ? evaluatedPhases.length : index;
+  }, [evaluatedPhases]);
+
+  const isJourneyCompleted = currentPhaseIndex >= evaluatedPhases.length;
+  
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [doctorGlow, setDoctorGlow] = useState(false);
   const [showTools, setShowTools] = useState(false);
@@ -367,51 +390,6 @@ export function ClinicOsShell(props: MissionControlSnapshot) {
   const dateLabel = formatCairoDateShort(date, locale);
   const unpaidCount = canViewRevenue ? yesterdayUnpaid.length : 0;
 
-  const isPsychiatry = props.specialty?.toLowerCase().includes("psych") ?? false;
-  const router = useRouter();
-
-  if (isPsychiatry) {
-    return (
-      <MissionControlNowProvider>
-        <div data-tenant-id={tenantId} aria-busy={isPending || Boolean(pendingId)}>
-          <div className="sr-only" aria-live="polite" aria-atomic="true">
-            {liveAnnouncement}
-          </div>
-          <PsychiatryOsDashboard
-            appointments={appointments}
-            clinicName={clinicName}
-            doctorName={doctorName}
-            dateLabel={dateLabel}
-            locale={locale}
-            busy={isPending || Boolean(pendingId)}
-            onStatusChange={persistStatus}
-            onAddWalkIn={() => setShowTools((v) => !v)}
-            onSearchClick={() => router.push("/dashboard/patients")}
-            onNewPatientClick={() => router.push("/dashboard/patients")}
-          />
-          {showTools ? (
-            <div className="mx-auto max-w-md mt-4 text-start">
-              <QuickOpsPanel
-                clinicName={clinicName}
-                dateLabel={dateLabel}
-                services={services}
-                canViewRevenue={false}
-                canCreateWalkIn={canCreateWalkIn}
-                canManageQueue={canManageQueue}
-                pendingTomorrowCount={0}
-                yesterdayUnpaid={[]}
-                attentionItems={[]}
-                unreadCount={0}
-                onWalkInAdded={onWalkInAdded}
-                compact
-              />
-            </div>
-          ) : null}
-        </div>
-      </MissionControlNowProvider>
-    );
-  }
-
   return (
     <MissionControlNowProvider>
       <div
@@ -472,6 +450,15 @@ export function ClinicOsShell(props: MissionControlSnapshot) {
             />
           </div>
         ) : null}
+
+        {/* Nawah Journey / Clinic Health */}
+        <section className="w-full">
+          {!isJourneyCompleted ? (
+            <JourneyWidget phases={evaluatedPhases} currentPhaseIndex={currentPhaseIndex} />
+          ) : (
+            <ClinicHealthWidget />
+          )}
+        </section>
 
         {/* 2–3. Current + Next */}
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">

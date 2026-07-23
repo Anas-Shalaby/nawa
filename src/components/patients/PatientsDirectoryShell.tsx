@@ -26,7 +26,7 @@ import {
   UserX,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { deletePatient, givePatientStrike } from "@/actions/managePatients";
 import { matchesPatientSearch } from "@/lib/patients/search";
@@ -74,6 +74,7 @@ export function PatientsDirectoryShell({
   patients: initialPatients,
 }: PatientsDirectoryShellProps) {
   const t = useTranslations("patients");
+  const locale = useLocale();
   const [patients, setPatients] = useState(initialPatients);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<GridFilter>("all");
@@ -256,7 +257,7 @@ export function PatientsDirectoryShell({
   };
 
   return (
-    <div className="w-full" dir="rtl">
+    <div className="w-full">
       <div className="sticky top-0 z-10 mb-4 bg-base/80 py-4 backdrop-blur-md">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full lg:max-w-2xl">
@@ -264,7 +265,7 @@ export function PatientsDirectoryShell({
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="ابحث بالاسم أو رقم الهاتف..."
+              placeholder={t("searchPlaceholder")}
               className="w-full rounded-xl border border-subtle bg-surface py-2.5 ps-10 pe-4 text-sm text-primary outline-none transition focus:border-accent"
             />
           </div>
@@ -277,10 +278,10 @@ export function PatientsDirectoryShell({
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-subtle bg-surface px-3 py-2 text-sm font-medium text-primary transition hover:bg-elevated"
               >
                 <SlidersHorizontal className="h-4 w-4" />
-                تصفية
+                {t("directory.filter")}
               </button>
               {filterOpen && (
-                <div className="absolute z-20 mt-2 w-56 rounded-xl border border-subtle bg-surface p-2 shadow-2xl shadow-black/25 ltr:left-0 rtl:right-0">
+                <div className="absolute z-20 mt-2 w-56 rounded-xl border border-subtle bg-surface p-2 shadow-2xl shadow-black/25 start-0">
                   <button
                     type="button"
                     onClick={() => {
@@ -292,7 +293,7 @@ export function PatientsDirectoryShell({
                       filter === "all" ? "bg-accent/15 text-accent" : "text-primary hover:bg-elevated",
                     ].join(" ")}
                   >
-                    كل المرضى
+                    {t("directory.all")}
                   </button>
                   <button
                     type="button"
@@ -305,7 +306,7 @@ export function PatientsDirectoryShell({
                       filter === "debt" ? "bg-accent/15 text-accent" : "text-primary hover:bg-elevated",
                     ].join(" ")}
                   >
-                    عليهم مديونية
+                    {t("directory.debt")}
                   </button>
                   <button
                     type="button"
@@ -320,7 +321,7 @@ export function PatientsDirectoryShell({
                         : "text-primary hover:bg-elevated",
                     ].join(" ")}
                   >
-                    زار العيادة قريبًا
+                    {t("directory.recent")}
                   </button>
                 </div>
               )}
@@ -332,7 +333,7 @@ export function PatientsDirectoryShell({
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-accent/20 transition hover:opacity-90"
             >
               <Plus className="h-4 w-4" />
-              إضافة مريض جديد
+              {t("addPatient")}
             </button>
           </div>
         </div>
@@ -341,19 +342,19 @@ export function PatientsDirectoryShell({
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-subtle bg-surface/40 px-6 py-16 text-center">
           <Search className="mx-auto mb-3 h-8 w-8 text-muted" />
-          <p className="text-sm text-muted">لم يتم العثور على مرضى بهذا الاسم.</p>
+          <p className="text-sm text-muted">{t("empty")}</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-subtle bg-surface">
-          <div className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)_auto] items-center gap-3 border-b border-subtle px-4 py-3 text-xs font-medium text-muted md:grid">
-            <span className="text-start">المريض</span>
-            <span className="text-center">آخر زيارة</span>
-            <span className="text-center">إجمالي الزيارات</span>
-            <span className="text-center">الحساب المتبقي</span>
-            <span className="text-center">الإجراءات</span>
+          <div className="hidden grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto] items-center gap-4 border-b border-subtle/50 bg-subtle/20 px-5 py-3 text-xs font-semibold text-muted md:grid">
+            <span className="text-start">{t("colName")}</span>
+            <span className="text-center">{t("directory.colLastVisit")}</span>
+            <span className="text-center">{t("directory.colTotalVisits")}</span>
+            <span className="text-center">{t("directory.colBalance")}</span>
+            <span className="text-end">{t("colActions")}</span>
           </div>
 
-          <motion.ul variants={rowsVariants} initial="hidden" animate="show" className="divide-y divide-subtle">
+          <motion.ul variants={rowsVariants} initial="hidden" animate="show" className="divide-y divide-subtle/50">
             {paged.map((patient) => {
               const due = patient.totalBalanceDue ?? 0;
               const visitCount = patient.totalVisits ?? 0;
@@ -366,58 +367,78 @@ export function PatientsDirectoryShell({
                 <motion.li
                   key={patient.id}
                   variants={rowVariants}
-                  className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 transition hover:bg-elevated md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)_auto]"
+                  className="flex flex-col gap-4 p-4 transition hover:bg-elevated/40 md:grid md:grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto] md:items-center md:gap-4 md:px-5 md:py-3.5"
                 >
-                  <div className="flex min-w-0 items-center gap-3 text-start">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-sm font-semibold text-accent">
-                      {initials(patient.name)}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="truncate text-sm font-semibold text-primary">{patient.name}</p>
-                        {patient.noShowCount > 0 ? (
-                          <span className="rounded-full bg-accent-danger/10 px-2 py-0.5 text-[11px] font-medium text-accent-danger">
-                            {t("strikes", { count: patient.noShowCount })}
-                          </span>
-                        ) : null}
+                  {/* Mobile Top Row / Desktop Col 1: Patient Info & Actions Menu (Mobile only) */}
+                  <div className="flex items-start justify-between md:items-center">
+                    <div className="flex min-w-0 items-center gap-3 text-start">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-accent/10 bg-gradient-to-br from-accent/15 to-accent/5 text-sm font-bold text-accent shadow-sm">
+                        {initials(patient.name)}
                       </div>
-                      <p className="mt-0.5 truncate text-xs text-muted" dir="ltr">
-                        {patient.phoneNumber}
-                      </p>
-                      <p className="mt-1 text-xs text-muted md:hidden">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <Link href={`/dashboard/patients/${patient.id}`} className="truncate text-sm font-bold text-primary transition hover:text-accent">
+                            {patient.name}
+                          </Link>
+                          {patient.noShowCount > 0 && (
+                            <span className="rounded-md bg-accent-danger/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-danger">
+                              {t("strikes", { count: patient.noShowCount })}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-0.5 truncate text-xs text-muted" dir="ltr">
+                          {patient.phoneNumber}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Mobile Action Menu */}
+                    <div className="md:hidden">
+                      <DirectoryActionsMenu
+                        patient={patient}
+                        whatsappUrl={whatsappUrl}
+                        pending={pendingId === patient.id || isPending}
+                        onEdit={() => openEdit(patient)}
+                        onStrike={() => requestStrike(patient)}
+                        onDelete={() => requestDelete(patient)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mobile Bottom Row / Desktop Cols 2, 3, 4 */}
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-start md:contents">
+                    {/* Last Visit */}
+                    <div className="flex flex-col text-start md:block md:text-center">
+                      <span className="mb-0.5 text-[10px] font-medium uppercase text-muted md:hidden">{t("directory.colLastVisit")}</span>
+                      <p className="text-sm font-medium text-primary md:text-sm md:font-medium md:text-muted">
                         {formatVisitDate(patient.lastVisitAt)}
                       </p>
                     </div>
+
+                    {/* Total Visits */}
+                    <div className="flex flex-col text-start md:flex md:items-center md:justify-center">
+                      <span className="mb-0.5 text-[10px] font-medium uppercase text-muted md:hidden">{t("directory.colTotalVisits")}</span>
+                      <span className="inline-flex h-6 w-8 items-center justify-center rounded-full bg-subtle/50 text-xs font-semibold text-primary">
+                        {visitCount}
+                      </span>
+                    </div>
+
+                    {/* Balance */}
+                    <div className="flex flex-col text-start md:flex md:items-center md:justify-center">
+                      <span className="mb-0.5 text-[10px] font-medium uppercase text-muted md:hidden">{t("directory.colBalance")}</span>
+                      {due > 0 ? (
+                        <span className="inline-flex min-w-[70px] items-center justify-center gap-1 rounded-md bg-accent-danger/10 px-2 py-1 text-xs font-bold text-accent-danger">
+                          {new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US").format(due)} {locale === "ar" ? "ج.م" : "EGP"}
+                        </span>
+                      ) : (
+                        <span className="inline-flex min-w-[70px] items-center justify-center gap-1 rounded-md bg-status-completed/10 px-2 py-1 text-xs font-bold text-status-completed">
+                          {t("directory.paid")}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <p className="hidden text-center text-sm text-muted md:block">
-                    {formatVisitDate(patient.lastVisitAt)}
-                  </p>
-
-                  <div className="hidden justify-center md:flex">
-                    <span className="inline-flex rounded-full border border-subtle bg-base/50 px-2.5 py-1 text-xs font-medium text-primary">
-                      {visitCount}
-                    </span>
-                  </div>
-
-                  <p
-                    className={[
-                      "text-center text-sm font-semibold",
-                      due > 0 ? "text-accent-danger" : "text-status-completed",
-                    ].join(" ")}
-                  >
-                    {due > 0 ? `${new Intl.NumberFormat("ar-EG").format(due)} ج.م` : "مسدد"}
-                  </p>
-
-                  <div className="flex items-center justify-end gap-2">
-                    <Link
-                      href={`/dashboard/patients/${patient.id}`}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-subtle px-3 py-2 text-xs font-medium text-primary transition hover:bg-elevated"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      عرض الملف
-                    </Link>
-
+                  {/* Desktop Actions */}
+                  <div className="hidden items-center justify-end gap-2 md:flex">
                     <DirectoryActionsMenu
                       patient={patient}
                       whatsappUrl={whatsappUrl}
@@ -473,7 +494,7 @@ export function PatientsDirectoryShell({
 
       <PatientFormModal
         open={modalOpen}
-        title={editingPatient ? "تعديل المريض" : "إضافة مريض جديد"}
+        title={editingPatient ? t("editPatient") : t("addPatient")}
         patient={editingPatient}
         onClose={() => {
           setModalOpen(false);
@@ -686,8 +707,18 @@ function DirectoryActionsMenu({
               left: position.left,
               width: MENU_WIDTH,
             }}
-            className="z-[90] rounded-xl border border-subtle bg-surface p-1 shadow-2xl shadow-black/25"
+            className="z-[90] flex flex-col gap-0.5 rounded-xl border border-subtle bg-surface p-1.5 shadow-2xl shadow-black/25"
           >
+            <Link
+              href={`/dashboard/patients/${patient.id}`}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm font-semibold text-accent transition hover:bg-accent/10"
+            >
+              <Eye className="h-4 w-4" />
+              {t("directory.viewFile")}
+            </Link>
+            <div className="mx-1 my-0.5 h-px bg-subtle/50" />
             <a
               href={whatsappUrl}
               target="_blank"
@@ -697,7 +728,7 @@ function DirectoryActionsMenu({
               className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-start text-sm text-primary transition hover:bg-elevated"
             >
               <MessageCircle className="h-4 w-4 text-accent-success" />
-              واتساب
+              {t("directory.whatsapp")}
             </a>
             <MenuButton
               icon={<Pencil className="h-4 w-4" />}
@@ -744,7 +775,7 @@ function DirectoryActionsMenu({
         type="button"
         onClick={() => setOpen((current) => !current)}
         className="rounded-lg border border-subtle p-2 text-muted transition hover:bg-elevated hover:text-primary"
-        aria-label="خيارات سريعة"
+        aria-label={t("directory.quickOptions")}
         aria-expanded={open}
         aria-haspopup="menu"
       >

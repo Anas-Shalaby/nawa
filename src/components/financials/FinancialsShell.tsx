@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { animate, useMotionValue, useTransform } from "framer-motion";
-import { Download, Loader2, MessageCircle, TrendingDown, TrendingUp } from "lucide-react";
+import { Download, Loader2, MessageCircle, TrendingDown, TrendingUp, FileSpreadsheet } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -12,6 +12,7 @@ import {
   XAxis,
 } from "recharts";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 import { Can } from "@/components/auth/Can";
 import { Link } from "@/i18n/navigation";
 import {
@@ -22,6 +23,7 @@ import {
 import type { FinancialOverview, FinancialTransaction } from "@/lib/dashboard/analyticsTypes";
 import type { Locale } from "@/i18n/routing";
 import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
+import { Button } from "@/components/ui/button";
 
 type Period = "today" | "week" | "month";
 
@@ -123,6 +125,7 @@ export function FinancialsShell({
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [pendingInvoice, setPendingInvoice] = useState<InvoicePrintData | null>(null);
   const invoiceRef = useRef<InvoicePrintHandle>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const earned = useMemo(() => {
     if (period === "week") return overview.weeklyRevenueEgp;
@@ -190,6 +193,105 @@ export function FinancialsShell({
     });
   }
 
+  function handleExportExcel() {
+    setIsExporting(true);
+    try {
+      const wb = XLSX.utils.book_new();
+
+      if (overview.debtPatients.length > 0) {
+        const debtsData = overview.debtPatients.map((p) => ({
+          "اسم المريض": p.name,
+          "رقم الهاتف": p.phoneNumber || "—",
+          "المبلغ المستحق (EGP)": p.amountDue,
+        }));
+        const total = debtsData.reduce((sum, item) => sum + item["المبلغ المستحق (EGP)"], 0);
+        debtsData.push({
+          "اسم المريض": "الإجمالي",
+          "رقم الهاتف": "",
+          "المبلغ المستحق (EGP)": total,
+        });
+        const wsDebts = XLSX.utils.json_to_sheet(debtsData);
+        wsDebts["!cols"] = [{ wch: 25 }, { wch: 15 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, wsDebts, "المديونيات");
+      }
+
+      if (overview.recentTransactions.length > 0) {
+        const txData = overview.recentTransactions.map((tx) => ({
+          "اسم المريض": tx.patientName,
+          "الخدمة": tx.serviceName,
+          "التاريخ": formatDate(tx.appointmentDate, locale),
+          "المبلغ (EGP)": tx.priceEgp,
+        }));
+        const total = txData.reduce((sum, item) => sum + (item["المبلغ (EGP)"] as number), 0);
+        txData.push({
+          "اسم المريض": "الإجمالي",
+          "الخدمة": "",
+          "التاريخ": "",
+          "المبلغ (EGP)": total,
+        });
+        const wsTx = XLSX.utils.json_to_sheet(txData);
+        wsTx["!cols"] = [{ wch: 25 }, { wch: 25 }, { wch: 22 }, { wch: 15 }];
+        XLSX.utils.book_append_sheet(wb, wsTx, "المعاملات الأخيرة");
+      }
+
+      if (overview.recentPayments.length > 0) {
+        const pyData = overview.recentPayments.map((p) => ({
+          "اسم المريض": p.patientName,
+          "تاريخ الدفع": formatDate(p.paidAt, locale),
+          "المبلغ المدفوع (EGP)": p.amountPaid,
+        }));
+        const total = pyData.reduce((sum, item) => sum + (item["المبلغ المدفوع (EGP)"] as number), 0);
+        pyData.push({
+          "اسم المريض": "الإجمالي",
+          "تاريخ الدفع": "",
+          "المبلغ المدفوع (EGP)": total,
+        });
+        const wsPy = XLSX.utils.json_to_sheet(pyData);
+        wsPy["!cols"] = [{ wch: 25 }, { wch: 22 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, wsPy, "المدفوعات الأخيرة");
+      }
+
+      if (overview.topServices.length > 0) {
+        const tsData = overview.topServices.map((s) => ({
+          "الخدمة": s.name,
+          "عدد الزيارات": s.count,
+          "الإيرادات (EGP)": s.revenueEgp,
+        }));
+        const total = tsData.reduce((sum, item) => sum + (item["الإيرادات (EGP)"] as number), 0);
+        tsData.push({
+          "الخدمة": "الإجمالي",
+          "عدد الزيارات": "",
+          "الإيرادات (EGP)": total,
+        } as any);
+        const wsTs = XLSX.utils.json_to_sheet(tsData);
+        wsTs["!cols"] = [{ wch: 30 }, { wch: 15 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, wsTs, "أفضل الخدمات");
+      }
+
+      if (overview.topPatientsByRevenue.length > 0) {
+        const tpData = overview.topPatientsByRevenue.map((p) => ({
+          "اسم المريض": p.name,
+          "الإيرادات (EGP)": p.revenueEgp,
+        }));
+        const total = tpData.reduce((sum, item) => sum + (item["الإيرادات (EGP)"] as number), 0);
+        tpData.push({
+          "اسم المريض": "الإجمالي",
+          "الإيرادات (EGP)": total,
+        });
+        const wsTp = XLSX.utils.json_to_sheet(tpData);
+        wsTp["!cols"] = [{ wch: 25 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, wsTp, "أفضل المرضى إيراداً");
+      }
+
+      XLSX.writeFile(wb, `التقرير_المالي_${new Date().toISOString().split("T")[0]}.xlsx`);
+      toast.success("تم التصدير بنجاح");
+    } catch (error) {
+      toast.error("حدث خطأ أثناء التصدير");
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-6xl pb-10">
       {pendingInvoice ? (
@@ -208,28 +310,44 @@ export function FinancialsShell({
           </h1>
           <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>
         </div>
-        <div
-          className="flex gap-1 rounded-xl border border-subtle bg-surface p-1"
-          role="tablist"
-          aria-label={t("periodLabel")}
-        >
-          {(["today", "week", "month"] as const).map((item) => (
-            <button
-              key={item}
-              type="button"
-              role="tab"
-              aria-selected={period === item}
-              onClick={() => setPeriod(item)}
-              className={[
-                "rounded-lg px-3 py-2 text-xs font-semibold transition",
-                period === item
-                  ? "bg-accent text-white"
-                  : "text-muted hover:text-primary",
-              ].join(" ")}
-            >
-              {t(`period.${item}`)}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            className="gap-2 h-[38px] rounded-xl border-subtle bg-surface hover:bg-elevated text-primary shadow-sm"
+            onClick={handleExportExcel}
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="h-4 w-4 text-accent" />
+            )}
+            تصدير Excel
+          </Button>
+
+          <div
+            className="flex gap-1 rounded-xl border border-subtle bg-surface p-1"
+            role="tablist"
+            aria-label={t("periodLabel")}
+          >
+            {(["today", "week", "month"] as const).map((item) => (
+              <button
+                key={item}
+                type="button"
+                role="tab"
+                aria-selected={period === item}
+                onClick={() => setPeriod(item)}
+                className={[
+                  "rounded-lg px-3 py-2 text-xs font-semibold transition",
+                  period === item
+                    ? "bg-accent text-white"
+                    : "text-muted hover:text-primary",
+                ].join(" ")}
+              >
+                {t(`period.${item}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 

@@ -215,10 +215,12 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
     { count: pendingTomorrowCount, error: tomorrowError },
     paymentResult,
     yesterdayResult,
+    patientsResult,
+    completedAppointmentsResult,
   ] = await Promise.all([
     supabase
       .from("tenants")
-      .select("id, name, doctor_name, specialty")
+      .select("id, name, doctor_name, avatar_url, specialty, journey_state")
       .eq("id", tenantId)
       .single(),
     fetchTodayAppointmentRows(supabase, tenantId, startIso, endExclusiveIso),
@@ -242,7 +244,7 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
           .gte("paid_at", startIso)
           .lt("paid_at", endExclusiveIso)
           .order("paid_at", { ascending: false })
-          .limit(12)
+          .limit(6)
       : Promise.resolve({ data: [], error: null }),
     permissions.canViewRevenue
       ? supabase
@@ -258,13 +260,22 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
           .gte("appointment_date", yesterdayBounds.startIso)
           .lt("appointment_date", yesterdayBounds.endExclusiveIso)
       : Promise.resolve({ data: [], error: null }),
+    supabase
+      .from("patients")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
+    supabase
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
+      .eq("status", "completed"),
   ]);
 
   let tenant = tenantResult.data;
   if (tenantResult.error || !tenant) {
-     const fallback = await supabase
+    const fallback = await supabase
       .from("tenants")
-      .select("id, name, specialty")
+      .select("id, name, doctor_name, avatar_url, specialty, journey_state")
       .eq("id", tenantId)
       .single();
     if (fallback.error || !fallback.data) {
@@ -272,7 +283,14 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
         `Failed to load clinic: ${tenantResult.error?.message ?? fallback.error?.message}`,
       );
     }
-    tenant = { ...fallback.data, doctor_name: fallback.data.name, specialty: fallback.data.specialty };
+    tenant = { 
+      ...fallback.data, 
+      doctor_name: fallback.data.doctor_name || fallback.data.name 
+    };
+  }
+
+  if (!tenant) {
+    throw new Error("Tenant could not be loaded.");
   }
 
   if (servicesError) {
@@ -422,7 +440,17 @@ export async function fetchMissionControlSnapshot(): Promise<MissionControlSnaps
     attentionItems,
     insights,
     unreadNotificationsHint: 0,
-    specialty: tenant.specialty ?? undefined,
+    journeyState: tenantResult.data?.journey_state,
+    journeyContext: {
+      hasLogo: !!tenantResult.data?.avatar_url,
+      hasSpecialty: !!tenantResult.data?.specialty,
+      hasServices: (serviceRows ?? []).length > 0,
+      hasPatients: (patientsResult?.count ?? 0) > 0,
+      hasTeamMembers: (staffResult.data?.length ?? 0) > 0,
+      hasAppointments: appointmentRows.length > 0 || (completedAppointmentsResult?.count ?? 0) > 0,
+      hasCompletedSessions: (completedAppointmentsResult?.count ?? 0) > 0,
+      hasWorkingHours: true, // Mocked for now to unblock
+    },
   };
 }
 

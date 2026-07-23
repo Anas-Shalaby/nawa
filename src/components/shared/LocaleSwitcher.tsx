@@ -65,10 +65,10 @@ export function LocaleSwitcher() {
         aria-haspopup="listbox"
         aria-label={t("label")}
         className={[
-          "flex items-center gap-2 rounded-xl border border-subtle/70 bg-surface/90 px-3 py-2",
+          "flex items-center gap-2 rounded-xl border border-subtle/70 bg-surface/90 px-3 z-[1000] py-2",
           "text-sm text-primary shadow-sm backdrop-blur-md transition",
           "hover:border-accent/30 hover:bg-elevated/90",
-          open ? "border-accent/40 bg-elevated/90" : "",
+          open ? "border-accent/40 bg-elevated/90 z-[1000]" : "",
         ].join(" ")}
       >
         <Globe className="h-4 w-4 shrink-0 text-accent" strokeWidth={1.75} aria-hidden />

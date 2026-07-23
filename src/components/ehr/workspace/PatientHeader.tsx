@@ -14,6 +14,9 @@ import { buildWhatsAppActionUrl } from "@/lib/whatsapp/templates";
 import {
   formatAppointmentTime,
 } from "@/lib/datetime/cairo";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { Locale } from "@/i18n/routing";
 import type { PatientRecord, FamilyMember } from "@/lib/queries/patients";
 import type { PatientVisitRecord } from "@/lib/queries/patientVisits";
@@ -34,13 +37,13 @@ interface PatientHeaderProps {
 }
 
 const STATUS_STYLES: Record<AppointmentStatus, string> = {
-  pending: "bg-status-pending/15 text-status-pending",
-  confirmed: "bg-status-confirmed/15 text-status-confirmed",
-  checked_in: "bg-status-checkedIn/15 text-status-checkedIn",
-  in_session: "bg-status-in_session/15 text-status-in_session",
-  completed: "bg-status-completed/15 text-status-completed",
-  no_show: "bg-accent-danger/15 text-accent-danger",
-  canceled: "bg-muted/15 text-muted",
+  pending: "bg-status-pending/15 text-status-pending border-status-pending/20",
+  confirmed: "bg-status-confirmed/15 text-status-confirmed border-status-confirmed/20",
+  checked_in: "bg-status-checkedIn/15 text-status-checkedIn border-status-checkedIn/20",
+  in_session: "bg-status-in_session/15 text-status-in_session border-status-in_session/20",
+  completed: "bg-status-completed/15 text-status-completed border-status-completed/20",
+  no_show: "bg-accent-danger/15 text-accent-danger border-accent-danger/20",
+  canceled: "bg-muted/15 text-muted border-muted/20",
 };
 
 function getInitials(name: string): string {
@@ -90,6 +93,9 @@ export function PatientHeader({
   const locale = useLocale() as Locale;
 
   const canUpdate = usePermission("patients.update");
+  const { scrollY } = useScroll();
+  const headerY = useTransform(scrollY, [0, 100], [0, -10]);
+  const headerOpacity = useTransform(scrollY, [0, 100], [1, 0.95]);
 
   const initials = getInitials(patient.name);
   const whatsappUrl = buildWhatsAppActionUrl(patient.phoneNumber, "appointment", {
@@ -99,77 +105,68 @@ export function PatientHeader({
 
   return (
     <>
-      <header className="sticky top-0 z-30 -mx-1 mb-6 border-b border-subtle/80 bg-base/90 px-1 py-4 backdrop-blur-md">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <motion.header 
+        style={{ y: headerY, opacity: headerOpacity }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="sticky top-4 z-40 mx-2 mb-8 glass-panel-heavy rounded-2xl px-5 py-4 shadow-xl transition-all duration-300"
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* Identity */}
-          <div className="flex min-w-0 items-start gap-3 text-start">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-lg font-semibold text-accent">
+          <div className="flex min-w-0 items-center gap-4 text-start">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/20 text-xl font-bold text-accent shadow-sm premium-glow">
               {initials}
             </div>
-            <div className="min-w-0">
-              <p className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                {tw("label")}
-              </p>
-              <h1 className="truncate font-arabic text-2xl font-semibold tracking-tight text-primary">
-                {patient.name}
-              </h1>
+            <div className="min-w-0 flex flex-col justify-center">
+              <div className="flex items-center gap-2">
+                <h1 className="truncate font-arabic text-2xl font-bold tracking-tight text-primary">
+                  {patient.name}
+                </h1>
+                {currentVisit ? (
+                    <Badge variant="outline" className={STATUS_STYLES[currentVisit.status]}>
+                      {tStatus(currentVisit.status)}
+                    </Badge>
+                ) : null}
+              </div>
 
               {/* Meta row */}
-              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
-                <span className="tabular-nums text-xs text-muted/70">
+              <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+                <span className="font-mono text-[11px] font-semibold text-accent/80">
                   {shortPatientId(patient.id)}
                 </span>
-                <span dir="ltr" className="inline-flex items-center gap-1.5">
+                <span dir="ltr" className="inline-flex items-center gap-1.5 font-medium">
                   <Phone className="h-3.5 w-3.5" aria-hidden />
                   {patient.phoneNumber}
                 </span>
                 {lastVisitDate ? (
-                  <span className="text-xs">
+                  <span className="text-[11px] font-medium bg-elevated/40 px-2 py-0.5 rounded-md">
                     {tw("lastVisitLabel")}: {formatShortDate(lastVisitDate, locale)}
                   </span>
                 ) : null}
               </div>
 
-              {/* Visit status + badges */}
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                {currentVisit ? (
-                  <span className="inline-flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-muted">
-                      {currentVisit.serviceName} ·{" "}
-                      {formatAppointmentTime(currentVisit.appointmentDate, locale)}
-                    </span>
-                    <span
-                      className={[
-                        "rounded-md px-2 py-0.5 text-[11px] font-medium",
-                        STATUS_STYLES[currentVisit.status],
-                      ].join(" ")}
-                    >
-                      {tStatus(currentVisit.status)}
-                    </span>
-                  </span>
-                ) : (
-                  <span className="text-sm text-muted">{tw("noActiveVisit")}</span>
-                )}
-
+              {/* Badges */}
+              <div className="mt-2.5 flex flex-wrap items-center gap-2">
                 {/* Balance badge */}
                 {balanceDue > 0 ? (
-                  <span className="rounded-md bg-accent-danger/10 px-2 py-0.5 text-[11px] font-semibold text-accent-danger">
-                    {formatMoney(balanceDue, locale)} {t("currency")}
-                  </span>
+                  <Badge variant="destructive" className="animate-pulse">
+                    {formatMoney(balanceDue, locale)} {t("currency")} {tw("label")} {/* Or specific label */}
+                  </Badge>
                 ) : null}
 
                 {/* Allergy badge */}
                 {allergyCount > 0 ? (
-                  <span className="rounded-md bg-accent-danger/10 px-2 py-0.5 text-[11px] font-semibold text-accent-danger">
-                    {tw("allergies")}
-                  </span>
+                  <Badge variant="destructive">
+                    {allergyCount} {tw("allergies")}
+                  </Badge>
                 ) : null}
 
                 {/* Chronic disease badge */}
                 {chronicDiseaseCount > 0 ? (
-                  <span className="rounded-md bg-accent-warning/10 px-2 py-0.5 text-[11px] font-semibold text-accent-warning">
-                    {tw("chronicDiseases")}
-                  </span>
+                  <Badge variant="warning">
+                    {chronicDiseaseCount} {tw("chronicDiseases")}
+                  </Badge>
                 ) : null}
               </div>
             </div>
@@ -177,58 +174,48 @@ export function PatientHeader({
 
           {/* Quick actions */}
           <div className="flex flex-wrap items-center gap-2 lg:justify-end hide-on-print">
-            <a
-              href={`tel:${patient.phoneNumber}`}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-subtle px-3 py-2 text-xs font-medium text-muted transition hover:text-accent-success"
-              aria-label={tw("callPatient")}
-            >
-              <Phone className="h-3.5 w-3.5" aria-hidden />
-              {tw("callPatient")}
-            </a>
+            <Button variant="outline" size="sm" asChild>
+              <a href={`tel:${patient.phoneNumber}`} aria-label={tw("callPatient")}>
+                <Phone className="h-4 w-4 me-2" aria-hidden />
+                {tw("callPatient")}
+              </a>
+            </Button>
 
             {canUpdate ? (
-              <button
-                type="button"
-                onClick={onEditPatient}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-subtle px-3 py-2 text-xs font-medium text-muted transition hover:text-primary"
-              >
-                <Pencil className="h-3.5 w-3.5" aria-hidden />
+              <Button variant="secondary" size="sm" onClick={onEditPatient}>
+                <Pencil className="h-4 w-4 me-2" aria-hidden />
                 {tw("editPatient")}
-              </button>
+              </Button>
             ) : null}
 
-            <button
-              type="button"
-              onClick={onPrintFile}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-subtle px-3 py-2 text-xs font-medium text-muted transition hover:text-primary"
-            >
-              <Printer className="h-3.5 w-3.5" aria-hidden />
-              {tw("printFile")}
-            </button>
+            <Button variant="ghost" size="sm" onClick={onPrintFile}>
+              <Printer className="h-4 w-4" aria-hidden />
+            </Button>
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-subtle px-3 py-2 text-xs font-medium text-muted transition hover:text-accent-success"
-            >
-              <MessageCircle className="h-3.5 w-3.5" aria-hidden />
-              {t("whatsapp")}
-            </a>
+            <Button variant="premium" size="sm" asChild>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="h-4 w-4 me-2 text-accent-success" aria-hidden />
+                {t("whatsapp")}
+              </a>
+            </Button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {!compact ? (
-        <div className="mb-6 hide-on-print">
+        <motion.div 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-4 mx-2 hide-on-print"
+        >
           <Link
             href={backHref}
-            className="inline-flex items-center gap-1.5 text-xs text-muted transition hover:text-accent"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-accent"
           >
             {t("backToPatients")}
-            <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
+            <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
           </Link>
-        </div>
+        </motion.div>
       ) : null}
     </>
   );

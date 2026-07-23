@@ -17,8 +17,6 @@ interface TreatmentPlanCardProps {
   onToggleCollapse: () => void;
   isActive: boolean;
   onFocus: () => void;
-  specialty?: string;
-  locale?: string;
 }
 
 export function TreatmentPlanCard({
@@ -28,28 +26,8 @@ export function TreatmentPlanCard({
   onToggleCollapse,
   isActive,
   onFocus,
-  specialty,
-  locale = "ar",
 }: TreatmentPlanCardProps) {
   const t = useTranslations("ehr.workspace.visit");
-  const isPsychiatry = specialty?.toLowerCase().includes("psych") ?? false;
-  const isAr = locale === "ar";
-
-  const labelNotes = isPsychiatry
-    ? (isAr ? "ملاحظات العلاج النفسي" : "Psychotherapy Notes")
-    : t("plan");
-
-  const labelLifestyle = isPsychiatry
-    ? (isAr ? "نصائح نمط الحياة" : "Lifestyle Advice")
-    : t("treatmentLifestyle");
-
-  const labelProcedures = isPsychiatry
-    ? (isAr ? "الواجبات والأهداف العلاجية" : "Homework & Goals Until Next Session")
-    : t("treatmentProcedures");
-
-  const labelInstructions = isPsychiatry
-    ? (isAr ? "التعديلات الدوائية المقترحة" : "Medication Changes")
-    : t("treatmentInstructions");
 
   function handleFieldChange(field: keyof TreatmentPlanData, val: string) {
     onChange({
@@ -59,10 +37,10 @@ export function TreatmentPlanCard({
   }
 
   const summary = [
-    value.notes.trim() && `${labelNotes}: ${value.notes.trim().slice(0, 20)}`,
-    value.lifestyle.trim() && `${labelLifestyle}: ${value.lifestyle.trim().slice(0, 20)}`,
-    value.procedures.trim() && `${labelProcedures}: ${value.procedures.trim().slice(0, 20)}`,
-    value.instructions.trim() && `${labelInstructions}: ${value.instructions.trim().slice(0, 20)}`,
+    value.notes.trim() && `${t("plan")}: ${value.notes.trim().slice(0, 20)}`,
+    value.lifestyle.trim() && `${t("treatmentLifestyle")}: ${value.lifestyle.trim().slice(0, 20)}`,
+    value.procedures.trim() && `${t("treatmentProcedures")}: ${value.procedures.trim().slice(0, 20)}`,
+    value.instructions.trim() && `${t("treatmentInstructions")}: ${value.instructions.trim().slice(0, 20)}`,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -87,11 +65,9 @@ export function TreatmentPlanCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent/10 text-xs font-semibold text-accent">
-            5
+            6
           </span>
-          <h2 className="text-sm font-semibold text-primary">
-            {isPsychiatry ? (isAr ? "خطة العلاج والجلسات" : "Treatment & Therapy Plan") : t("step6")}
-          </h2>
+          <h2 className="text-sm font-semibold text-primary">{t("step6")}</h2>
         </div>
         <button
           type="button"
@@ -109,14 +85,12 @@ export function TreatmentPlanCard({
       {/* Card Body */}
       {!isCollapsed ? (
         <div className="mt-4 space-y-4">
-          <p className="text-xs text-muted">
-            {isPsychiatry ? (isAr ? "قم بتوثيق خطة العلاج والواجبات المنزلية هنا" : "Document psychotherapy notes and guidelines here") : t("stepDescription6")}
-          </p>
- 
+          <p className="text-xs text-muted">{t("stepDescription6")}</p>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
-                {labelNotes}
+              <label className="block text-[10px] font-medium uppercase tracking-wider text-muted mb-1">
+                {t("plan")}
               </label>
               <textarea
                 value={value.notes}
@@ -128,8 +102,8 @@ export function TreatmentPlanCard({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
-                {labelLifestyle}
+              <label className="block text-[10px] font-medium uppercase tracking-wider text-muted mb-1">
+                {t("treatmentLifestyle")}
               </label>
               <textarea
                 value={value.lifestyle}
@@ -141,8 +115,8 @@ export function TreatmentPlanCard({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
-                {labelProcedures}
+              <label className="block text-[10px] font-medium uppercase tracking-wider text-muted mb-1">
+                {t("treatmentProcedures")}
               </label>
               <textarea
                 value={value.procedures}
@@ -154,8 +128,8 @@ export function TreatmentPlanCard({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-muted mb-1">
-                {labelInstructions}
+              <label className="block text-[10px] font-medium uppercase tracking-wider text-muted mb-1">
+                {t("treatmentInstructions")}
               </label>
               <textarea
                 value={value.instructions}

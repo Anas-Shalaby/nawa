@@ -167,7 +167,8 @@ export interface MissionControlSnapshot {
   attentionItems: AttentionItem[];
   insights: MissionControlInsight[];
   unreadNotificationsHint: number;
-  specialty?: string;
+  journeyState?: any;
+  journeyContext?: any;
 }
 
 export { isQueueVisible, isKanbanColumn, type QueueVisibleStatus } from "./queueStateMachine";

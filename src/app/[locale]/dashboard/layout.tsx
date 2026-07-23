@@ -12,19 +12,27 @@ import {
 } from "@/lib/queries/services";
 import { createAuthenticatedClient } from "@/utils/supabase/auth";
 
+import { redirect } from "@/i18n/navigation";
+
 export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   const supabase = await createAuthenticatedClient();
-  const [{ clinicName, tenantId }, services, switcher, permissions] =
+  const [{ clinicName, tenantId, isOnboarded }, services, switcher, permissions] =
     await Promise.all([
       fetchClinicBrief(),
       fetchDashboardServices(),
       fetchClinicSwitcherOptions(),
       resolveStaffPermissions(supabase),
     ]);
+
+  // Onboarding is now handled in-app via the Journey widget.
+  // No need to redirect to a standalone onboarding page.
 
   return (
     <AppThemeProvider>

@@ -280,10 +280,10 @@ function PhonePreview({
 
             <div className="flex-1 overflow-y-auto px-5 pb-24 pt-3 text-center">
               <h2 className="text-lg font-bold text-slate-900">
-                {doctorName || "د. أحمد محمود"}
+                {doctorName || t("previewNameFallback")}
               </h2>
               <p className="mt-1 text-sm text-slate-500">
-                {specialty || "استشاري جراحة الوجه والفكين"}
+                {specialty || t("previewSpecialtyFallback")}
               </p>
 
               {clinicPhone || clinicLocation ? (
@@ -337,7 +337,7 @@ function PhonePreview({
 
               <p className="mt-4 text-start text-xs leading-relaxed text-slate-600">
                 {bio ||
-                  "نبذة مهنية قصيرة تظهر هنا للمريض قبل الحجز — خبراتك، أسلوبك، وما يميز عيادتك."}
+                  t("previewBioFallback")}
               </p>
             </div>
 
@@ -498,7 +498,7 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
   }
 
   return (
-    <div className="w-full" dir="rtl">
+    <div className="w-full">
       <EntityContextHeader
         entityLabel={t("entityLabel")}
         title={t("title")}
@@ -519,6 +519,42 @@ export function ProfileSettingsShell({ profile }: ProfileSettingsShellProps) {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         {/* Form — right in RTL (first in DOM for RTL reading) */}
         <section className="lg:col-span-7">
+          <div className="mb-8 rounded-2xl border border-accent bg-accent/5 p-6 md:p-8 text-start">
+            <h3 className="text-lg font-bold text-primary mb-4">{t("checklistTitle")}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-center gap-2 text-sm text-primary">
+                <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{t("checklistLogo")}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-primary">
+                <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{t("checklistHours")}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-primary">
+                <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{t("checklistTeam")}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-primary">
+                <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{t("checklistServices")}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-primary">
+                <svg className="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{t("checklistLive")}</span>
+              </div>
+            </div>
+          </div>
+
           <div className="rounded-2xl border border-subtle/70 bg-surface/80 p-6 shadow-[0_0_0_1px_rgba(108,92,231,0.04)] backdrop-blur-sm md:p-8">
             <div className="mb-8 text-start">
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-medium text-accent">

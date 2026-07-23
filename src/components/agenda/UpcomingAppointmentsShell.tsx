@@ -39,7 +39,7 @@ import {
 } from "./AgendaAppointmentModal";
 import type { DashboardService } from "@/lib/dashboard/types";
 
-type QuickFilter = "all" | "week" | "month";
+type QuickFilter = "today" | "all" | "week" | "month";
 
 interface UpcomingAppointmentsShellProps {
   appointments: AgendaAppointment[];
@@ -70,7 +70,7 @@ export function UpcomingAppointmentsShell({
   const locale = useLocale() as Locale;
 
   const [appointments, setAppointments] = useState(initialAppointments);
-  const [filter, setFilter] = useState<QuickFilter>("all");
+  const [filter, setFilter] = useState<QuickFilter>("today");
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] =
@@ -88,6 +88,7 @@ export function UpcomingAppointmentsShell({
     return appointments.filter((appointment) => {
       const key = getCairoDateKeyFromIso(appointment.appointmentDate);
 
+      if (filter === "today") return key === todayKey;
       if (filter === "week") return key >= todayKey && key <= weekEnd;
       if (filter === "month") return key >= todayKey && key <= monthEnd;
       return true;
@@ -127,6 +128,7 @@ export function UpcomingAppointmentsShell({
   }
 
   const chips: { id: QuickFilter; label: string }[] = [
+    { id: "today", label: t("today") },
     { id: "all", label: t("filterAll") },
     { id: "week", label: t("filterWeek") },
     { id: "month", label: t("filterMonth") },

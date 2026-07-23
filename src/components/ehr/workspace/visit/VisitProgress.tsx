@@ -8,8 +8,6 @@ interface StepItem {
   key: string;
   elementId: string;
   isCompleted: boolean;
-  label?: string;
-  description?: string;
 }
 
 interface VisitProgressProps {
@@ -67,7 +65,7 @@ export function VisitProgress({ activeStep, steps, onStepClick }: VisitProgressP
                           : "text-muted hover:text-primary",
                     ].join(" ")}
                   >
-                    {step.label || t(`step${step.id}`)}
+                    {t(`step${step.id}`)}
                   </button>
                   <p
                     className={[
@@ -75,7 +73,7 @@ export function VisitProgress({ activeStep, steps, onStepClick }: VisitProgressP
                       isActive ? "text-muted" : "text-muted/50 group-hover:text-muted/70",
                     ].join(" ")}
                   >
-                    {step.description || t(`stepDescription${step.id}`)}
+                    {t(`stepDescription${step.id}`)}
                   </p>
                 </div>
               </li>

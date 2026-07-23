@@ -33,8 +33,6 @@ interface FinishVisitPanelProps {
   onPrintPrescription: (rx: PrescriptionRecord) => void;
   onOpenFollowUp: () => void;
   onOpenPayment: () => void;
-  specialty?: string;
-  locale?: string;
 }
 
 export function FinishVisitPanel({
@@ -51,12 +49,8 @@ export function FinishVisitPanel({
   onPrintPrescription,
   onOpenFollowUp,
   onOpenPayment,
-  specialty,
-  locale = "ar",
 }: FinishVisitPanelProps) {
   const tw = useTranslations("ehr.workspace");
-  const isPsychiatry = specialty?.toLowerCase().includes("psych") ?? false;
-  const isAr = locale === "ar";
   const [sheetOpen, setSheetOpen] = useState(false);
   const [actions, setActions] = useState({
     saveNotes: true,
@@ -126,11 +120,7 @@ export function FinishVisitPanel({
           onOpenPayment();
         }
 
-        toast.success(
-          isPsychiatry
-            ? (isAr ? "تم إنهاء وتوثيق الجلسة بنجاح" : "Session finished and documented successfully")
-            : tw("finishVisitSuccess")
-        );
+        toast.success(tw("finishVisitSuccess"));
         onVisitCompleted();
         setSheetOpen(false);
       } catch {
@@ -148,9 +138,7 @@ export function FinishVisitPanel({
   }[] = [
     {
       key: "saveNotes",
-      label: isPsychiatry
-        ? (isAr ? "حفظ ملاحظات الجلسة" : "Save Session Notes")
-        : tw("finishSaveVisit"),
+      label: tw("finishSaveVisit"),
       icon: Save,
       checked: actions.saveNotes,
     },
@@ -163,17 +151,13 @@ export function FinishVisitPanel({
     },
     {
       key: "scheduleFollowUp",
-      label: isPsychiatry
-        ? (isAr ? "جدولة الجلسة القادمة" : "Schedule Next Session")
-        : tw("finishScheduleFollowUp"),
+      label: tw("finishScheduleFollowUp"),
       icon: CalendarPlus,
       checked: actions.scheduleFollowUp,
     },
     {
       key: "recordPayment",
-      label: isPsychiatry
-        ? (isAr ? "تسجيل حساب الجلسة" : "Process Session Payment")
-        : tw("finishOpenPayment"),
+      label: tw("finishOpenPayment"),
       icon: Wallet,
       checked: actions.recordPayment,
     },
@@ -188,7 +172,7 @@ export function FinishVisitPanel({
         className="w-full rounded-2xl bg-accent py-4 text-base font-semibold text-white shadow-lg shadow-accent/20 transition hover:brightness-110 active:scale-[0.99]"
       >
         <CheckCircle2 className="me-2 inline-block h-5 w-5" aria-hidden />
-        {isPsychiatry ? (isAr ? "إنهاء الجلسة" : "Finish Session") : tw("finishVisit")}
+        {tw("finishVisit")}
       </button>
 
       {/* Confirmation sheet */}
@@ -217,7 +201,7 @@ export function FinishVisitPanel({
 
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="text-base font-semibold text-primary">
-                  {isPsychiatry ? (isAr ? "إنهاء وتوثيق الجلسة" : "Finish & Document Session") : tw("finishVisitTitle")}
+                  {tw("finishVisitTitle")}
                 </h3>
                 <button
                   type="button"
@@ -228,9 +212,7 @@ export function FinishVisitPanel({
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <p className="mb-5 text-xs text-muted">
-                {isPsychiatry ? (isAr ? "سيتم إغلاق الجلسة الحالية وحفظ جميع ملاحظات العلاج النفسي." : "This will close the active session and save all clinical logs.") : tw("finishVisitHint")}
-              </p>
+              <p className="mb-5 text-xs text-muted">{tw("finishVisitHint")}</p>
 
               {/* Checklist */}
               <div className="space-y-3">
@@ -290,7 +272,7 @@ export function FinishVisitPanel({
                   ) : (
                     <CheckCircle2 className="me-1.5 inline-block h-4 w-4" />
                   )}
-                  {isPsychiatry ? (isAr ? "إنهاء الجلسة الآن" : "Finish Session Now") : tw("finishVisitConfirm")}
+                  {tw("finishVisitConfirm")}
                 </button>
               </div>
             </motion.div>

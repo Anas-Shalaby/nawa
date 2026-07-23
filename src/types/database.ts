@@ -16,6 +16,7 @@ export interface Database {
           name: string;
           slug: string;
           is_active: boolean;
+          is_onboarded: boolean;
           created_at: string;
           doctor_name: string | null;
           specialty: string | null;
@@ -27,11 +28,13 @@ export interface Database {
           clinic_location: string | null;
           clinic_latitude: number | null;
           clinic_longitude: number | null;
+          journey_state: any;
         };
         Insert: {
           name: string;
           slug: string;
           is_active?: boolean;
+          is_onboarded?: boolean;
           doctor_name?: string | null;
           specialty?: string | null;
           bio?: string | null;
@@ -42,11 +45,13 @@ export interface Database {
           clinic_location?: string | null;
           clinic_latitude?: number | null;
           clinic_longitude?: number | null;
+          journey_state?: any;
         };
         Update: {
           name?: string;
           slug?: string;
           is_active?: boolean;
+          is_onboarded?: boolean;
           doctor_name?: string | null;
           specialty?: string | null;
           bio?: string | null;
@@ -57,6 +62,7 @@ export interface Database {
           clinic_location?: string | null;
           clinic_latitude?: number | null;
           clinic_longitude?: number | null;
+          journey_state?: any;
         };
       };
       services: {

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PatientDetailShell } from "@/components/ehr/PatientDetailShell";
+import { SpecialtyProvider } from "@/lib/specialty/SpecialtyContext";
 import { requirePagePermission } from "@/lib/auth/requirePagePermission";
 import { fetchDoctorProfile } from "@/lib/queries/doctorProfile";
 import { fetchPatientMedia } from "@/lib/queries/patientMedia";
@@ -76,25 +77,27 @@ export default async function PatientDetailPage({
 
   return (
     <div className="w-full">
-      <PatientDetailShell
-        patient={patient}
-        tenantId={tenantId}
-        initialMedia={media}
-        initialVisits={visits}
-        initialPayments={payments}
-        services={services}
-        doctorName={profile.doctorName}
-        clinicName={profile.clinicName}
-        specialty={profile.specialty}
-        clinicPhone={profile.clinicPhone}
-        clinicLocation={profile.clinicLocation}
-        logoUrl={profile.avatarUrl}
-        initialPrescriptions={prescriptions}
-        initialFavorites={favorites}
-        clinicTemplates={clinicTemplates}
-        chronicMedications={chronicMedications}
-        family={family}
-      />
+      <SpecialtyProvider specialty={profile.specialty}>
+        <PatientDetailShell
+          patient={patient}
+          tenantId={tenantId}
+          initialMedia={media}
+          initialVisits={visits}
+          initialPayments={payments}
+          services={services}
+          doctorName={profile.doctorName}
+          clinicName={profile.clinicName}
+          specialty={profile.specialty}
+          clinicPhone={profile.clinicPhone}
+          clinicLocation={profile.clinicLocation}
+          logoUrl={profile.avatarUrl}
+          initialPrescriptions={prescriptions}
+          initialFavorites={favorites}
+          clinicTemplates={clinicTemplates}
+          chronicMedications={chronicMedications}
+          family={family}
+        />
+      </SpecialtyProvider>
     </div>
   );
 }

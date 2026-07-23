@@ -28,7 +28,13 @@ export function groupAgendaByDate(appointments: AgendaAppointment[]): AgendaDate
 
   return Array.from(map.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([dateKey, items]) => ({ dateKey, appointments: items }));
+    .map(([dateKey, items]) => ({
+      dateKey,
+      appointments: items.sort(
+        (a, b) =>
+          new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime()
+      ),
+    }));
 }
 
 export function formatAgendaSectionLabel(

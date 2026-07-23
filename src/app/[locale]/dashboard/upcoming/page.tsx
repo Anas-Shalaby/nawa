@@ -1,4 +1,4 @@
-import { InteractiveAgendaCanvas } from "@/components/agenda/InteractiveAgendaCanvas";
+import { UpcomingViewSwitcher } from "@/components/agenda/UpcomingViewSwitcher";
 import { fetchWorkingHours } from "@/actions/workingHours";
 import { fetchUpcomingAgenda } from "@/lib/queries/agenda";
 import { fetchPatients } from "@/lib/queries/patients";
@@ -36,7 +36,7 @@ export default async function UpcomingPage() {
     }));
 
   return (
-    <InteractiveAgendaCanvas
+    <UpcomingViewSwitcher
       appointments={appointments}
       services={services}
       patients={activePatients}

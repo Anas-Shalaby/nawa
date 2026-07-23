@@ -937,6 +937,19 @@
       "saving": "Saving…",
       "close": "Close",
       "error": "Could not save patient."
+    },
+    "directory": {
+      "filter": "Filter",
+      "all": "All Patients",
+      "debt": "Has Debt",
+      "recent": "Recent Visit",
+      "colLastVisit": "Last Visit",
+      "colTotalVisits": "Total Visits",
+      "colBalance": "Balance",
+      "paid": "Paid",
+      "viewFile": "View Profile",
+      "whatsapp": "WhatsApp",
+      "quickOptions": "Quick Options"
     }
   },
   "financials": {
@@ -1654,6 +1667,46 @@
         "none": "None",
         "collapseRx": "Collapse",
         "insertTemplate": "Edit"
+      },
+      "psychiatry": {
+        "mseTitle": "Mental Status Examination",
+        "mseHint": "Structured psychiatric assessment — all fields are optional.",
+        "mseFieldPlaceholder": "Describe…",
+        "mseEmpty": "Not documented",
+        "mse_appearance": "Appearance",
+        "mse_behavior": "Behavior",
+        "mse_speech": "Speech",
+        "mse_mood": "Mood",
+        "mse_affect": "Affect",
+        "mse_thoughtProcess": "Thought Process",
+        "mse_thoughtContent": "Thought Content",
+        "mse_perception": "Perception",
+        "mse_insight": "Insight",
+        "mse_judgment": "Judgment",
+        "mse_cognition": "Cognition",
+        "psychPlanTitle": "Treatment Plan",
+        "psychPlanHint": "Psychotherapy goals, homework, and medication changes.",
+        "psychFieldPlaceholder": "Enter details…",
+        "psychPlanEmpty": "No treatment plan documented",
+        "psych_psychotherapyNotes": "Psychotherapy Notes",
+        "psych_homework": "Homework for Patient",
+        "psych_lifestyleAdvice": "Lifestyle Advice",
+        "psych_goalsNextSession": "Goals Until Next Session",
+        "psych_medicationChanges": "Medication Changes",
+        "nextSessionTitle": "Next Session",
+        "nextSessionHint": "Psychiatry depends heavily on follow-up. Schedule the next session before the patient leaves.",
+        "nextSessionRequired": "Follow-up session is needed",
+        "scheduleNextSession": "Schedule Next Session",
+        "sessionStep1": "Chief Complaint",
+        "sessionStep2": "History",
+        "sessionStep3": "Mental Status Exam",
+        "sessionStep4": "Assessment",
+        "sessionStep5": "Treatment Plan",
+        "sessionStep6": "Medication",
+        "sessionStep7": "Next Session",
+        "sessionStep8": "Billing",
+        "sessionStep9": "Finish Session",
+        "ccSuggestions": "Common Psychiatric Complaints"
       }
     }
   },
@@ -1772,7 +1825,18 @@
     "saved": "Clinic identity saved",
     "saveError": "Could not save clinic identity",
     "editWorkingHours": "Edit working hours",
-    "formEyebrow": "Public booking identity for this clinic"
+    "formEyebrow": "Public booking identity for this clinic",
+    "checklistTitle": "Clinic Setup Checklist",
+    "checklistLogo": "Logo & Clinic Identity",
+    "checklistHours": "Working Hours",
+    "checklistTeam": "Team Invited",
+    "checklistServices": "Services & Pricing",
+    "checklistLive": "Booking Page Live",
+    "previewNameFallback": "Dr. Ahmed Mahmoud",
+    "previewSpecialtyFallback": "Maxillofacial Surgeon",
+    "previewCredential1": "American Board",
+    "previewCredential2": "15 Years Experience",
+    "previewBioFallback": "A short professional bio appears here before booking — your experience, style, and what makes your clinic unique."
   },
   "availability": {
     "metaTitle": "Working hours — Nawah",
@@ -2758,6 +2822,154 @@
       "lab": "Lab",
       "cashier": "Cashier",
       "intern": "Intern"
+    }
+  },
+  "onboarding": {
+    "metaTitle": "Clinic Setup",
+    "goodMorning": "Good Morning",
+    "goodAfternoon": "Good Afternoon",
+    "goodEvening": "Good Evening",
+    "welcomeMessage": "Welcome to Nawah. Let's prepare your clinic.",
+    "letsBegin": "Let's Begin",
+    "estimatedTime": "Estimated time: 3 minutes",
+    "progressPreparing": "Preparing your clinic",
+    "completed": "completed",
+    "step1Title": "Clinic Identity",
+    "step1Hint": "Confirm your clinic details. You can change these later.",
+    "clinicName": "Clinic Name",
+    "doctorName": "Doctor Name",
+    "specialty": "Specialty",
+    "specialtyPlaceholder": "e.g. Psychiatry",
+    "back": "Back",
+    "continue": "Continue",
+    "saving": "Saving...",
+    "step1Success": "Clinic details saved",
+    "saveError": "Failed to save. Please try again.",
+    "step2Title": "Meet Your Assistant",
+    "step2Description": "I'll help you prepare everything before your first patient arrives.",
+    "step3Title": "Invite Your Team",
+    "step3Hint": "Invite your receptionist or assistant to join your clinic workspace.",
+    "teamEmail": "Email Address",
+    "teamRole": "Role",
+    "roleDoctor": "Doctor",
+    "roleReceptionist": "Receptionist",
+    "roleAssistant": "Assistant",
+    "sendInvite": "Send Invite",
+    "inviting": "Inviting...",
+    "inviteSent": "Invitation sent successfully!",
+    "inviteFailed": "Failed to send invitation.",
+    "invalidEmail": "Please enter a valid email address.",
+    "invitedMembers": "Invited Members",
+    "skip": "Skip for now",
+    "step4Title": "Working Hours",
+    "step4Hint": "Set when your clinic is open for appointments.",
+    "schedulePlaceholder": "Your default schedule is Monday to Friday, 9:00 AM - 5:00 PM.",
+    "useDefaultSchedule": "Use default schedule",
+    "step5Title": "Services & Pricing",
+    "step5Hint": "Start with these essential services. We can add more later.",
+    "errorNoServices": "Please select at least one service.",
+    "servicesSaved": "Services successfully created",
+    "step6Title": "Booking Page",
+    "step6Hint": "This is what your patients will see when they book an appointment.",
+    "step7Title": "First Patient",
+    "step7Hint": "Let's create your first patient record together.",
+    "patientName": "Patient Name",
+    "patientPhone": "Phone Number",
+    "patientNotes": "Notes",
+    "optionalNotes": "Optional notes...",
+    "errorPatientName": "Patient name is required",
+    "patientCreated": "First patient created!",
+    "createPatient": "Create Patient",
+    "step8Title": "First Appointment",
+    "step8Hint": "Let's schedule an appointment for your first patient.",
+    "scheduleFirstAppointmentHint": "Schedule an appointment for today.",
+    "scheduleNow": "Schedule Appointment",
+    "scheduling": "Scheduling...",
+    "appointmentScheduled": "Appointment scheduled successfully!",
+    "step9Title": "Ready for your first session?",
+    "step9Hint": "Let's start your first consultation session.",
+    "finishOnboarding": "Start Session",
+    "completionTitle": "Your clinic is now ready",
+    "completionHint": "Today's work starts here.",
+    "openWorkspace": "Open Today's Workspace",
+    "visitBookingPage": "Visit Booking Page",
+    "redirecting": "Opening Workspace..."
+  },
+  "journey": {
+    "phase1": {
+      "title": "Prepare Your Clinic",
+      "steps": {
+        "logo": {
+          "title": "Clinic Logo",
+          "desc": "Upload your clinic logo to personalize the experience."
+        },
+        "specialty": {
+          "title": "Specialty",
+          "desc": "Define your medical specialty."
+        },
+        "hours": {
+          "title": "Working Hours",
+          "desc": "Set the default hours your clinic operates."
+        },
+        "services": {
+          "title": "Services",
+          "desc": "Add the services and prices you offer."
+        },
+        "team": {
+          "title": "Invite Team",
+          "desc": "Invite your receptionists to Nawah."
+        }
+      }
+    },
+    "phase2": {
+      "title": "Prepare Your First Day",
+      "steps": {
+        "patient": {
+          "title": "Create First Patient",
+          "desc": "Register your first patient profile."
+        },
+        "appointment": {
+          "title": "Book First Appointment",
+          "desc": "Schedule a session for your patient."
+        },
+        "session": {
+          "title": "Start First Session",
+          "desc": "Open the patient chart and start the consultation."
+        }
+      }
+    },
+    "phase3": {
+      "title": "Become More Efficient",
+      "steps": {
+        "roles": {
+          "title": "Customize Roles",
+          "desc": "Assign specific permissions to your team."
+        },
+        "finance": {
+          "title": "Financial Settings",
+          "desc": "Configure billing and payment preferences."
+        }
+      }
+    },
+    "phaseComplete": "All tasks completed! Amazing work.",
+    "remainingTasks": "{count} Remaining Tasks",
+    "phaseProgress": "Phase {current} of {total}",
+    "minutes": "minutes",
+    "doTask": "Start Task",
+    "health": {
+      "title": "Clinic Health",
+      "subtitle": "A quick snapshot of your clinic operations.",
+      "dimensions": {
+        "scheduling": "Scheduling",
+        "patients": "Patients",
+        "finance": "Finance",
+        "inventory": "Inventory"
+      },
+      "status": {
+        "healthy": "Healthy",
+        "needs_attention": "Needs Attention",
+        "getting_started": "Getting Started"
+      }
     }
   }
 }

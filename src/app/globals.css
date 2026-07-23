@@ -70,6 +70,30 @@
   --scrollbar-thumb-active: #6c5ce7;
 }
 
+/* Premium UI Utility Classes */
+.glass-panel {
+  @apply bg-surface/60 backdrop-blur-xl border border-subtle/50 shadow-sm;
+}
+.glass-panel-heavy {
+  @apply bg-base/80 backdrop-blur-2xl border border-subtle/30 shadow-lg;
+}
+.premium-glow {
+  position: relative;
+}
+.premium-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.5), transparent 50%, rgba(108, 92, 231, 0.1));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+
 @layer base {
   html {
     @apply antialiased;

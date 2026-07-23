@@ -938,6 +938,19 @@
       "error": "تعذّر حذف المريض.",
       "hasAppointments": "تعذّر حذف المريض بسبب سجلات مرتبطة. جرّب الأرشفة بدل الحذف.",
       "success": "تم حذف المريض بنجاح"
+    },
+    "directory": {
+      "filter": "تصفية",
+      "all": "كل المرضى",
+      "debt": "عليهم مديونية",
+      "recent": "زار العيادة قريبًا",
+      "colLastVisit": "آخر زيارة",
+      "colTotalVisits": "إجمالي الزيارات",
+      "colBalance": "الحساب المتبقي",
+      "paid": "مسدد",
+      "viewFile": "عرض الملف",
+      "whatsapp": "واتساب",
+      "quickOptions": "خيارات سريعة"
     }
   },
   "financials": {
@@ -1655,6 +1668,46 @@
         "none": "لا يوجد",
         "collapseRx": "طي",
         "insertTemplate": "تعديل"
+      },
+      "psychiatry": {
+        "mseTitle": "فحص الحالة العقلية",
+        "mseHint": "تقييم نفسي منظم — جميع الحقول اختيارية.",
+        "mseFieldPlaceholder": "صف…",
+        "mseEmpty": "لم يتم التوثيق",
+        "mse_appearance": "المظهر",
+        "mse_behavior": "السلوك",
+        "mse_speech": "الكلام",
+        "mse_mood": "المزاج",
+        "mse_affect": "الوجدان",
+        "mse_thoughtProcess": "سيرورة التفكير",
+        "mse_thoughtContent": "محتوى التفكير",
+        "mse_perception": "الإدراك",
+        "mse_insight": "الاستبصار",
+        "mse_judgment": "الحُكم",
+        "mse_cognition": "الإدراك المعرفي",
+        "psychPlanTitle": "الخطة العلاجية",
+        "psychPlanHint": "أهداف العلاج النفسي والواجبات والتغييرات الدوائية.",
+        "psychFieldPlaceholder": "أدخل التفاصيل…",
+        "psychPlanEmpty": "لم يتم توثيق خطة علاجية",
+        "psych_psychotherapyNotes": "ملاحظات العلاج النفسي",
+        "psych_homework": "واجبات المريض",
+        "psych_lifestyleAdvice": "نصائح نمط الحياة",
+        "psych_goalsNextSession": "أهداف الجلسة القادمة",
+        "psych_medicationChanges": "التغييرات الدوائية",
+        "nextSessionTitle": "الجلسة القادمة",
+        "nextSessionHint": "الطب النفسي يعتمد بشدة على المتابعة. جدول الجلسة القادمة قبل مغادرة المريض.",
+        "nextSessionRequired": "يلزم جلسة متابعة",
+        "scheduleNextSession": "جدولة الجلسة القادمة",
+        "sessionStep1": "الشكوى الرئيسية",
+        "sessionStep2": "التاريخ المرضي",
+        "sessionStep3": "فحص الحالة العقلية",
+        "sessionStep4": "التقييم والتشخيص",
+        "sessionStep5": "الخطة العلاجية",
+        "sessionStep6": "الأدوية",
+        "sessionStep7": "الجلسة القادمة",
+        "sessionStep8": "المحاسبة",
+        "sessionStep9": "إنهاء الجلسة",
+        "ccSuggestions": "شكاوى نفسية شائعة"
       }
     }
   },
@@ -1773,7 +1826,18 @@
     "saved": "تم حفظ هوية العيادة",
     "saveError": "تعذّر حفظ هوية العيادة",
     "editWorkingHours": "تعديل أوقات العمل",
-    "formEyebrow": "الهوية العامة لصفحة حجز هذه العيادة"
+    "formEyebrow": "الهوية العامة لصفحة حجز هذه العيادة",
+    "checklistTitle": "قائمة إعداد العيادة",
+    "checklistLogo": "الشعار وهوية العيادة",
+    "checklistHours": "أوقات العمل",
+    "checklistTeam": "دعوة الفريق",
+    "checklistServices": "الخدمات والأسعار",
+    "checklistLive": "صفحة الحجز جاهزة",
+    "previewNameFallback": "د. أحمد محمود",
+    "previewSpecialtyFallback": "استشاري جراحة الوجه والفكين",
+    "previewCredential1": "البورد الأمريكي",
+    "previewCredential2": "خبرة 15 عاماً",
+    "previewBioFallback": "نبذة مهنية قصيرة تظهر هنا للمريض قبل الحجز — خبراتك، أسلوبك، وما يميز عيادتك."
   },
   "availability": {
     "metaTitle": "أوقات العمل — نواة",
@@ -2759,6 +2823,154 @@
       "lab": "مختبر",
       "cashier": "كاشير",
       "intern": "متدرب"
+    }
+  },
+  "onboarding": {
+    "metaTitle": "إعداد العيادة",
+    "goodMorning": "صباح الخير",
+    "goodAfternoon": "مساء الخير",
+    "goodEvening": "مساء الخير",
+    "welcomeMessage": "مرحباً بك في نواة. لنقم بإعداد عيادتك.",
+    "letsBegin": "لنبدأ",
+    "estimatedTime": "الوقت المتوقع: ٣ دقائق",
+    "progressPreparing": "جاري تجهيز العيادة",
+    "completed": "مكتمل",
+    "step1Title": "هوية العيادة",
+    "step1Hint": "تأكيد بيانات عيادتك. يمكنك تعديلها لاحقاً.",
+    "clinicName": "اسم العيادة",
+    "doctorName": "اسم الطبيب",
+    "specialty": "التخصص",
+    "specialtyPlaceholder": "مثال: الطب النفسي",
+    "back": "رجوع",
+    "continue": "متابعة",
+    "saving": "جاري الحفظ...",
+    "step1Success": "تم حفظ بيانات العيادة",
+    "saveError": "فشل الحفظ. يرجى المحاولة مرة أخرى.",
+    "step2Title": "تعرف على مساعدك",
+    "step2Description": "سأساعدك في تجهيز كل شيء قبل وصول مريضك الأول.",
+    "step3Title": "دعوة فريق العمل",
+    "step3Hint": "قم بدعوة موظف الاستقبال أو المساعد للانضمام إلى مساحة عمل العيادة.",
+    "teamEmail": "البريد الإلكتروني",
+    "teamRole": "الدور",
+    "roleDoctor": "طبيب",
+    "roleReceptionist": "استقبال",
+    "roleAssistant": "مساعد",
+    "sendInvite": "إرسال الدعوة",
+    "inviting": "جاري الإرسال...",
+    "inviteSent": "تم إرسال الدعوة بنجاح!",
+    "inviteFailed": "فشل إرسال الدعوة.",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح.",
+    "invitedMembers": "الأعضاء المدعوين",
+    "skip": "تخطي الآن",
+    "step4Title": "أوقات العمل",
+    "step4Hint": "حدد أوقات فتح العيادة للمواعيد.",
+    "schedulePlaceholder": "جدولك الافتراضي هو من الإثنين للجمعة، ٩:٠٠ ص - ٥:٠٠ م.",
+    "useDefaultSchedule": "استخدام الجدول الافتراضي",
+    "step5Title": "الخدمات والأسعار",
+    "step5Hint": "ابدأ بهذه الخدمات الأساسية. يمكننا إضافة المزيد لاحقاً.",
+    "errorNoServices": "يرجى اختيار خدمة واحدة على الأقل.",
+    "servicesSaved": "تم إنشاء الخدمات بنجاح",
+    "step6Title": "صفحة الحجز",
+    "step6Hint": "هذا ما سيراه مرضاك عند حجز موعد.",
+    "step7Title": "المريض الأول",
+    "step7Hint": "لنقم بإنشاء ملف مريضك الأول معاً.",
+    "patientName": "اسم المريض",
+    "patientPhone": "رقم الهاتف",
+    "patientNotes": "ملاحظات",
+    "optionalNotes": "ملاحظات اختيارية...",
+    "errorPatientName": "اسم المريض مطلوب",
+    "patientCreated": "تم إنشاء المريض الأول!",
+    "createPatient": "إنشاء مريض",
+    "step8Title": "الموعد الأول",
+    "step8Hint": "لنقم بجدولة موعد لمريضك الأول.",
+    "scheduleFirstAppointmentHint": "قم بجدولة موعد لليوم.",
+    "scheduleNow": "جدولة الموعد",
+    "scheduling": "جاري الجدولة...",
+    "appointmentScheduled": "تم جدولة الموعد بنجاح!",
+    "step9Title": "جاهز لجلستك الأولى؟",
+    "step9Hint": "لنبدأ جلسة الاستشارة الأولى.",
+    "finishOnboarding": "بدء الجلسة",
+    "completionTitle": "عيادتك جاهزة الآن",
+    "completionHint": "عمل اليوم يبدأ من هنا.",
+    "openWorkspace": "فتح مساحة عمل اليوم",
+    "visitBookingPage": "زيارة صفحة الحجز",
+    "redirecting": "جاري فتح مساحة العمل..."
+  },
+  "journey": {
+    "phase1": {
+      "title": "تجهيز العيادة",
+      "steps": {
+        "logo": {
+          "title": "شعار العيادة",
+          "desc": "قم برفع شعار عيادتك لتخصيص التجربة."
+        },
+        "specialty": {
+          "title": "التخصص",
+          "desc": "تحديد التخصص الطبي الخاص بك."
+        },
+        "hours": {
+          "title": "ساعات العمل",
+          "desc": "قم بتعيين ساعات العمل الافتراضية للعيادة."
+        },
+        "services": {
+          "title": "الخدمات",
+          "desc": "أضف الخدمات والأسعار التي تقدمها."
+        },
+        "team": {
+          "title": "دعوة الفريق",
+          "desc": "قم بدعوة موظفي الاستقبال إلى منصة نواة."
+        }
+      }
+    },
+    "phase2": {
+      "title": "الاستعداد لليوم الأول",
+      "steps": {
+        "patient": {
+          "title": "إنشاء أول مريض",
+          "desc": "قم بتسجيل ملف أول مريض لك."
+        },
+        "appointment": {
+          "title": "حجز أول موعد",
+          "desc": "قم بجدولة جلسة للمريض."
+        },
+        "session": {
+          "title": "بدء أول جلسة",
+          "desc": "افتح ملف المريض وابدأ الاستشارة."
+        }
+      }
+    },
+    "phase3": {
+      "title": "زيادة الكفاءة",
+      "steps": {
+        "roles": {
+          "title": "تخصيص الصلاحيات",
+          "desc": "تعيين صلاحيات محددة لفريقك."
+        },
+        "finance": {
+          "title": "الإعدادات المالية",
+          "desc": "تكوين تفضيلات الفوترة والدفع."
+        }
+      }
+    },
+    "phaseComplete": "تم إنجاز جميع المهام! عمل رائع.",
+    "remainingTasks": "يتبقى {count} مهام",
+    "phaseProgress": "المرحلة {current} من {total}",
+    "minutes": "دقائق",
+    "doTask": "ابدأ المهمة",
+    "health": {
+      "title": "صحة العيادة",
+      "subtitle": "نظرة سريعة على عمليات العيادة الخاصة بك.",
+      "dimensions": {
+        "scheduling": "الجدولة",
+        "patients": "المرضى",
+        "finance": "المالية",
+        "inventory": "المخزون"
+      },
+      "status": {
+        "healthy": "صحي",
+        "needs_attention": "يحتاج انتباه",
+        "getting_started": "البدء"
+      }
     }
   }
 }

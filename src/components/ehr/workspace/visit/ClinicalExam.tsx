@@ -3,6 +3,10 @@
 import { useTranslations } from "next-intl";
 import { ChevronDown, ChevronUp, Activity } from "lucide-react";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface VitalsData {
   heartRate: string;
@@ -60,7 +64,7 @@ export function ClinicalExam({
     .join(" | ");
 
   return (
-    <section
+    <Card
       id="visit-exam"
       onClick={() => {
         if (isCollapsed) {
@@ -68,142 +72,164 @@ export function ClinicalExam({
         }
       }}
       className={[
-        "rounded-2xl border bg-surface/40 p-5 transition-all duration-200 text-start",
+        "transition-all duration-300 text-start overflow-hidden",
         isActive
-          ? "border-accent ring-1 ring-accent/20"
-          : "border-subtle/70 hover:border-subtle",
-        isCollapsed ? "cursor-pointer" : "",
+          ? "border-accent ring-1 ring-accent/20 shadow-md premium-glow bg-surface/90"
+          : "border-subtle/50 bg-surface/40 hover:border-subtle hover:shadow-sm",
+        isCollapsed ? "cursor-pointer opacity-80 hover:opacity-100" : "",
       ].join(" ")}
     >
-      {/* Card Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-accent/10 text-xs font-semibold text-accent">
+      <CardHeader className="p-4 md:p-5 flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="flex items-center gap-3">
+          <Badge variant={isActive ? "premium" : "secondary"} className="h-7 w-7 rounded-lg flex items-center justify-center p-0 text-sm">
             3
-          </span>
+          </Badge>
           <h2 className="text-sm font-semibold text-primary">{t("step3")}</h2>
         </div>
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onToggleCollapse();
           }}
-          className="rounded-lg p-1 text-muted hover:bg-elevated hover:text-primary hide-on-print"
+          className="h-8 w-8 text-muted hide-on-print"
           aria-label={isCollapsed ? "Expand" : "Collapse"}
         >
           {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-        </button>
-      </div>
+        </Button>
+      </CardHeader>
 
-      {/* Card Body */}
-      {!isCollapsed ? (
-        <div className="mt-4 space-y-4">
-          <p className="text-xs text-muted">{t("stepDescription3")}</p>
+      <AnimatePresence initial={false}>
+        {!isCollapsed ? (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <CardContent className="p-4 md:p-5 pt-0 space-y-5">
+              <p className="text-xs text-muted">{t("stepDescription3")}</p>
 
-          {/* Vitals expander */}
-          <div className="rounded-xl border border-subtle bg-elevated/10 p-3">
-            <button
-              type="button"
-              onClick={() => {
-                setShowVitals((v) => !v);
-                onFocus();
-              }}
-              className="flex w-full items-center justify-between text-xs font-semibold text-primary/80 transition hover:text-accent"
-            >
-              <span className="flex items-center gap-1.5">
-                <Activity className="h-3.5 w-3.5 text-accent" />
-                {t("examVitals")}
-                {vitalsSummary && <span className="text-[11px] font-normal text-muted">({vitalsSummary})</span>}
-              </span>
-              <span>{showVitals ? t("collapseRx") : t("insertTemplate")}</span>
-            </button>
+              {/* Vitals expander */}
+              <div className="rounded-xl border border-subtle bg-elevated/20 p-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setShowVitals((v) => !v);
+                    onFocus();
+                  }}
+                  className="w-full justify-between hover:bg-transparent h-10 px-3"
+                >
+                  <span className="flex items-center gap-2 text-sm font-medium">
+                    <Activity className="h-4 w-4 text-accent" />
+                    {t("examVitals")}
+                    {vitalsSummary && <span className="text-[11px] font-normal text-muted hidden sm:inline-block ml-2">({vitalsSummary})</span>}
+                  </span>
+                  <span className="text-xs text-muted">{showVitals ? t("collapseRx") : t("insertTemplate")}</span>
+                </Button>
 
-            {showVitals ? (
-              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div>
-                  <label className="block text-[10px] font-medium text-muted mb-1">
-                    {t("vitalHR")}
-                  </label>
-                  <input
-                    type="text"
-                    value={vitals.heartRate}
-                    onChange={(e) => handleVitalChange("heartRate", e.target.value)}
-                    onFocus={onFocus}
-                    placeholder="e.g. 72"
-                    dir="ltr"
-                    className="w-full rounded-lg border border-subtle bg-elevated/40 px-2.5 py-1.5 text-xs text-primary focus:border-accent/40 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-medium text-muted mb-1">
-                    {t("vitalBP")}
-                  </label>
-                  <input
-                    type="text"
-                    value={vitals.bloodPressure}
-                    onChange={(e) => handleVitalChange("bloodPressure", e.target.value)}
-                    onFocus={onFocus}
-                    placeholder="e.g. 120/80"
-                    dir="ltr"
-                    className="w-full rounded-lg border border-subtle bg-elevated/40 px-2.5 py-1.5 text-xs text-primary focus:border-accent/40 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-medium text-muted mb-1">
-                    {t("vitalTemp")}
-                  </label>
-                  <input
-                    type="text"
-                    value={vitals.temperature}
-                    onChange={(e) => handleVitalChange("temperature", e.target.value)}
-                    onFocus={onFocus}
-                    placeholder="e.g. 37.0"
-                    dir="ltr"
-                    className="w-full rounded-lg border border-subtle bg-elevated/40 px-2.5 py-1.5 text-xs text-primary focus:border-accent/40 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-medium text-muted mb-1">
-                    {t("vitalWeight")}
-                  </label>
-                  <input
-                    type="text"
-                    value={vitals.weight}
-                    onChange={(e) => handleVitalChange("weight", e.target.value)}
-                    onFocus={onFocus}
-                    placeholder="e.g. 70"
-                    dir="ltr"
-                    className="w-full rounded-lg border border-subtle bg-elevated/40 px-2.5 py-1.5 text-xs text-primary focus:border-accent/40 focus:outline-none"
-                  />
-                </div>
+                <AnimatePresence>
+                  {showVitals && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-3 pt-2">
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                            {t("vitalHR")}
+                          </label>
+                          <input
+                            type="text"
+                            value={vitals.heartRate}
+                            onChange={(e) => handleVitalChange("heartRate", e.target.value)}
+                            onFocus={onFocus}
+                            placeholder="e.g. 72"
+                            dir="ltr"
+                            className="flex h-9 w-full rounded-md border border-subtle bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                            {t("vitalBP")}
+                          </label>
+                          <input
+                            type="text"
+                            value={vitals.bloodPressure}
+                            onChange={(e) => handleVitalChange("bloodPressure", e.target.value)}
+                            onFocus={onFocus}
+                            placeholder="e.g. 120/80"
+                            dir="ltr"
+                            className="flex h-9 w-full rounded-md border border-subtle bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                            {t("vitalTemp")}
+                          </label>
+                          <input
+                            type="text"
+                            value={vitals.temperature}
+                            onChange={(e) => handleVitalChange("temperature", e.target.value)}
+                            onFocus={onFocus}
+                            placeholder="e.g. 37.0"
+                            dir="ltr"
+                            className="flex h-9 w-full rounded-md border border-subtle bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                            {t("vitalWeight")}
+                          </label>
+                          <input
+                            type="text"
+                            value={vitals.weight}
+                            onChange={(e) => handleVitalChange("weight", e.target.value)}
+                            onFocus={onFocus}
+                            placeholder="e.g. 70"
+                            dir="ltr"
+                            className="flex h-9 w-full rounded-md border border-subtle bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            ) : null}
-          </div>
 
-          {/* Exam notes */}
-          <div>
-            <label className="block text-[10px] font-medium uppercase tracking-wider text-muted mb-1">
-              {t("examNotes")}
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => onNotesChange(e.target.value)}
-              onFocus={onFocus}
-              rows={4}
-              placeholder={t("examNotesPlaceholder")}
-              className="w-full resize-none rounded-xl border border-subtle bg-elevated/30 px-3 py-2.5 text-sm text-primary placeholder:text-muted/60 focus:border-accent/40 focus:outline-none focus:ring-1 focus:ring-accent/20"
-            />
-          </div>
-        </div>
-      ) : (
-        /* Collapsed Summary */
-        <div className="mt-2.5 ps-8.5">
-          <p className="text-xs text-primary/80 line-clamp-1 italic">
-            {collapsedSummary || <span className="text-muted/60">{t("none")}</span>}
-          </p>
-        </div>
-      )}
-    </section>
+              {/* Exam notes */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                  {t("examNotes")}
+                </label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => onNotesChange(e.target.value)}
+                  onFocus={onFocus}
+                  rows={4}
+                  placeholder={t("examNotesPlaceholder")}
+                  className="flex min-h-[80px] w-full rounded-md border border-subtle bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                />
+              </div>
+            </CardContent>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+          >
+            <CardContent className="p-4 md:p-5 pt-0 ps-12 md:ps-[3.25rem]">
+              <p className="text-sm text-primary/80 line-clamp-1 italic">
+                {collapsedSummary || <span className="text-muted">{t("none")}</span>}
+              </p>
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Card>
   );
 }

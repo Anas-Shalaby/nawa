@@ -43,31 +43,28 @@ export async function fetchClinicBrief(): Promise<{
   slug: string;
   tenantId: string;
   doctorName: string;
+  isOnboarded: boolean;
+  journeyState: any;
 }> {
   const supabase = await createAuthenticatedClient();
   const tenantId = await resolveTenantId(supabase);
 
-  const [{ data, error }, { data: authData }] = await Promise.all([
-    supabase.from("tenants").select("name, slug").eq("id", tenantId).single(),
-    supabase.auth.getUser(),
-  ]);
+  const { data, error } = await supabase
+    .from("tenants")
+    .select("name, slug, doctor_name, is_onboarded, journey_state")
+    .eq("id", tenantId)
+    .single();
 
-  if (error) {
-    throw new Error(`Failed to load clinic: ${error.message}`);
+  if (error || !data) {
+    throw new Error("Could not find clinic for user.");
   }
-
-  const user = authData.user;
-  const meta = user?.user_metadata ?? {};
-  const doctorName =
-    (typeof meta.display_name === "string" && meta.display_name.trim()) ||
-    (typeof meta.full_name === "string" && meta.full_name.trim()) ||
-    (typeof meta.name === "string" && meta.name.trim()) ||
-    data.name;
 
   return {
     clinicName: data.name,
     slug: data.slug,
     tenantId,
-    doctorName,
+    doctorName: data.doctor_name || "Doctor",
+    isOnboarded: data.is_onboarded ?? false,
+    journeyState: data.journey_state,
   };
 }

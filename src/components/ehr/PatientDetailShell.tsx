@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { motion } from "framer-motion";
+import { motion, LayoutGroup } from "framer-motion";
 import {
   FilePlus2,
   Loader2,
@@ -39,6 +39,11 @@ import { InvestigationPanel } from "./workspace/visit/InvestigationPanel";
 import { TreatmentPlanCard } from "./workspace/visit/TreatmentPlanCard";
 import { PrescriptionSection } from "./workspace/visit/PrescriptionSection";
 import { FollowUpCard } from "./workspace/visit/FollowUpCard";
+import { MseCard, DEFAULT_MSE } from "./workspace/visit/MseCard";
+import type { MseData } from "./workspace/visit/MseCard";
+import { PsychTreatmentPlan, DEFAULT_PSYCH_TREATMENT } from "./workspace/visit/PsychTreatmentPlan";
+import type { PsychTreatmentData } from "./workspace/visit/PsychTreatmentPlan";
+import { SessionFollowUpCard } from "./workspace/visit/SessionFollowUpCard";
 import { BillingCard } from "./workspace/BillingCard";
 import { FinishVisitPanel } from "./workspace/FinishVisitPanel";
 
@@ -59,7 +64,9 @@ import { QuickActionPanel } from "./workspace/intelligence/QuickActionPanel";
 import { RelatedHistory } from "./workspace/intelligence/RelatedHistory";
 import { MedicationHistory } from "./workspace/intelligence/MedicationHistory";
 import { FollowUpCenter } from "./workspace/intelligence/FollowUpCenter";
-import { MseCard } from "./workspace/visit/MseCard";
+import { NawahAIAssistant } from "./workspace/intelligence/NawahAIAssistant";
+import { SpecialtyProvider, useSpecialty } from "@/lib/specialty/SpecialtyContext";
+import { useSpecialtyTerms } from "@/lib/specialty/useSpecialtyTerms";
 
 // Visit Data Schemas
 interface StructuredVisit {
@@ -95,19 +102,8 @@ interface StructuredVisit {
     procedures: string;
     instructions: string;
   };
-  mse?: {
-    appearance?: string;
-    behavior?: string;
-    speech?: string;
-    mood?: string;
-    affect?: string;
-    thoughtProcess?: string;
-    thoughtContent?: string;
-    perception?: string;
-    insight?: string;
-    judgment?: string;
-    cognition?: string;
-  };
+  mse?: MseData;
+  psychTreatment?: PsychTreatmentData;
 }
 
 interface FollowUpData {
@@ -150,19 +146,8 @@ const DEFAULT_VISIT: StructuredVisit = {
     procedures: "",
     instructions: "",
   },
-  mse: {
-    appearance: "",
-    behavior: "",
-    speech: "",
-    mood: "",
-    affect: "",
-    thoughtProcess: "",
-    thoughtContent: "",
-    perception: "",
-    insight: "",
-    judgment: "",
-    cognition: "",
-  },
+  mse: { ...DEFAULT_MSE },
+  psychTreatment: { ...DEFAULT_PSYCH_TREATMENT },
 };
 
 function parseVisitNotes(notesString: string | null | undefined): StructuredVisit {
@@ -205,19 +190,26 @@ function parseVisitNotes(notesString: string | null | undefined): StructuredVisi
           procedures: parsed.treatmentPlan?.procedures || "",
           instructions: parsed.treatmentPlan?.instructions || "",
         },
-        mse: {
-          appearance: parsed.mse?.appearance || "",
-          behavior: parsed.mse?.behavior || "",
-          speech: parsed.mse?.speech || "",
-          mood: parsed.mse?.mood || "",
-          affect: parsed.mse?.affect || "",
-          thoughtProcess: parsed.mse?.thoughtProcess || "",
-          thoughtContent: parsed.mse?.thoughtContent || "",
-          perception: parsed.mse?.perception || "",
-          insight: parsed.mse?.insight || "",
-          judgment: parsed.mse?.judgment || "",
-          cognition: parsed.mse?.cognition || "",
-        },
+        mse: parsed.mse ? {
+          appearance: parsed.mse.appearance || "",
+          behavior: parsed.mse.behavior || "",
+          speech: parsed.mse.speech || "",
+          mood: parsed.mse.mood || "",
+          affect: parsed.mse.affect || "",
+          thoughtProcess: parsed.mse.thoughtProcess || "",
+          thoughtContent: parsed.mse.thoughtContent || "",
+          perception: parsed.mse.perception || "",
+          insight: parsed.mse.insight || "",
+          judgment: parsed.mse.judgment || "",
+          cognition: parsed.mse.cognition || "",
+        } : { ...DEFAULT_MSE },
+        psychTreatment: parsed.psychTreatment ? {
+          psychotherapyNotes: parsed.psychTreatment.psychotherapyNotes || "",
+          homework: parsed.psychTreatment.homework || "",
+          lifestyleAdvice: parsed.psychTreatment.lifestyleAdvice || "",
+          goalsNextSession: parsed.psychTreatment.goalsNextSession || "",
+          medicationChanges: parsed.psychTreatment.medicationChanges || "",
+        } : { ...DEFAULT_PSYCH_TREATMENT },
       };
     }
   } catch (e) {
@@ -316,6 +308,8 @@ export function PatientDetailShell({
   const tv = useTranslations("ehr.workspace.visit");
   const tPatients = useTranslations("patients");
   const locale = useLocale() as Locale;
+  const { isPsychiatry } = useSpecialty();
+  const specialtyTerms = useSpecialtyTerms(locale);
 
   const router = useRouter();
 
@@ -589,202 +583,85 @@ export function PatientDetailShell({
     window.print();
   }
 
-  const isPsychiatry = specialty?.toLowerCase().includes("psych") ?? false;
-  const isAr = locale === "ar";
-
-  function getStepId(key: string): number {
-    if (!isPsychiatry) {
-      if (key === "cc") return 1;
-      if (key === "history") return 2;
-      if (key === "exam") return 3;
-      if (key === "assessment") return 4;
-      if (key === "investigations") return 5;
-      if (key === "plan") return 6;
-      if (key === "prescription") return 7;
-      if (key === "followup") return 8;
-      if (key === "billing") return 9;
-      if (key === "finish") return 10;
-      return 0;
-    }
-    // Psychiatry mapping
-    if (key === "cc") return 1;
-    if (key === "history") return 2;
-    if (key === "mse") return 3;
-    if (key === "assessment") return 4;
-    if (key === "plan") return 5;
-    if (key === "prescription") return 6;
-    if (key === "followup") return 7;
-    if (key === "billing") return 8;
-    if (key === "finish") return 9;
-    return 0;
-  }
-
-  // Visual completeness markers for steps
-  const steps = isPsychiatry
-    ? [
-        {
-          id: 1,
-          key: "cc",
-          elementId: "visit-cc",
-          isCompleted: !!visitData.chiefComplaint.trim(),
-          label: isAr ? "ملاحظات الجلسة" : "Session Notes & Complaint",
-          description: isAr ? "شكوى المريض وملاحظات الجلسة" : "Client symptom notes & complaints",
-        },
-        {
-          id: 2,
-          key: "history",
-          elementId: "visit-history",
-          isCompleted:
-            !!visitData.history.presentIllness.trim() ||
-            !!visitData.history.pastMedical.trim() ||
-            !!visitData.history.social.trim(),
-          label: isAr ? "التاريخ النفسي والطبي" : "Psychiatric History",
-          description: isAr ? "الأمراض والتاريخ العائلي والاجتماعي" : "Family history & lifestyle contexts",
-        },
-        {
-          id: 3,
-          key: "mse",
-          elementId: "visit-exam",
-          isCompleted:
-            !!visitData.mse?.appearance?.trim() ||
-            !!visitData.mse?.behavior?.trim() ||
-            !!visitData.mse?.speech?.trim() ||
-            !!visitData.mse?.mood?.trim(),
-          label: isAr ? "الفحص العقلي والنفسي (MSE)" : "Mental Status Exam (MSE)",
-          description: isAr ? "المظهر، الوجدان، الأفكار والسلوك" : "Appearance, affect, speech & thoughts",
-        },
-        {
-          id: 4,
-          key: "assessment",
-          elementId: "visit-assessment",
-          isCompleted:
-            !!visitData.assessment.primaryDiagnosis.trim() ||
-            !!visitData.assessment.notes.trim(),
-          label: isAr ? "التقييم والتشخيص" : "Psychiatric Assessment",
-          description: isAr ? "التشخيص الأساسي والملاحظات" : "Clinical diagnosis & assessment notes",
-        },
-        {
-          id: 5,
-          key: "plan",
-          elementId: "visit-plan",
-          isCompleted:
-            !!visitData.treatmentPlan.notes.trim() ||
-            !!visitData.treatmentPlan.lifestyle.trim() ||
-            !!visitData.treatmentPlan.instructions.trim(),
-          label: isAr ? "خطة العلاج والجلسات" : "Treatment & Therapy Plan",
-          description: isAr ? "ملاحظات العلاج والواجبات المنزلية" : "Psychotherapy homework & goals",
-        },
-        {
-          id: 6,
-          key: "prescription",
-          elementId: "visit-prescription",
-          isCompleted: prescriptions.length > 0,
-          label: isAr ? "الروشتة والعلاجات" : "Medications (Rx)",
-          description: isAr ? "وصف الأدوية والجرعات" : "Prescribe drugs & dosages",
-        },
-        {
-          id: 7,
-          key: "followup",
-          elementId: "visit-followup",
-          isCompleted: followupData.required,
-          label: isAr ? "الجلسة القادمة" : "Next Session",
-          description: isAr ? "جدولة موعد الاستشارة التالي" : "Schedule next counseling slot",
-        },
-        {
-          id: 8,
-          key: "billing",
-          elementId: "visit-billing",
-          isCompleted: balanceDue === 0,
-          label: isAr ? "حساب الجلسة" : "Session Billing",
-          description: isAr ? "تحصيل رسوم المعاملة الحالية" : "Process invoice balance due",
-        },
-        {
-          id: 9,
-          key: "finish",
-          elementId: "visit-finish",
-          isCompleted: currentVisit?.status === "completed",
-          label: isAr ? "إنهاء الجلسة" : "Finish Session",
-          description: isAr ? "إغلاق الجلسة الحالية وتوثيقها" : "Close active session file",
-        },
-      ]
-    : [
-        {
-          id: 1,
-          key: "cc",
-          elementId: "visit-cc",
-          isCompleted: !!visitData.chiefComplaint.trim(),
-        },
-        {
-          id: 2,
-          key: "history",
-          elementId: "visit-history",
-          isCompleted:
-            !!visitData.history.presentIllness.trim() ||
-            !!visitData.history.pastMedical.trim() ||
-            !!visitData.history.drug.trim() ||
-            !!visitData.history.family.trim() ||
-            !!visitData.history.social.trim(),
-        },
-        {
-          id: 3,
-          key: "exam",
-          elementId: "visit-exam",
-          isCompleted:
-            !!visitData.clinicalExamination.trim() ||
-            !!visitData.vitals.heartRate ||
-            !!visitData.vitals.bloodPressure,
-        },
-        {
-          id: 4,
-          key: "assessment",
-          elementId: "visit-assessment",
-          isCompleted:
-            !!visitData.assessment.primaryDiagnosis.trim() ||
-            !!visitData.assessment.notes.trim(),
-        },
-        {
-          id: 5,
-          key: "investigations",
-          elementId: "visit-investigations",
-          isCompleted:
-            !!visitData.investigations.lab.trim() ||
-            !!visitData.investigations.imaging.trim() ||
-            !!visitData.investigations.other.trim(),
-        },
-        {
-          id: 6,
-          key: "plan",
-          elementId: "visit-plan",
-          isCompleted:
-            !!visitData.treatmentPlan.notes.trim() ||
-            !!visitData.treatmentPlan.lifestyle.trim() ||
-            !!visitData.treatmentPlan.instructions.trim(),
-        },
-        {
-          id: 7,
-          key: "prescription",
-          elementId: "visit-prescription",
-          isCompleted: prescriptions.length > 0,
-        },
-        {
-          id: 8,
-          key: "followup",
-          elementId: "visit-followup",
-          isCompleted: followupData.required,
-        },
-        {
-          id: 9,
-          key: "billing",
-          elementId: "visit-billing",
-          isCompleted: balanceDue === 0,
-        },
-        {
-          id: 10,
-          key: "finish",
-          elementId: "visit-finish",
-          isCompleted: currentVisit?.status === "completed",
-        },
-      ];
+  // Visual completeness markers for steps 1-10
+  const steps = [
+    {
+      id: 1,
+      key: "cc",
+      elementId: "visit-cc",
+      isCompleted: !!visitData.chiefComplaint.trim(),
+    },
+    {
+      id: 2,
+      key: "history",
+      elementId: "visit-history",
+      isCompleted:
+        !!visitData.history.presentIllness.trim() ||
+        !!visitData.history.pastMedical.trim() ||
+        !!visitData.history.drug.trim() ||
+        !!visitData.history.family.trim() ||
+        !!visitData.history.social.trim(),
+    },
+    {
+      id: 3,
+      key: "exam",
+      elementId: "visit-exam",
+      isCompleted:
+        !!visitData.clinicalExamination.trim() ||
+        !!visitData.vitals.heartRate ||
+        !!visitData.vitals.bloodPressure,
+    },
+    {
+      id: 4,
+      key: "assessment",
+      elementId: "visit-assessment",
+      isCompleted:
+        !!visitData.assessment.primaryDiagnosis.trim() ||
+        !!visitData.assessment.notes.trim(),
+    },
+    {
+      id: 5,
+      key: "investigations",
+      elementId: "visit-investigations",
+      isCompleted:
+        !!visitData.investigations.lab.trim() ||
+        !!visitData.investigations.imaging.trim() ||
+        !!visitData.investigations.other.trim(),
+    },
+    {
+      id: 6,
+      key: "plan",
+      elementId: "visit-plan",
+      isCompleted:
+        !!visitData.treatmentPlan.notes.trim() ||
+        !!visitData.treatmentPlan.lifestyle.trim() ||
+        !!visitData.treatmentPlan.instructions.trim(),
+    },
+    {
+      id: 7,
+      key: "prescription",
+      elementId: "visit-prescription",
+      isCompleted: prescriptions.length > 0,
+    },
+    {
+      id: 8,
+      key: "followup",
+      elementId: "visit-followup",
+      isCompleted: followupData.required,
+    },
+    {
+      id: 9,
+      key: "billing",
+      elementId: "visit-billing",
+      isCompleted: balanceDue === 0,
+    },
+    {
+      id: 10,
+      key: "finish",
+      elementId: "visit-finish",
+      isCompleted: currentVisit?.status === "completed",
+    },
+  ];
 
   return (
     <>
@@ -792,7 +669,7 @@ export function PatientDetailShell({
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         dir="rtl"
-        className="mx-auto w-full max-w-5xl pb-16 patient-workspace-print"
+        className="mx-auto w-full max-w-5xl pb-16 print:hidden"
       >
         {/* 1. Sticky Header */}
         <PatientHeader
@@ -884,19 +761,28 @@ export function PatientDetailShell({
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
           
           {/* Main vertical clinical forms */}
-          <div className="lg:col-span-3 space-y-6">
+          <LayoutGroup>
+            <div className="lg:col-span-3 space-y-6">
             
             {/* Step 1: Chief Complaint */}
             {canWriteEhr ? (
               <ChiefComplaintCard
                 value={visitData.chiefComplaint}
                 onChange={(val) => setVisitData((prev) => ({ ...prev, chiefComplaint: val }))}
-                isCollapsed={!expandedSections[getStepId("cc")] && activeStep !== getStepId("cc")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("cc"))}
-                isActive={activeStep === getStepId("cc")}
-                onFocus={() => handleStepFocus(getStepId("cc"))}
-                specialty={specialty}
-                locale={locale}
+                isCollapsed={!expandedSections[1] && activeStep !== 1}
+                onToggleCollapse={() => toggleSectionCollapse(1)}
+                isActive={activeStep === 1}
+                onFocus={() => handleStepFocus(1)}
+                suggestions={isPsychiatry ? [
+                  "Anxiety / قلق",
+                  "Depression / اكتئاب",
+                  "Insomnia / أرق",
+                  "Panic Attacks / نوبات هلع",
+                  "OCD / وسواس قهري",
+                  "PTSD / اضطراب ما بعد الصدمة",
+                  "Mood Swings / تقلبات مزاجية",
+                  "Social Withdrawal / انسحاب اجتماعي",
+                ] : undefined}
               />
             ) : null}
 
@@ -905,37 +791,25 @@ export function PatientDetailShell({
               <HistoryEditor
                 value={visitData.history}
                 onChange={(val) => setVisitData((prev) => ({ ...prev, history: val }))}
-                isCollapsed={!expandedSections[getStepId("history")] && activeStep !== getStepId("history")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("history"))}
-                isActive={activeStep === getStepId("history")}
-                onFocus={() => handleStepFocus(getStepId("history"))}
+                isCollapsed={!expandedSections[2] && activeStep !== 2}
+                onToggleCollapse={() => toggleSectionCollapse(2)}
+                isActive={activeStep === 2}
+                onFocus={() => handleStepFocus(2)}
               />
             ) : null}
 
-            {/* Step 3: Clinical Examination / MSE */}
+            {/* Step 3: Clinical Examination */}
             {canWriteEhr ? (
-              isPsychiatry ? (
-                <MseCard
-                  data={visitData.mse || {}}
-                  onChange={(val) => setVisitData((prev) => ({ ...prev, mse: val }))}
-                  locale={locale}
-                  isCollapsed={!expandedSections[getStepId("mse")] && activeStep !== getStepId("mse")}
-                  onToggleCollapse={() => toggleSectionCollapse(getStepId("mse"))}
-                  isActive={activeStep === getStepId("mse")}
-                  onFocus={() => handleStepFocus(getStepId("mse"))}
-                />
-              ) : (
-                <ClinicalExam
-                  notes={visitData.clinicalExamination}
-                  onNotesChange={(val) => setVisitData((prev) => ({ ...prev, clinicalExamination: val }))}
-                  vitals={visitData.vitals}
-                  onVitalsChange={(val) => setVisitData((prev) => ({ ...prev, vitals: val }))}
-                  isCollapsed={!expandedSections[getStepId("exam")] && activeStep !== getStepId("exam")}
-                  onToggleCollapse={() => toggleSectionCollapse(getStepId("exam"))}
-                  isActive={activeStep === getStepId("exam")}
-                  onFocus={() => handleStepFocus(getStepId("exam"))}
-                />
-              )
+              <ClinicalExam
+                notes={visitData.clinicalExamination}
+                onNotesChange={(val) => setVisitData((prev) => ({ ...prev, clinicalExamination: val }))}
+                vitals={visitData.vitals}
+                onVitalsChange={(val) => setVisitData((prev) => ({ ...prev, vitals: val }))}
+                isCollapsed={!expandedSections[3] && activeStep !== 3}
+                onToggleCollapse={() => toggleSectionCollapse(3)}
+                isActive={activeStep === 3}
+                onFocus={() => handleStepFocus(3)}
+              />
             ) : null}
 
             {/* Step 4: Assessment & Diagnosis */}
@@ -943,36 +817,57 @@ export function PatientDetailShell({
               <AssessmentCard
                 value={visitData.assessment}
                 onChange={(val) => setVisitData((prev) => ({ ...prev, assessment: val }))}
-                isCollapsed={!expandedSections[getStepId("assessment")] && activeStep !== getStepId("assessment")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("assessment"))}
-                isActive={activeStep === getStepId("assessment")}
-                onFocus={() => handleStepFocus(getStepId("assessment"))}
+                isCollapsed={!expandedSections[4] && activeStep !== 4}
+                onToggleCollapse={() => toggleSectionCollapse(4)}
+                isActive={activeStep === 4}
+                onFocus={() => handleStepFocus(4)}
               />
             ) : null}
 
-            {/* Step 5: Investigations (Standard Clinic Only) */}
+            {/* Psychiatry: MSE between Clinical Exam and Assessment */}
+            {canWriteEhr && isPsychiatry ? (
+              <MseCard
+                value={visitData.mse || DEFAULT_MSE}
+                onChange={(val) => setVisitData((prev) => ({ ...prev, mse: val }))}
+                isCollapsed={!expandedSections[35] && activeStep !== 35}
+                onToggleCollapse={() => toggleSectionCollapse(35)}
+                isActive={activeStep === 35}
+                onFocus={() => handleStepFocus(35)}
+                stepNumber={isPsychiatry ? 3 : 0}
+              />
+            ) : null}
+
+            {/* Step 5: Investigations (hidden for psychiatry) */}
             {canWriteEhr && !isPsychiatry ? (
               <InvestigationPanel
                 value={visitData.investigations}
                 onChange={(val) => setVisitData((prev) => ({ ...prev, investigations: val }))}
-                isCollapsed={!expandedSections[getStepId("investigations")] && activeStep !== getStepId("investigations")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("investigations"))}
-                isActive={activeStep === getStepId("investigations")}
-                onFocus={() => handleStepFocus(getStepId("investigations"))}
+                isCollapsed={!expandedSections[5] && activeStep !== 5}
+                onToggleCollapse={() => toggleSectionCollapse(5)}
+                isActive={activeStep === 5}
+                onFocus={() => handleStepFocus(5)}
               />
             ) : null}
 
-            {/* Step 6: Treatment Plan */}
-            {canWriteEhr ? (
+            {/* Step 6: Treatment Plan (generic or psychiatry-specific) */}
+            {canWriteEhr && isPsychiatry ? (
+              <PsychTreatmentPlan
+                value={visitData.psychTreatment || DEFAULT_PSYCH_TREATMENT}
+                onChange={(val) => setVisitData((prev) => ({ ...prev, psychTreatment: val }))}
+                isCollapsed={!expandedSections[6] && activeStep !== 6}
+                onToggleCollapse={() => toggleSectionCollapse(6)}
+                isActive={activeStep === 6}
+                onFocus={() => handleStepFocus(6)}
+                stepNumber={5}
+              />
+            ) : canWriteEhr ? (
               <TreatmentPlanCard
                 value={visitData.treatmentPlan}
                 onChange={(val) => setVisitData((prev) => ({ ...prev, treatmentPlan: val }))}
-                isCollapsed={!expandedSections[getStepId("plan")] && activeStep !== getStepId("plan")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("plan"))}
-                isActive={activeStep === getStepId("plan")}
-                onFocus={() => handleStepFocus(getStepId("plan"))}
-                specialty={specialty}
-                locale={locale}
+                isCollapsed={!expandedSections[6] && activeStep !== 6}
+                onToggleCollapse={() => toggleSectionCollapse(6)}
+                isActive={activeStep === 6}
+                onFocus={() => handleStepFocus(6)}
               />
             ) : null}
 
@@ -1015,22 +910,33 @@ export function PatientDetailShell({
                     ...current,
                   ]);
                 }}
-                isCollapsed={!expandedSections[getStepId("prescription")] && activeStep !== getStepId("prescription")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("prescription"))}
-                isActive={activeStep === getStepId("prescription")}
-                onFocus={() => handleStepFocus(getStepId("prescription"))}
+                isCollapsed={!expandedSections[7] && activeStep !== 7}
+                onToggleCollapse={() => toggleSectionCollapse(7)}
+                isActive={activeStep === 7}
+                onFocus={() => handleStepFocus(7)}
               />
             ) : null}
 
-            {/* Step 8: Follow-up */}
-            {canWriteEhr ? (
+            {/* Step 8: Follow-up (generic or psychiatry session) */}
+            {canWriteEhr && isPsychiatry ? (
+              <SessionFollowUpCard
+                value={{ ...followupData, interval: followupData.interval === "3d" ? "1w" : followupData.interval === "none" ? "none" : followupData.interval as any }}
+                onChange={(val) => setFollowupData({ ...val, interval: val.interval as any })}
+                isCollapsed={!expandedSections[8] && activeStep !== 8}
+                onToggleCollapse={() => toggleSectionCollapse(8)}
+                isActive={activeStep === 8}
+                onFocus={() => handleStepFocus(8)}
+                onTriggerModal={() => setScheduleOpen(true)}
+                stepNumber={7}
+              />
+            ) : canWriteEhr ? (
               <FollowUpCard
                 value={followupData}
                 onChange={(val) => setFollowupData(val)}
-                isCollapsed={!expandedSections[getStepId("followup")] && activeStep !== getStepId("followup")}
-                onToggleCollapse={() => toggleSectionCollapse(getStepId("followup"))}
-                isActive={activeStep === getStepId("followup")}
-                onFocus={() => handleStepFocus(getStepId("followup"))}
+                isCollapsed={!expandedSections[8] && activeStep !== 8}
+                onToggleCollapse={() => toggleSectionCollapse(8)}
+                isActive={activeStep === 8}
+                onFocus={() => handleStepFocus(8)}
                 onTriggerModal={() => setScheduleOpen(true)}
               />
             ) : null}
@@ -1040,10 +946,10 @@ export function PatientDetailShell({
               balanceDue={balanceDue}
               payments={payments}
               onOpenPayment={() => setPaymentOpen(true)}
-              isCollapsed={!expandedSections[getStepId("billing")] && activeStep !== getStepId("billing")}
-              onToggleCollapse={() => toggleSectionCollapse(getStepId("billing"))}
-              isActive={activeStep === getStepId("billing")}
-              onFocus={() => handleStepFocus(getStepId("billing"))}
+              isCollapsed={!expandedSections[9] && activeStep !== 9}
+              onToggleCollapse={() => toggleSectionCollapse(9)}
+              isActive={activeStep === 9}
+              onFocus={() => handleStepFocus(9)}
             />
 
             {/* Step 10: Finish Visit */}
@@ -1065,13 +971,12 @@ export function PatientDetailShell({
                   onPrintPrescription={printStructuredPrescription}
                   onOpenFollowUp={() => setScheduleOpen(true)}
                   onOpenPayment={() => setPaymentOpen(true)}
-                  specialty={specialty}
-                  locale={locale}
                 />
               </div>
             ) : null}
 
           </div>
+          </LayoutGroup>
 
           {/* Sidebar stepper tracker */}
           <div className="hidden lg:block lg:col-span-1">
@@ -1135,6 +1040,7 @@ export function PatientDetailShell({
                 />
               </div>
 
+
               {/* Sticky facts panel (right side) */}
               <div className="hidden lg:block lg:col-span-1">
                 <ClinicalSummaryPanel
@@ -1180,6 +1086,17 @@ export function PatientDetailShell({
 
       </motion.section>
 
+      {/* EHR 2.0 Nawah AI Assistant */}
+      <div className="print:hidden">
+        <NawahAIAssistant
+          patientName={patient.name}
+          allergies={parsedSummary.allergies}
+          chronicDiseases={parsedSummary.chronicDiseases}
+          lastDiagnosis={parsedSummary.recentDiagnosis}
+          totalVisits={visits.length}
+          locale={locale}
+        />
+      </div>
       {/* Modals */}
       <ScheduleSessionModal
         open={scheduleOpen}
@@ -1289,100 +1206,6 @@ export function PatientDetailShell({
           <div>{locale === "ar" ? "الأمراض المزمنة" : "Chronic Diseases"}: <span className="font-bold">{locale === "ar" ? "لا يوجد" : "None"}</span></div>
           <div>{locale === "ar" ? "الرصيد المستحق" : "Outstanding Balance"}: <span className="font-bold">{balanceDue} {t("currency")}</span></div>
         </div>
-
-        {/* Current Consultation Details */}
-        <h2 className="text-sm font-bold text-slate-900 border-b border-slate-300 pb-1 mb-3">
-          {locale === "ar" ? "ملاحظات الكشف الحالية" : "Current Consultation Notes"}
-        </h2>
-        <div className="border border-slate-300 rounded-lg p-4 mb-6 text-xs space-y-3">
-          {visitData.chiefComplaint.trim() && (
-            <div>
-              <strong>{locale === "ar" ? "الشكوى الرئيسية" : "Chief Complaint"}:</strong>
-              <div className="mt-1 text-slate-700 whitespace-pre-wrap">{visitData.chiefComplaint}</div>
-            </div>
-          )}
-          
-          {(visitData.history.presentIllness.trim() || visitData.history.pastMedical.trim()) && (
-            <div>
-              <strong className="block border-t border-slate-100 pt-2 mt-2">{locale === "ar" ? "التاريخ المرضي" : "History"}:</strong>
-              {visitData.history.presentIllness.trim() && <div className="mt-1 text-slate-700">· {locale === "ar" ? "تاريخ المرض الحالي" : "Present Illness"}: {visitData.history.presentIllness}</div>}
-              {visitData.history.pastMedical.trim() && <div className="mt-1 text-slate-700">· {locale === "ar" ? "التاريخ السابق" : "Past Medical"}: {visitData.history.pastMedical}</div>}
-              {visitData.history.drug.trim() && <div className="mt-1 text-slate-700">· {locale === "ar" ? "التاريخ الدوائي" : "Drug History"}: {visitData.history.drug}</div>}
-            </div>
-          )}
-
-          {(visitData.clinicalExamination.trim() || visitData.vitals.heartRate || visitData.vitals.bloodPressure) && (
-            <div>
-              <strong className="block border-t border-slate-100 pt-2 mt-2">{locale === "ar" ? "الفحص والعلامات الحيوية" : "Examination & Vitals"}:</strong>
-              {(visitData.vitals.heartRate || visitData.vitals.bloodPressure) && (
-                <div className="mt-1 text-slate-700">
-                  · HR: {visitData.vitals.heartRate || "-"} bpm | BP: {visitData.vitals.bloodPressure || "-"} mmHg | Temp: {visitData.vitals.temperature || "-"} °C | Wt: {visitData.vitals.weight || "-"} kg
-                </div>
-              )}
-              {visitData.clinicalExamination.trim() && (
-                <div className="mt-1 text-slate-700 whitespace-pre-wrap">{visitData.clinicalExamination}</div>
-              )}
-            </div>
-          )}
-
-          {(visitData.assessment.primaryDiagnosis.trim() || visitData.assessment.secondaryDiagnosis.trim()) && (
-            <div>
-              <strong className="block border-t border-slate-100 pt-2 mt-2">{locale === "ar" ? "التقييم والتشخيص" : "Assessment & Diagnosis"}:</strong>
-              {visitData.assessment.primaryDiagnosis.trim() && <div className="mt-1 text-slate-700">· {locale === "ar" ? "التشخيص الأساسي" : "Primary"}: {visitData.assessment.primaryDiagnosis}</div>}
-              {visitData.assessment.secondaryDiagnosis.trim() && <div className="mt-1 text-slate-700">· {locale === "ar" ? "التشخيص الفرعي" : "Secondary"}: {visitData.assessment.secondaryDiagnosis}</div>}
-              {visitData.assessment.notes.trim() && <div className="mt-1 text-slate-700">{visitData.assessment.notes}</div>}
-            </div>
-          )}
-
-          {(visitData.investigations.lab.trim() || visitData.investigations.imaging.trim() || visitData.investigations.other.trim()) && (
-            <div>
-              <strong className="block border-t border-slate-100 pt-2 mt-2">{locale === "ar" ? "الفحوصات المطلوبة" : "Requested Investigations"}:</strong>
-              {visitData.investigations.lab.trim() && <div className="mt-1 text-slate-700">· Lab: {visitData.investigations.lab}</div>}
-              {visitData.investigations.imaging.trim() && <div className="mt-1 text-slate-700">· Imaging: {visitData.investigations.imaging}</div>}
-              {visitData.investigations.other.trim() && <div className="mt-1 text-slate-700">· Other: {visitData.investigations.other}</div>}
-            </div>
-          )}
-
-          {(visitData.treatmentPlan.notes.trim() || visitData.treatmentPlan.lifestyle.trim() || visitData.treatmentPlan.instructions.trim()) && (
-            <div>
-              <strong className="block border-t border-slate-100 pt-2 mt-2">{locale === "ar" ? "خطة العلاج" : "Treatment Plan"}:</strong>
-              {visitData.treatmentPlan.notes.trim() && <div className="mt-1 text-slate-700">{visitData.treatmentPlan.notes}</div>}
-              {visitData.treatmentPlan.lifestyle.trim() && <div className="mt-1 text-slate-700">· Lifestyle: {visitData.treatmentPlan.lifestyle}</div>}
-              {visitData.treatmentPlan.instructions.trim() && <div className="mt-1 text-slate-700">· Instructions: {visitData.treatmentPlan.instructions}</div>}
-            </div>
-          )}
-        </div>
-
-        {/* Prescription */}
-        {prescriptions.length > 0 && (
-          <>
-            <h2 className="text-sm font-bold text-slate-900 border-b border-slate-300 pb-1 mb-3">
-              {locale === "ar" ? "الروشتة الطبية الحالية" : "Current Prescription"}
-            </h2>
-            <table className="w-full border-collapse mb-6 text-xs text-start">
-              <thead>
-                <tr className="bg-slate-100 border-b border-slate-300">
-                  <th className="p-2 text-start" style={{ width: "5%" }}>#</th>
-                  <th className="p-2 text-start">{locale === "ar" ? "الدواء" : "Medicine"}</th>
-                  <th className="p-2 text-start">{locale === "ar" ? "الجرعة" : "Dose"}</th>
-                  <th className="p-2 text-start">{locale === "ar" ? "التكرار" : "Frequency"}</th>
-                  <th className="p-2 text-start">{locale === "ar" ? "المدة" : "Duration"}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {prescriptions[0].lines.map((line: any, index: number) => (
-                  <tr key={index} className="border-b border-slate-200">
-                    <td className="p-2">{index + 1}</td>
-                    <td className="p-2 font-bold">{line.medicineName}</td>
-                    <td className="p-2">{line.doseAmount} {line.form}</td>
-                    <td className="p-2">{line.frequency}</td>
-                    <td className="p-2">{line.duration}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
 
         {/* Visits History */}
         {visits.length > 0 && (

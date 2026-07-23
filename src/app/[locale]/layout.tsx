@@ -1,10 +1,16 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { routing, localeDirection, type Locale } from "@/i18n/routing";
 import { GlobalLocaleSwitcher } from "@/components/shared/GlobalLocaleSwitcher";
+import "../globals.css";
+
+export const viewport: Viewport = {
+  themeColor: "#6C5CE7",
+  colorScheme: "dark",
+};
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,6 +42,23 @@ export async function generateMetadata({
   return {
     title: t("appTitle"),
     description: t("appDescription"),
+    applicationName: "Nawah",
+    manifest: "/manifest.webmanifest",
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/favicon.png", type: "image/png", sizes: "192x192" },
+        { url: "/icons/icon.svg", type: "image/svg+xml" },
+        { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+      shortcut: ["/favicon.ico"],
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: "نواة",
+    },
   };
 }
 
