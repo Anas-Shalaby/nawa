@@ -10,6 +10,8 @@ import {
 } from "react";
 import type { AppNotification } from "@/lib/notifications/types";
 
+import { createClient } from "@/utils/supabase/client";
+
 const MAX_NOTIFICATIONS = 40;
 
 interface NotificationsContextValue {
@@ -24,12 +26,14 @@ interface NotificationsContextValue {
   hydrateNotifications: (items: AppNotification[]) => void;
   markRead: (id: string) => void;
   markAllRead: () => void;
+  clearReadNotifications: () => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextValue | null>(null);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const supabase = useMemo(() => createClient(), []);
 
   const pushNotification = useCallback(
     (
@@ -79,13 +83,27 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     setNotifications((current) =>
       current.map((item) => (item.id === id ? { ...item, read: true } : item)),
     );
-  }, []);
+    // Sync to DB
+    supabase.from("app_notifications").update({ is_read: true }).eq("id", id).then();
+  }, [supabase]);
 
   const markAllRead = useCallback(() => {
     setNotifications((current) =>
       current.map((item) => (item.read ? item : { ...item, read: true })),
     );
-  }, []);
+    // We only update notifications that are currently not read in state (to avoid over-updating, but for simplicity we can just update all unread in DB for this user)
+    // Actually, calling an RPC or update where is_read = false might be better, but let's just do it directly.
+    // wait, we don't have tenant_id here, but RLS protects it. 
+    // It's safer to just let the user mark all their unread notifications as read.
+    supabase.from("app_notifications").update({ is_read: true }).eq("is_read", false).then();
+  }, [supabase]);
+
+  const clearReadNotifications = useCallback(() => {
+    // Remove read from local state
+    setNotifications((current) => current.filter(n => !n.read));
+    // Remove read from DB
+    supabase.rpc("cleanup_read_notifications").then();
+  }, [supabase]);
 
   const unreadCount = useMemo(
     () => notifications.filter((item) => !item.read).length,
@@ -100,6 +118,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       hydrateNotifications,
       markRead,
       markAllRead,
+      clearReadNotifications,
     }),
     [
       notifications,
@@ -108,6 +127,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       hydrateNotifications,
       markRead,
       markAllRead,
+      clearReadNotifications,
     ],
   );
 

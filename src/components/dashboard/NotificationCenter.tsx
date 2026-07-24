@@ -15,7 +15,7 @@ type FilterTab = "all" | "unread" | "urgent";
 
 export function NotificationCenter() {
   const t = useTranslations("dashboard.notifications");
-  const { notifications, unreadCount, markAllRead, pushNotification } =
+  const { notifications, unreadCount, markAllRead, pushNotification, clearReadNotifications } =
     useNotifications();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<FilterTab>("all");
@@ -70,7 +70,12 @@ export function NotificationCenter() {
   }, [hydratedOps, pushNotification, t]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      if (mounted) {
+        clearReadNotifications();
+      }
+      return;
+    }
 
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") setOpen(false);
@@ -84,7 +89,7 @@ export function NotificationCenter() {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = previousOverflow;
     };
-  }, [open]);
+  }, [open, mounted, clearReadNotifications]);
 
   const filtered = useMemo(() => {
     return notifications.filter((item) => {
